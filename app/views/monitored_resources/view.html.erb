@@ -1,6 +1,18 @@
 <% content_for :title, 'List of Monitored Resources' %>
-<h1>Monitored Resources: <%= @monitored_resource.head_resource.title %></h1>
+<h1>Monitored Resource: <%= @monitored_resource.head_resource.title %></h1>
 
+<h2>Permissions</h2>
+<ul>
+<% @monitored_resource.permissions.each do |permission| %>
+	<li><%= permission.name %> (<%= permission.role %>)</li>
+<% end%>
+</ul>
+
+<h2>Permission-Groups</h2>
+<%= link_to "Create new", permission_groups_new_path, :class => 'button radius tiny' %>
+
+
+<h2>File List</h2>
 <ul>
 	<% @resources.each do |r| %>
 	<li><%= r.title %> (<%= r.mime_type %>)</li>

@@ -14,6 +14,8 @@ class Resources < ActiveRecord::Migration
       t.datetime :created_date
       t.datetime :modified_date
       t.boolean :shared
+      t.boolean :trashed
+      t.boolean :viewed
       t.belongs_to :monitored_resource
       t.belongs_to :user
       t.timestamps

@@ -1,5 +1,6 @@
 class Resource < ActiveRecord::Base
   belongs_to :monitored_resource
+  # resource is not bound to user, can be used several times
   
   def self.find_create_or_update_batched_for(child_resources, mr_id, user_id)
     child_resources.each do |resource|
@@ -27,6 +28,8 @@ class Resource < ActiveRecord::Base
         :mime_type => metadata['mimeType'],
         :modified_date => metadata['modifiedDate'],
         :shared => metadata['shared'],
+        :trashed => metadata['labels']['trashed'],
+        :viewed => metadata['labels']['viewed'],
         :title => metadata['title']
       )
   end

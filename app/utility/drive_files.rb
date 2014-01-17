@@ -1,6 +1,7 @@
 module DriveFiles
-  FIELDS_FILE = 'alternateLink,createdDate,etag,fileExtension,fileSize,kind,ownerNames,lastModifyingUserName,mimeType,modifiedDate,shared,title'
-  FIELDS_LIST = 'items(id' + FIELDS_FILE + ')'
+  FIELDS_FILES_GET = 'alternateLink,createdDate,etag,fileExtension,fileSize,kind,ownerNames,lastModifyingUserName,mimeType,modifiedDate,shared,title'
+  FIELDS_FILES_LIST = 'items(id' + FIELDS_FILES_GET + ')'
+  FIELDS_PERMISSIONS_LIST = 'items(domain,emailAddress,etag,id,kind,name,role,type,value)'
   
   def retrieve_all_root_folders(user_token)
     query = "'root' in parents and mimeType='application/vnd.google-apps.folder'"
@@ -10,7 +11,14 @@ module DriveFiles
   def retrieve_all_files_for(gid, user_token)
     query = "'#{gid}' in parents"
     return gdrive_api_file_list(query, user_token)
-    # @todo: and trashed = false --> better monitor all files, but mark state
+  end
+  
+  def retrieve_file_metadata(gid, user_token)
+    return gdrive_api_file_get(gid, user_token)
+  end
+  
+  def retrieve_file_permissions(gid, user_token)
+    
   end
   
   private
@@ -19,7 +27,7 @@ module DriveFiles
       :key => GOOGLE['client_secret'], 
       :access_token => user_token,
       :q => query,
-      :fields => FIELDS_LIST }}
+      :fields => FIELDS_FILES_LIST }}
     response = JSON::parse(response)
     return response["items"]
   end
@@ -29,8 +37,17 @@ module DriveFiles
     response = RestClient.get "https://www.googleapis.com/drive/v2/files/#{file_id}", {:params => {
       :key => GOOGLE['client_secret'], 
       :access_token => user_token,
-      :fields => }}
+      :fields => FIELDS_FILES_GET }}
     response = JSON::parse(response)
     # should return null
+  end
+  
+  def gdrive_api_permission_list(file_id, user_token)
+    response = RestClient.get "https://www.googleapis.com/drive/v2/files/#{file_id}/permissions", {:params => {
+      :key => GOOGLE['client_secret'], 
+      :access_token => user_token,
+      :fields => FIELDS_PERMISSIONS_LIST }}
+      response = JSON::parse(response)
+      return response["items"]
   end
 end

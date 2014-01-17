@@ -7,6 +7,8 @@ GdriveFeed::Application.routes.draw do
   get "welcome/index"
   devise_for :users, :controllers => { :omniauth_callbacks => "users/omniauth_callbacks" }
   
+  resources :permission_groups
+  
   root :to => "welcome#index"
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
