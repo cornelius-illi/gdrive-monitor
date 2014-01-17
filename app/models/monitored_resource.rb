@@ -2,6 +2,7 @@ class MonitoredResource < ActiveRecord::Base
   has_many  :resources, :dependent => :delete_all
   has_many  :permissions, :dependent => :delete_all
   has_many  :permission_groups, :dependent => :delete_all
+  has_and_belongs_to_many :monitored_periods
   
   def self.find_or_create_by_resource_id_for(res_gid, current_user)    
     monitored_resource = MonitoredResource
@@ -16,10 +17,12 @@ class MonitoredResource < ActiveRecord::Base
   private
   def update_metadata(user_token)
     metadata = DriveFiles.retrieve_file_metadata(self.gid, user_token)
+    lowest_change_date = GOOGLE['lowest_change_date'] 
     self.update_attributes(
       :created_date => metadata['createdDate'],
       :modified_date => metadata['modifiedDate'],
       :shared_with_me_date => metadata['sharedWithMeDate'],
+      :lowest_change_date => lowest_change_date
       :etag => metadata['etag'],
       :owner_names => metadata['ownerNames'].join(", "),
       :title => metadata['title']

@@ -1,11 +1,14 @@
 development:
   client_id: XXX
   client_secret: XXX
+	lowest_change_date: XXX
 
 test:
   client_id: XXX
   client_secret: XXX
+	lowest_change_date: XXX
 
 production:
   client_id: XXX
   client_secret: XXX
+	lowest_change_date: XXX

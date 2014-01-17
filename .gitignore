@@ -16,4 +16,4 @@
 /tmp
 
 # google drive app config
-/config/google_drive.yml.sample
+/config/google_drive.yml
