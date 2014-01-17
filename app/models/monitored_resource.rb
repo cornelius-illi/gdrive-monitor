@@ -17,7 +17,11 @@ class MonitoredResource < ActiveRecord::Base
   private
   def update_metadata(user_token)
     metadata = DriveFiles.retrieve_file_metadata(self.gid, user_token)
-    lowest_change_date = GOOGLE['lowest_change_date'] 
+    
+    # @todo: check for easier solution
+    lowest_change_date = Datetime.parse( GOOGLE['lowest_change_date'] )
+    lowest_change_data = metadata['sharedWithMeDate'] if (lowest_change_data < DateTime.parse( metadata['sharedWithMeDate'] ))
+    
     self.update_attributes(
       :created_date => metadata['createdDate'],
       :modified_date => metadata['modifiedDate'],
