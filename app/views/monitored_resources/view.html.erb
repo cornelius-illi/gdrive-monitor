@@ -1,0 +1,8 @@
+<% content_for :title, 'List of Monitored Resources' %>
+<h1>Monitored Resources: <%= @monitored_resource.head_resource.title %></h1>
+
+<ul>
+	<% @resources.each do |r| %>
+	<li><%= r.title %> (<%= r.mime_type %>)</li>
+	<% end %>
+</ul>

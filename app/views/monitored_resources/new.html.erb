@@ -1,0 +1,14 @@
+<% content_for :title, 'Create new Monitored Resource' %>
+
+<h1>Monitor a resource</h1>
+<ul class="folder-list">
+<% @folders.each do |folder| %>
+	<li><i class="fi-folder"></i> 
+		<% unless @monitored_resources_ids.include? folder['id'] %>
+		<%= link_to folder['title'], mr_create_path(folder['id']) %>
+		<%else %>
+			<%= folder['title'] %>
+		<% end%>
+	</li>
+<% end %>
+</ul>

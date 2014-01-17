@@ -1,0 +1,16 @@
+<% content_for :title, 'List of Monitored Resources' %>
+<h1>Monitored Resources</h1>
+<%= link_to "Create new", monitored_resources_new_path, :class => 'button radius tiny' %>
+
+<% unless @monitored_resource.nil? %>
+<div data-alert class="alert-box info radius">
+	There are no monitored resources yet.
+  <a href="#" class="close">&times;</a>
+</div>
+<% else %>
+	<ul>
+		<% @monitored_resources.each do |mr| %>
+		<li><%= link_to mr.head_resource.title, mr_view_path(mr.id) %> (<%= mr.head_resource.gid %>)</li>
+		<% end %>
+	</ul>
+<% end %>
