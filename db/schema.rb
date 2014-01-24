@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140115155601) do
+ActiveRecord::Schema.define(version: 20140117173029) do
 
   create_table "changes", force: true do |t|
     t.string   "change_id"
@@ -24,13 +24,54 @@ ActiveRecord::Schema.define(version: 20140115155601) do
     t.datetime "updated_at"
   end
 
+  create_table "monitored_periods", force: true do |t|
+    t.string   "name"
+    t.datetime "start"
+    t.datetime "end"
+    t.integer  "user_id"
+  end
+
+  create_table "monitored_periods_monitored_resources", force: true do |t|
+    t.integer "monitored_period_id"
+    t.integer "monitored_resource_id"
+  end
+
   create_table "monitored_resources", force: true do |t|
     t.string   "gid"
     t.integer  "largest_change_id"
-    t.integer  "head_resource_id"
+    t.integer  "lowest_change_id"
+    t.datetime "lowest_change_date"
+    t.datetime "shared_with_me_date"
+    t.boolean  "indexed"
+    t.datetime "created_date"
+    t.datetime "modified_date"
+    t.string   "title"
+    t.string   "etag"
+    t.string   "owner_names"
     t.integer  "user_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+  end
+
+  create_table "permission_groups", force: true do |t|
+    t.string  "name"
+    t.integer "monitored_resource_id"
+  end
+
+  create_table "permission_groups_permissions", force: true do |t|
+    t.integer "permission_group_id"
+    t.integer "permission_id"
+  end
+
+  create_table "permissions", force: true do |t|
+    t.string  "gid"
+    t.string  "name"
+    t.string  "domain"
+    t.string  "role"
+    t.string  "type"
+    t.string  "email_address"
+    t.integer "monitored_resource_id"
+    t.integer "permission_group_id"
   end
 
   create_table "resources", force: true do |t|
@@ -47,6 +88,8 @@ ActiveRecord::Schema.define(version: 20140115155601) do
     t.datetime "created_date"
     t.datetime "modified_date"
     t.boolean  "shared"
+    t.boolean  "trashed"
+    t.boolean  "viewed"
     t.integer  "monitored_resource_id"
     t.integer  "user_id"
     t.datetime "created_at"

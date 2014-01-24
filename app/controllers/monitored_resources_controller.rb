@@ -9,10 +9,8 @@ class MonitoredResourcesController < ApplicationController
   end
 
   def new
-    res = DriveFiles.retrieve_all_root_folders(current_user.token)
-    @folders = res['items']
+    @folders = DriveFiles.retrieve_all_root_folders(current_user.token)
     @monitored_resources_ids = current_user.monitored_resources_ids
-    p @monitored_resources_ids
   end
   
   def create

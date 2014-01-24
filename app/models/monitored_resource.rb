@@ -26,7 +26,7 @@ class MonitoredResource < ActiveRecord::Base
       :created_date => metadata['createdDate'],
       :modified_date => metadata['modifiedDate'],
       :shared_with_me_date => metadata['sharedWithMeDate'],
-      :lowest_change_date => lowest_change_date
+      :lowest_change_date => lowest_change_date,
       :etag => metadata['etag'],
       :owner_names => metadata['ownerNames'].join(", "),
       :title => metadata['title']
