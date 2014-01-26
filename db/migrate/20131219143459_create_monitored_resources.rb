@@ -3,12 +3,12 @@ class CreateMonitoredResources < ActiveRecord::Migration
     create_table :monitored_resources do |t|
       t.string    :gid # for google id
      
-      t.integer   :largest_change_id
-      t.integer   :lowest_change_id
-      t.datetime  :lowest_change_date  # = shared_with_me_date or set by user
+      t.integer   :largest_change_id # required for periodical updates
       t.datetime  :shared_with_me_date
-      t.boolean   :indexed # when the crawler has finished a first complete indexing
-     
+      t.datetime  :lowest_index_date
+      t.datetime  :structure_indexed_at # when the crawler has finished a first complete indexing files.list
+      t.datetime  :changehistory_indexed_at # when the crawler has finished a first complete indexing of changes.list
+
       t.datetime  :created_date
       t.datetime  :modified_date
       t.string    :title

@@ -32,9 +32,19 @@ gem 'json'
 gem 'foundation-rails'
 gem 'simple-navigation'
 
+# auth + oauth2
 gem 'devise'
 gem 'omniauth-google-oauth2'
 gem 'rest-client'
+
+# install default db records (admin user)
+gem "seedbank", github: 'james2m/seedbank'
+
+# background working
+gem 'delayed_job_active_record'
+gem "delayed_job_web"
+gem 'daemons'
+gem 'whenever'
 
 group :doc do
   # bundle exec rake doc:rails generates the API under doc/api.

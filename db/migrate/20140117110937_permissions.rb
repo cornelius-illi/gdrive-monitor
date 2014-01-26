@@ -5,7 +5,7 @@ class Permissions < ActiveRecord::Migration
       t.string      :name
       t.string      :domain
       t.string      :role
-      t.string      :type
+      t.string      :perm_type
       t.string      :email_address
       t.belongs_to  :monitored_resource
       t.belongs_to  :permission_group

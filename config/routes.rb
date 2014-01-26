@@ -1,8 +1,13 @@
 GdriveFeed::Application.routes.draw do
-  get "monitored_resources/list"
+  get "monitored_resources", to: "monitored_resources#list", as: :monitored_resources
   get "monitored_resources/new"
-  get "monitored_resources/:id/create", to: "monitored_resources#create", as: :mr_create
-  get "monitored_resources/:id/view", to: "monitored_resources#view", as: :mr_view
+  get "monitored_resources/:gid/create", to: "monitored_resources#create", as: :mr_create
+  get "monitored_resources/:id", to: "monitored_resources#show", as: :monitored_resource
+  get "monitored_resources/:id/index_structure", to: "monitored_resources#index_structure", as: :mr_index_structure
+  get "monitored_resources/:id/index_changehistory", to: "monitored_resources#index_changehistory", as: :mr_index_changehistory
+  get "monitored_resources/:id/permissions", to: "monitored_resources#permissions", as: :mr_permissions
+  get "monitored_resources/:id/permissions/refresh", to: "monitored_resources#refresh_permissions", as: :mr_refresh_permissions
+  get "monitored_resources/:id/reports", to: "monitored_resources#reports",as: :mr_reports
   
   get "welcome/index"
   devise_for :users, :controllers => { :omniauth_callbacks => "users/omniauth_callbacks" }

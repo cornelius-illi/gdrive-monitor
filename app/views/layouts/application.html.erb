@@ -1,72 +1,55 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-	<%= favicon_link_tag "favicon.ico" %>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <%= favicon_link_tag "favicon.ico" %>
 
-    <title>GDrive Feed: <%= content_for?(:title) ? yield(:title) : "" %></title>
+  <title>GDrive Feed: <%= content_for?(:title) ? yield(:title) : "" %></title>
 
-    <%= stylesheet_link_tag    "application" %>
-    <%= javascript_include_tag "vendor/modernizr" %>
-    <%= csrf_meta_tags %>
-  </head>
+  <%= stylesheet_link_tag "application" %>
+  <%= javascript_include_tag "vendor/modernizr" %>
+  <%= csrf_meta_tags %>
+</head>
 
-  <body>
-  	<!-- Header and Nav -->
-    <div class="row">
-      <div class="large-12 columns">
-        <div class="panel">
-          <h1><%= image_tag("gdrive-logo.svg", :alt => "Google Drive", :width => '80') %> Google Drive Changes</h1>
-        </div>
+<body>
+<nav class="top-bar" data-topbar>
+  <ul class="title-area">
+    <li class="name">
+      <h1><a href="#"><%= image_tag("gdrive-logo.svg", :alt => "Google Drive", :width => '35') %> Goolge Drive Changes</a></h1>
+    </li>
+    <li class="toggle-topbar menu-icon"><a href="#">Menu</a></li>
+  </ul>
+
+  <section class="top-bar-section">
+    <%= render_navigation(:context => :user) %>
+  </section>
+</nav>
+<!-- Main Page Content and Sidebar -->
+
+<div class="sidebar small-2 columns">
+  <h5>Monitored Resources</h5>
+  <nav>
+    <%= render_navigation %>
+  </nav>
+</div>
+<div class="small-10 columns content">
+  <% unless @monitored_resource.blank? %>
+      <div data-magellan-expedition="fixed">
+        <dl class="sub-nav">
+          <dt>Navigation:</dt>
+          <dd class="<%= 'active' if current_page?(controller: 'monitored_resources', action: 'permissions') %>">
+            <%= link_to 'Permissions', mr_permissions_path(@monitored_resource) %>
+          </dd>
+          <dd class="<%= 'active' if current_page?(controller: 'monitored_resources', action: 'reports') %>">
+            <%= link_to 'Reports', mr_reports_path(@monitored_resource) %>
+          </dd>
+        </dl>
       </div>
-    </div>
+  <% end %>
+  <%= yield %>
+</div>
 
-    <!-- End Header and Nav -->
-    <div class="row">
-
-   <!-- Nav Sidebar -->
-		<div class="large-4 columns ">
-        	<div class="panel">
-          	  	<% unless current_user.nil? %><h5><%=  current_user.email %></h5><% end %>
-            	<div class="section-container vertical-nav" data-section data-options="deep_linking: false; one_up: true">
-					<%= render_navigation :renderer => SectionRenderer %>
-				</div>
-        	</div>
-      	</div>
-	  	<div class="large-8 columns">
-			<% if flash[:notice] %>
-			<div data-alert class="alert-box info radius">
-			  <%= flash[:notice] %>
-			  <a href="#" class="close">&times;</a>
-			</div>
-			<% end %>
-			<% if flash[:warning] %>
-			<div data-alert class="alert-box warning radius">
-			  <%= flash[:warning] %>
-			  <a href="#" class="close">&times;</a>
-			</div>
-			<% end %>
-    		<%= yield %>
-		</div>
-	</div>
-    <!-- Footer -->
-	<footer class="row">
-	<div class="large-12 columns">
-	 <hr />
-	 <div class="row">
-	   <div class="large-7 columns">
-	     <p>&copy; Copyright Cornelius Illi 2013-2014, <a href="http://corneliusilli.de">corneliusilli.de</a></p>
-	   </div>
-	   <div class="large-5 columns">
-	     <ul class="inline-list right">
-	       <li><a href="#">Logout</a></li>
-	     </ul>
-	   </div>
-	 </div>
-	</div>
-	</footer>
-	
-    <%= javascript_include_tag "application" %>
-  </body>
+<%= javascript_include_tag "application" %>
+</body>
 </html>

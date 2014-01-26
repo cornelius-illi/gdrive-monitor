@@ -13,6 +13,11 @@
 
  *= require_tree .
  */
+
+html, body {
+    height: 100%;
+}
+
 ul.folder-list {
 	list-style-type: none;
 	margin-left: 0px;
@@ -21,4 +26,18 @@ ul.folder-list {
 ul.folder-list li i {
 	color: #008cba;
 	font-size: 1.1em;
+}
+
+div.sidebar {
+    background: #E2E2E2;
+    padding: 32px 20px;
+    height: 100%;
+}
+
+div.content {
+    padding: 16px 32px;
+}
+
+.side-nav li.divider {
+    margin: 16px 0px;
 }

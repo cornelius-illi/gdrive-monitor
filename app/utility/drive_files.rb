@@ -1,10 +1,10 @@
 module DriveFiles
-  FIELDS_FILES_GET = 'alternateLink,createdDate,etag,fileExtension,fileSize,kind,ownerNames,lastModifyingUserName,mimeType,modifiedDate,shared,title'
+  FIELDS_FILES_GET = 'alternateLink,createdDate,etag,fileExtension,fileSize,kind,ownerNames,lastModifyingUserName,mimeType,modifiedDate,shared,sharedWithMeDate,title'
   FIELDS_FILES_LIST = 'items(id,' + FIELDS_FILES_GET + ')'
   FIELDS_PERMISSIONS_LIST = 'items(domain,emailAddress,etag,id,kind,name,role,type,value)'
   
   def self.retrieve_all_root_folders(user_token)
-    query = "'root' in parents and mimeType='application/vnd.google-apps.folder'"
+    query = "'root' in parents AND mimeType='application/vnd.google-apps.folder'" # AND sharedWithMe"
     return self.gdrive_api_file_list(query, user_token)
   end
   
@@ -18,7 +18,7 @@ module DriveFiles
   end
   
   def self.retrieve_file_permissions(gid, user_token)
-    
+    return self.gdrive_api_permission_list(gid, user_token)
   end
   
   private

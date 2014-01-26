@@ -1,0 +1,14 @@
+<% content_for :title, 'Permissions for file: ' + @monitored_resource.title %>
+<h3>Permissions for: <%= @monitored_resource.title %></h3>
+
+<% unless @monitored_resource.permissions.blank? %>
+    <ul>
+    <% @monitored_resource.permissions.each do |permission| %>
+        <li><%= permission.email_address.blank? ? permission.name : permission.email_address  %> (<%= permission.role %>, <%= permission.perm_type %>)</li>
+    <% end %>
+    </ul>
+<% end %>
+
+<%= link_to "Refresh Permissions", mr_refresh_permissions_path(@monitored_resource.id), :class => 'button tiny' %>
+
+<h3>Permissions Groups</h3>

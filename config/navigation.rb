@@ -32,33 +32,17 @@ SimpleNavigation::Configuration.run do |navigation|
 
   # Define the primary navigation
   navigation.items do |primary|
-    # Add an item to the primary navigation. The following params apply:
-    # key - a symbol which uniquely defines your navigation item in the scope of the primary_navigation
-    # name - will be displayed in the rendered navigation. This can also be a call to your I18n-framework.
-    # url - the address that the generated item links to. You can also use url_helpers (named routes, restful routes helper, url_for etc.)
-    # options - can be used to specify attributes that will be included in the rendered navigation item (e.g. id, class etc.)
-    #           some special options that can be set:
-    #           :if - Specifies a proc to call to determine if the item should
-    #                 be rendered (e.g. <tt>:if => Proc.new { current_user.admin? }</tt>). The
-    #                 proc should evaluate to a true or false value and is evaluated in the context of the view.
-    #           :unless - Specifies a proc to call to determine if the item should not
-    #                     be rendered (e.g. <tt>:unless => Proc.new { current_user.admin? }</tt>). The
-    #                     proc should evaluate to a true or false value and is evaluated in the context of the view.
-    #           :method - Specifies the http-method for the generated link - default is :get.
-    #           :highlights_on - if autohighlighting is turned off and/or you want to explicitly specify
-    #                            when the item should be highlighted, you can set a regexp which is matched
-    #                            against the current URI.  You may also use a proc, or the symbol <tt>:subpath</tt>. 
-    #
-    primary.item :key_0, 'Sign in with Google', user_omniauth_authorize_path(:google_oauth2), :unless => Proc.new { user_signed_in? }
-    #primary.item :key_1, 'Monitored Folders', monitored_resources_new_path
+    primary.dom_class = 'side-nav'
 
-    # You can also specify a condition-proc that needs to be fullfilled to display an item.
-    # Conditions are part of the options. They are evaluated in the context of the views,
-    # thus you can use all the methods and vars you have available in the views.
-    #primary.item :key_2, 'Edit Password', edit_user_password_path, :if => Proc.new { user_signed_in? }
-    primary.item :key_3, 'Logout', destroy_user_session_path, :method => 'delete', :if => Proc.new { user_signed_in? }
-    primary.item :hr, '', '', :if => Proc.new { user_signed_in? }
-    primary.item :key_5, 'Monitored Resources', monitored_resources_list_path, :if => Proc.new { user_signed_in? }
+    primary.item :recources_label, 'Configuration', :class => 'heading'
+    primary.item :monitored_resources, 'Create new', monitored_resources_path, :highlights_on => /monitored_resources/, :if => Proc.new { user_signed_in? }
+    primary.item :divider, '', :class => 'divider'
+    primary.item :recources_label, 'Monitored Resources', :class => 'heading'
+    unless @monitored_resources.blank?
+      @monitored_resources.each do |monitored_resource|
+        primary.item :monitored_resource, monitored_resource.try(:title), monitored_resource_path(monitored_resource)
+      end
+    end
 
     # you can also specify a css id or class to attach to this particular level
     # works for all levels of the menu
@@ -69,5 +53,4 @@ SimpleNavigation::Configuration.run do |navigation|
     # primary.auto_highlight = false
 
   end
-
 end

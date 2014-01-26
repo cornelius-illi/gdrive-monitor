@@ -16,7 +16,7 @@ class SectionRenderer < SimpleNavigation::Renderer::Base
     if skip_if_empty? && item_container.empty?
       ''
     else
-      content_tag(:nav, list_content, {:id => item_container.dom_id, :class => item_container.dom_class})
+      content_tag(:nav, list_content, {:class => item_container.dom_class})
     end
   end
 end
