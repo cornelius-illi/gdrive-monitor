@@ -15,5 +15,8 @@
 /log/*.log
 /tmp
 
+# ignore all idea files
+.idea/*
+
 # google drive app config
 /config/google_drive.yml

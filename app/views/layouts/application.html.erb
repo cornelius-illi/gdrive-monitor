@@ -28,23 +28,42 @@
 <!-- Main Page Content and Sidebar -->
 
 <div class="sidebar small-2 columns">
+  <% if user_signed_in? %>
   <h5>Monitored Resources</h5>
   <nav>
     <%= render_navigation %>
   </nav>
+  <% end %>
 </div>
 <div class="small-10 columns content">
+  <!-- sub-navigation //-->
   <% unless @monitored_resource.blank? %>
       <div data-magellan-expedition="fixed">
         <dl class="sub-nav">
           <dt>Navigation:</dt>
+          <dd class="<%= 'active' if current_page?(controller: 'monitored_resources', action: 'show') %>">
+            <%= link_to 'List Files', mr_permissions_path(@monitored_resource) %>
+          </dd>
           <dd class="<%= 'active' if current_page?(controller: 'monitored_resources', action: 'permissions') %>">
             <%= link_to 'Permissions', mr_permissions_path(@monitored_resource) %>
           </dd>
-          <dd class="<%= 'active' if current_page?(controller: 'monitored_resources', action: 'reports') %>">
-            <%= link_to 'Reports', mr_reports_path(@monitored_resource) %>
+          <dd class="<%= 'active' if current_page?(controller: 'permission_groups') %>">
+            <%= link_to 'Permission Groups', permission_groups_path %>
           </dd>
         </dl>
+      </div>
+  <% end %>
+
+  <% if flash[:notice] %>
+      <div data-alert class="alert-box info radius">
+        <%= flash[:notice] %>
+        <a href="#" class="close">&times;</a>
+      </div>
+  <% end %>
+  <% if flash[:warning] %>
+      <div data-alert class="alert-box warning radius">
+        <%= flash[:warning] %>
+        <a href="#" class="close">&times;</a>
       </div>
   <% end %>
   <%= yield %>
