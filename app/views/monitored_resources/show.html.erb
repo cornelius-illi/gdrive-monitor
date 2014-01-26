@@ -1,5 +1,5 @@
 <% content_for :title, 'List of Monitored Resources' %>
-<h3>Monitored Resource: <%= @monitored_resource.title %></h3>
+<h2>Monitored Resource: <%= @monitored_resource.title %></h2>
 
 <% unless @monitored_resource.structure_indexed? %>
     <%= link_to "Index Structure", mr_index_structure_path(@monitored_resource.id), :class => 'button tiny' %>

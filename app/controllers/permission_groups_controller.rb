@@ -4,7 +4,7 @@ class PermissionGroupsController < ApplicationController
   # GET /permission_groups
   # GET /permission_groups.json
   def index
-    @permission_groups = PermissionGroup.find(:user_id => current_user.id)
+    @permission_groups = PermissionGroup.find_by_monitored_resource_id(current_user.id)
   end
 
   # GET /permission_groups/1

@@ -35,19 +35,19 @@ SimpleNavigation::Configuration.run do |navigation|
     primary.dom_class = 'side-nav'
 
     primary.item :recources_label, 'Configuration', :class => 'heading'
-    primary.item :monitored_resources, 'Create New Resource', monitored_resources_path, :highlights_on => /monitored_resources/
-    primary.item :monitored_periods, 'Define Periods', monitored_periods_path
+    primary.item :monitored_resources, '<span class="fi-plus"></span> Create New Resource', monitored_resources_path, :highlights_on => /monitored_resources/
+    primary.item :monitored_periods, '<span class="fi-calendar"></span> Define Periods', monitored_periods_path
     primary.item :divider1, '', :class => 'divider'
     primary.item :recources_label1, 'Monitored Resources', :class => 'heading'
-    unless @monitored_resources.blank?
-      @monitored_resources.each do |monitored_resource|
-        primary.item :monitored_resource, monitored_resource.try(:title), monitored_resource_path(monitored_resource)
+    if user_signed_in? && !current_user.monitored_resources.blank?
+      current_user.monitored_resources.each do |monitored_resource|
+        primary.item :monitored_resource, '<span class="fi-folder"></span> ' + monitored_resource.try(:title), monitored_resource_path(monitored_resource)
       end
     end
     primary.item :divider2, '', :class => 'divider'
     primary.item :recources_labe2l, 'Reports', :class => 'heading'
-    primary.item :create_report, 'Create New Report'
-    primary.item :list_reports, 'List Reports'
+    primary.item :create_report, '<span class="fi-page-doc"></span> Create New Report'
+    primary.item :list_reports, '<span class="fi-graph-bar"></span> List Reports'
 
     # you can also specify a css id or class to attach to this particular level
     # works for all levels of the menu

@@ -3,7 +3,7 @@ require 'rest_client'
 class MonitoredResourcesController < ApplicationController
   #before_filter :authenticate_user!
   before_filter :refresh_token!
-  before_action :set_monitored_resource, only: [:show, :permissions, :refresh_permissions, :reports]
+  before_action :set_monitored_resource, only: [:show, :permissions, :refresh_permissions, :reports, :permission_groups]
   
   def list
     @monitored_resources = current_user.monitored_resources
@@ -45,6 +45,10 @@ class MonitoredResourcesController < ApplicationController
     end
   end
 
+  def permission_groups
+    @permission_groups = PermissionGroup.find_by_monitored_resource_id(@monitored_resource.id)
+  end
+
   def reports
 
   end
@@ -61,7 +65,6 @@ class MonitoredResourcesController < ApplicationController
   # Use callbacks to share common setup or constraints between actions.
   def set_monitored_resource
     @monitored_resource = MonitoredResource.where(:id => params[:id], :user_id => current_user.id).first
-    @monitored_resources = current_user.monitored_resources # for navigation only
   end
 
   # Never trust parameters from the scary internet, only allow the white list through.

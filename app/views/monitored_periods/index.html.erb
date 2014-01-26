@@ -1,0 +1,10 @@
+<% content_for :title, 'List of Monitored Periods' %>
+<h2>Monitored Periods</h2>
+
+<%= link_to "Create new", new_monitored_period_path, :class => 'button tiny' %>
+
+<% if @monitored_periods.nil? %>
+    <p><i>There are no monitored periods available, yet. Go create one!</i></p>
+<% end %>
+
+<%= link_to "Create new", new_monitored_period_path, :class => 'button tiny' %>

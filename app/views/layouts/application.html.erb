@@ -42,13 +42,13 @@
         <dl class="sub-nav">
           <dt>Navigation:</dt>
           <dd class="<%= 'active' if current_page?(controller: 'monitored_resources', action: 'show') %>">
-            <%= link_to 'List Files', mr_permissions_path(@monitored_resource) %>
+            <%= link_to 'List Files', monitored_resource_path(@monitored_resource) %>
           </dd>
           <dd class="<%= 'active' if current_page?(controller: 'monitored_resources', action: 'permissions') %>">
             <%= link_to 'Permissions', mr_permissions_path(@monitored_resource) %>
           </dd>
-          <dd class="<%= 'active' if current_page?(controller: 'permission_groups') %>">
-            <%= link_to 'Permission Groups', permission_groups_path %>
+          <dd class="<%= 'active' if current_page?(controller: 'monitored_resources', action: 'permission_groups') %>">
+            <%= link_to 'Permission Groups', mr_permission_groups_path(@monitored_resource) %>
           </dd>
         </dl>
       </div>

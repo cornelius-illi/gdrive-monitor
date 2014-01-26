@@ -38,11 +38,10 @@ gem 'omniauth-google-oauth2'
 gem 'rest-client'
 
 # install default db records (admin user)
-gem "seedbank", github: 'james2m/seedbank'
+gem 'seedbank', github: 'james2m/seedbank'
 
 # background working
-gem 'delayed_job_active_record'
-gem "delayed_job_web"
+gem 'delayed_job_active_rec'
 gem 'daemons'
 gem 'whenever'
 

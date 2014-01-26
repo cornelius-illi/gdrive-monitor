@@ -1,0 +1,10 @@
+<% content_for :title, 'List of Permission Groups' %>
+<h2>Permission Groups for <%= @monitored_resource.title %></h2>
+
+<%= link_to "Create new", new_monitored_period_path, :class => 'button tiny' %>
+
+<% if @monitored_periods.nil? %>
+    <p><i>There are no permission groups available, yet. Go create one!</i></p>
+<% end %>
+
+<%= link_to "Create new", new_monitored_period_path, :class => 'button tiny' %>

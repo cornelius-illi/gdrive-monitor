@@ -4,7 +4,7 @@ class MonitoredPeriodsController < ApplicationController
   # GET /monitored_periods
   # GET /monitored_periods.json
   def index
-    @monitored_periods = MonitoredPeriod.find(:user_id => current_user.id)
+    @monitored_periods = MonitoredPeriod.find_by_user_id(current_user.id)
   end
 
   # GET /monitored_periods/1
@@ -18,12 +18,12 @@ class MonitoredPeriodsController < ApplicationController
     @monitored_period = MonitoredPeriod.new
   end
 
-  # GET /monitored_period/1/edit
+  # GET /monitored_periods/1/edit
   def edit
   end
 
-  # POST /monitored_period
-  # POST /monitored_period.json
+  # POST /monitored_periods
+  # POST /monitored_periods.json
   def create
     @monitored_period = MonitoredPeriod.new(monitored_period_params)
     @monitored_period.user = current_user
@@ -39,8 +39,8 @@ class MonitoredPeriodsController < ApplicationController
     end
   end
 
-  # PATCH/PUT /monitored_period/1
-  # PATCH/PUT /monitored_period/1.json
+  # PATCH/PUT /monitored_periods/1
+  # PATCH/PUT /monitored_periods/1.json
   def update
     respond_to do |format|
       if @monitored_period.update(monitored_period_params)
@@ -53,8 +53,8 @@ class MonitoredPeriodsController < ApplicationController
     end
   end
 
-  # DELETE /monitored_period/1
-  # DELETE /monitored_period/1.json
+  # DELETE /monitored_periods/1
+  # DELETE /monitored_periods/1.json
   def destroy
     @monitored_period.destroy
     respond_to do |format|
@@ -71,6 +71,6 @@ class MonitoredPeriodsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def monitored_period_params
-      params.require(:monitored_period).permit(:name)
+      params.require(:monitored_periods).permit(:name)
     end
 end

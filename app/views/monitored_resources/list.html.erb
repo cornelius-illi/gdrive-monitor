@@ -1,5 +1,6 @@
 <% content_for :title, 'List of Monitored Resources' %>
-<h1>Monitored Resources</h1>
+<h2>Monitored Resources</h2>
+
 <%= link_to "Create new", monitored_resources_new_path, :class => 'button tiny' %>
 
 <% unless @monitored_resource.nil? %>
@@ -8,9 +9,24 @@
   <a href="#" class="close">&times;</a>
 </div>
 <% else %>
-	<ul>
-		<% @monitored_resources.each do |mr| %>
-		<li><%= link_to mr.title, monitored_resource_path(mr.id) %> (<%= mr.gid %>)</li>
-		<% end %>
-	</ul>
+    <table>
+      <thead>
+      <tr>
+        <th width="250">Folder Title</th>
+        <th width="350">Google Resource ID</th>
+        <th width="100">Permissions</th>
+      </tr>
+      </thead>
+      <tbody>
+      <% @monitored_resources.each do |mr| %>
+          <tr>
+            <td><%= link_to mr.title, monitored_resource_path(mr.id) %></td>
+            <td><%= mr.gid %></td>
+            <td><%= mr.permissions.count %></td>
+          </tr>
+      <% end %>
+      </tbody>
+    </table>
 <% end %>
+
+<%= link_to "Create new", monitored_resources_new_path, :class => 'button tiny' %>
