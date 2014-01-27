@@ -3,7 +3,13 @@ class MonitoredResource < ActiveRecord::Base
   has_many  :permissions, :dependent => :delete_all
   has_many  :permission_groups, :dependent => :delete_all
   has_and_belongs_to_many :monitored_periods
-  has_many :jobs, :as => :owner
+  has_many :jobs, :class_name => "::Delayed::Job", :as => :owner
+
+  #def self.jobs
+    # to address the STI scenario we use base_class.name.
+    # downside: you have to write extra code to filter STI class specific instance.
+    #Delayed::Job.find_all_by_owner_type(self.base_class.name)
+  #end
 
   def structure_indexed?
     # structure_indexed?.nil? || structure_indexed?.empty?
@@ -61,30 +67,33 @@ class MonitoredResource < ActiveRecord::Base
     end
   end
 
-  # DELAYED TASKS
-  def index_structure!(current_user,fileId='root')
-    fileId = fileId.blank? ? 'root' : fileId
 
-    resources = DriveFiles.retrieve_all_files_for(fileId, current_user.user_token)
+  # *** DELAYED TASKS - START
+  def index_structure(user_id, user_token, file_id)
+    resources = DriveFiles.retrieve_all_files_for(file_id, user_token)
 
     resources.each do |metadata|
       new_resource = Resource
         .where(:gid => metadata['id'])
         .where(:monitored_resource_id => id)
-        .where(:user_id => current_user.id)
+        .where(:user_id => user_id)
       .first_or_create
 
       new_resource.update_metadata(metadata)
 
       # create new delayed_job, if type is folder
       if new_resource.is_folder?
-        index_structure!(new_resource.gid, current_user)
+        index_structure(user_id, user_token, new_resource.gid)
+      end
+
+      unless structure_indexing?
+        update_attribute :structure_indexed_at, Time.now
       end
     end
   end
-  handle_asynchronously :index_structure!, :queue => 'indexing', :owner => self
+  handle_asynchronously :index_structure, :queue => 'index_structure', :owner => Proc.new {|o| o}
 
-  def index_changehistory!(link)
+  def index_changehistory(link)
     if link.blank?
       # start from the beginning changes.list
     else
@@ -94,12 +103,6 @@ class MonitoredResource < ActiveRecord::Base
     # @todo: get the changes, filter changes, add change to resources
     # @todo: extract link for next, crate new job
   end
-  handle_asynchronously :index_changehistory!, :queue => 'indexing', :owner => self
-  # DELAYED TASKS - END
-
-  private
-  def index_folder!(gid)
-
-  end
-  handle_asynchronously :index_structure!, :queue => 'indexing', :owner => self
+  handle_asynchronously :index_changehistory, :queue => 'index_changehistory', :owner => Proc.new {|o| o}
+  # *** DELAYED TASKS - END
 end

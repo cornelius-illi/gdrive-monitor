@@ -25,11 +25,6 @@ class MonitoredResourcesController < ApplicationController
   end
   
   def show
-    unless @monitored_resource.nil?
-      # @todo: migrate to delayed task
-      # child_resources = DriveFiles.retrieve_all_files_for(@monitored_resource.gid, current_user.token)
-      # Resource.find_create_or_update_batched_for(child_resources, mr_id, current_user.id)
-    end
   end
 
   def permissions
@@ -52,7 +47,8 @@ class MonitoredResourcesController < ApplicationController
 
   def index_structure
     unless @monitored_resource.structure_indexed?
-      @monitored_resource.index_structure!(current_user)
+      #@monitored_resource.delay(:queue => 'index_structure', :owner => @monitored_resource).index_structure(current_user.id, current_user.token, 'root')
+      @monitored_resource.index_structure(current_user.id, current_user.token, @monitored_resource.gid)
       redirect_to @monitored_resource
     else
       redirect_to @monitored_resource, :notice => "Structure has already been indexed on: #{@monitored_resource.structure_indexed_at.to_s(:db)}"
@@ -61,7 +57,7 @@ class MonitoredResourcesController < ApplicationController
 
   def index_changehistory
     unless @monitored_resource.changehistory_indexed?
-      @monitored_resource.index_changehistory!()
+      @monitored_resource.index_changehistory()
     else
       redirect_to @monitored_resource, :notice => "Change History has already been indexed on: #{@monitored_resource.changehistory_indexed_at.to_s(:db)}"
     end

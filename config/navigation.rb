@@ -37,6 +37,8 @@ SimpleNavigation::Configuration.run do |navigation|
     primary.item :recources_label, 'Configuration', :class => 'heading'
     primary.item :monitored_resources, '<span class="fi-plus"></span> Create New Resource', monitored_resources_path, :highlights_on => /monitored_resources/
     primary.item :monitored_periods, '<span class="fi-calendar"></span> Define Periods', monitored_periods_path
+    primary.item :mr_sindex_all, 'Index Structure', ''
+    primary.item :mr_cindex_all, 'Index Change History', ''
     primary.item :divider1, '', :class => 'divider'
     primary.item :recources_label1, 'Monitored Resources', :class => 'heading'
     if user_signed_in? && !current_user.monitored_resources.blank?

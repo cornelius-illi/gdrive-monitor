@@ -13,7 +13,19 @@
 //= require jquery
 //= require jquery_ujs
 //= require foundation
+//= require jquery.dataTables.min
+//= require dataTables.foundation
 //= require turbolinks
 //= require_tree .
 
-$(function(){ $(document).foundation(); });
+$(function(){
+    $(document).foundation({
+        alert: {
+            animation_speed: 500,
+            animation: 'fadeOut'
+        }
+    });
+    $(document).ready(function() {
+        $('#files-table').dataTable();
+    } );
+});

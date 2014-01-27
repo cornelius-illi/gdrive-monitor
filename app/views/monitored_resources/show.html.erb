@@ -5,7 +5,11 @@
     <%= link_to "Index Structure", mr_index_structure_path(@monitored_resource.id), :class => 'button tiny' %>
 <% end %>
 <% unless @monitored_resource.changehistory_indexed? %>
-    <%= link_to "Index Change History", mr_index_changehistory_path(@monitored_resource.id), :class => 'button tiny' %>
+    <% if @monitored_resource.structure_indexed? %>
+        <%= link_to "Index Change History", mr_index_changehistory_path(@monitored_resource.id), :class => 'button tiny' %>
+    <% else %>
+       <span class="has-tip button secondary tiny" title="Change History can only be indexed once structure has been indexed." data-tooltip="" data-width="300">Index Change History</span>
+    <% end %>
 <% end %>
 
 <h4>File List</h4>
@@ -16,9 +20,24 @@
 <% end %>
 
 <% unless @monitored_resource.resources.blank? %>
-<ul>
-	<% @resources.each do |r| %>
-	<li><%= r.title %> (<%= r.mime_type %>)</li>
-	<% end %>
-</ul>
+<table id="files-table">
+  <thead>
+  <tr>
+    <th>File Title</th>
+    <th>Created Date</th>
+    <th>Last Modified Date</th>
+    <th>Trashed</th>
+  </tr>
+  </thead>
+  <tbody>
+  <% @monitored_resource.resources.each do |resource| %>
+      <tr>
+        <td><%= link_to resource.shortened_title, resource.alternate_link, :target => "_blank" %></td>
+        <td><%= resource.created_date %></td>
+        <td><%= resource.modified_date %></td>
+        <td><%= resource.trashed %></td>
+      </tr>
+  <% end %>
+  </tbody>
+</table>
 <% end %>

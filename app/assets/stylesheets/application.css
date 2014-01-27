@@ -13,6 +13,7 @@
 
  *= require_tree .
  *= require loader
+ *= require dataTables.foundation
  */
 
 html, body {

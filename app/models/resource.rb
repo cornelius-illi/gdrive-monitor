@@ -14,7 +14,15 @@ class Resource < ActiveRecord::Base
       self.update_resource_attributes_for(new_resource, resource)
     end
   end
-  
+
+  def is_folder?
+    return (mime_type.eql? 'application/vnd.google-apps.folder')
+  end
+
+  def shortened_title(length = 50)
+    title.size > length+5 ? [title[0,length],title[-5,5]].join("...") : title
+  end
+
   def update_metadata(metadata)
     update_attributes(
         :alternate_link => metadata['alternateLink'],
