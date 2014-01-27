@@ -8,16 +8,17 @@ GdriveFeed::Application.routes.draw do
   get "monitored_resources/:id/permissions", to: "monitored_resources#permissions", as: :mr_permissions
   get "monitored_resources/:id/permissions/refresh", to: "monitored_resources#refresh_permissions", as: :mr_refresh_permissions
   get "monitored_resources/:id/permission_groups", to: "monitored_resources#permission_groups", as: :mr_permission_groups
-
   get "monitored_resources/:id/reports", to: "monitored_resources#reports",as: :mr_reports
   
-  get "welcome/index"
   devise_for :users, :controllers => { :omniauth_callbacks => "users/omniauth_callbacks" }
   
   resources :permission_groups
   resources :monitored_periods
-  
+
+  get "welcome/index"
   root :to => "welcome#index"
+
+  match "/delayed_job" => DelayedJobWeb, :anchor => false, via: [:get, :post]
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 

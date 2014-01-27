@@ -3,7 +3,8 @@ require 'rest_client'
 class MonitoredResourcesController < ApplicationController
   #before_filter :authenticate_user!
   before_filter :refresh_token!
-  before_action :set_monitored_resource, only: [:show, :permissions, :refresh_permissions, :reports, :permission_groups]
+  before_action :set_monitored_resource, only: [:show, :permissions, :refresh_permissions,
+                                                :reports, :permission_groups, :index_structure, :index_changehistory]
   
   def list
     @monitored_resources = current_user.monitored_resources
@@ -25,10 +26,6 @@ class MonitoredResourcesController < ApplicationController
   
   def show
     unless @monitored_resource.nil?
-      unless @monitored_resource.structure_indexed? || @monitored_resource.changehistory_indexed?
-        flash[:warning] = "Structure/ Change History  has not been indexed, yet!"
-      end
-
       # @todo: migrate to delayed task
       # child_resources = DriveFiles.retrieve_all_files_for(@monitored_resource.gid, current_user.token)
       # Resource.find_create_or_update_batched_for(child_resources, mr_id, current_user.id)
@@ -54,11 +51,20 @@ class MonitoredResourcesController < ApplicationController
   end
 
   def index_structure
-
+    unless @monitored_resource.structure_indexed?
+      @monitored_resource.index_structure!(current_user)
+      redirect_to @monitored_resource
+    else
+      redirect_to @monitored_resource, :notice => "Structure has already been indexed on: #{@monitored_resource.structure_indexed_at.to_s(:db)}"
+    end
   end
 
   def index_changehistory
-
+    unless @monitored_resource.changehistory_indexed?
+      @monitored_resource.index_changehistory!()
+    else
+      redirect_to @monitored_resource, :notice => "Change History has already been indexed on: #{@monitored_resource.changehistory_indexed_at.to_s(:db)}"
+    end
   end
 
   private

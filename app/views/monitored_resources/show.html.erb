@@ -9,6 +9,12 @@
 <% end %>
 
 <h4>File List</h4>
+<% if @monitored_resource.structure_indexing? %>
+    <div class="callout panel">
+      <span class="spin1 spinner"></span><i>Indexing in progress! Currently X jobs are running. Please reload to refresh status!</i>
+    </div>
+<% end %>
+
 <% unless @monitored_resource.resources.blank? %>
 <ul>
 	<% @resources.each do |r| %>

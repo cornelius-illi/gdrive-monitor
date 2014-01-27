@@ -34,14 +34,18 @@ gem 'simple-navigation'
 
 # auth + oauth2
 gem 'devise'
-gem 'omniauth-google-oauth2'
+gem 'omniauth-google-oauth2' # registration, authorization
+#gem 'devise_openid_authenticatable' # choose between login/ registration
 gem 'rest-client'
+#gem 'cancan'
+#gem 'switch_user'
 
 # install default db records (admin user)
 gem 'seedbank', github: 'james2m/seedbank'
 
 # background working
-gem 'delayed_job_active_rec'
+gem 'delayed_job_web'
+gem 'delayed_job_active_record'
 gem 'daemons'
 gem 'whenever'
 

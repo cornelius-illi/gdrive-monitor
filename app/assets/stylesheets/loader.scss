@@ -1,0 +1,43 @@
+@-webkit-keyframes spin {
+  to {
+    -webkit-transform: rotate(1turn);
+  }
+}
+
+// Mixin for spinner.
+
+@mixin spinner($closeness: 8px, $length: 10, $thickness: 3px, $color: #555) {
+    $sh: ();
+    $shadow: ();
+    $w: $closeness;
+    $n: $length;
+    $k: floor($n*0.75);
+    $f: floor($w*0.75);
+
+// Calculate box-shadow.
+    @for $j from 0 through $length {
+        $sh: $sh, 0 $j+($w) $color, $j+($w) 0 lighten($color, 30%), 0px (-$j)+(-$w) lighten($color, 50%), (-$j)+(-$w) 0px lighten($color, 62%);
+    }
+    @for $i from 0 through $k {
+        $shadow: $sh, $shadow, $i+($f) $i+($f) lighten($color, 20%), (-$i)+(-$f) (-$i)+(-$f) lighten($color, 60%), $i+($f) (-$i)+(-$f) lighten($color, 40%), (-$i)+(-$f) $i+($f) lighten($color, 65%);
+    }
+
+// Implements rules.
+  width: $thickness;
+  height: $thickness;
+  box-shadow: $shadow;
+}
+
+.spin1 {
+@include spinner();
+}
+
+// common styling.
+ .spinner {
+     display: inline-block;
+     margin: 0px 30px 0px 10px;
+     background: transparent;
+     border-radius: 100%;
+     -webkit-animation: spin 1s infinite steps(8);
+     -webkit-transform-origin: 50% 50%;
+ }

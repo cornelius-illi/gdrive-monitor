@@ -15,8 +15,8 @@ class Resource < ActiveRecord::Base
     end
   end
   
-  def self.update_resource_attributes_for(resource, metadata)
-    resource.update_attributes(
+  def update_metadata(metadata)
+    update_attributes(
         :alternate_link => metadata['alternateLink'],
         :created_date => metadata['createdDate'],
         :etag => metadata['etag'],
@@ -34,8 +34,8 @@ class Resource < ActiveRecord::Base
       )
   end
   
-  def update_metadata(token)
+  def retrieve_and_update_metadata(token)
     metadata = DriveFiles.retrieve_metadata_for(gid, token)
-    self.update_resource_attributes_for(self, metadata)
+    update_metadata(metadata)
   end
 end

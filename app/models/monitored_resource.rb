@@ -3,6 +3,7 @@ class MonitoredResource < ActiveRecord::Base
   has_many  :permissions, :dependent => :delete_all
   has_many  :permission_groups, :dependent => :delete_all
   has_and_belongs_to_many :monitored_periods
+  has_many :jobs, :as => :owner
 
   def structure_indexed?
     # structure_indexed?.nil? || structure_indexed?.empty?
@@ -14,13 +15,13 @@ class MonitoredResource < ActiveRecord::Base
   end
 
   def structure_indexing?
-    # @todo: check if there is a delayed task of type X for this resource
-    return false
+    # @todo: add job type/ title to delayed_jobs to be able to distinguish
+    return structure_indexed_at.blank? && (jobs.length > 0)
   end
 
   def changehistory_indexing?
-    # @todo: check if there is a delayed task of type X for this resource
-    return false
+    # @todo: add job type/ title to delayed_jobs to be able to distinguish
+    return changehistory_indexed_at.blank? && (jobs.length > 0)
   end
 
   def update_metadata(user_token)
@@ -59,4 +60,46 @@ class MonitoredResource < ActiveRecord::Base
       )
     end
   end
+
+  # DELAYED TASKS
+  def index_structure!(current_user,fileId='root')
+    fileId = fileId.blank? ? 'root' : fileId
+
+    resources = DriveFiles.retrieve_all_files_for(fileId, current_user.user_token)
+
+    resources.each do |metadata|
+      new_resource = Resource
+        .where(:gid => metadata['id'])
+        .where(:monitored_resource_id => id)
+        .where(:user_id => current_user.id)
+      .first_or_create
+
+      new_resource.update_metadata(metadata)
+
+      # create new delayed_job, if type is folder
+      if new_resource.is_folder?
+        index_structure!(new_resource.gid, current_user)
+      end
+    end
+  end
+  handle_asynchronously :index_structure!, :queue => 'indexing', :owner => self
+
+  def index_changehistory!(link)
+    if link.blank?
+      # start from the beginning changes.list
+    else
+      # continue one page
+    end
+
+    # @todo: get the changes, filter changes, add change to resources
+    # @todo: extract link for next, crate new job
+  end
+  handle_asynchronously :index_changehistory!, :queue => 'indexing', :owner => self
+  # DELAYED TASKS - END
+
+  private
+  def index_folder!(gid)
+
+  end
+  handle_asynchronously :index_structure!, :queue => 'indexing', :owner => self
 end
