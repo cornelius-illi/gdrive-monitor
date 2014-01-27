@@ -1,5 +1,6 @@
 class Resource < ActiveRecord::Base
   belongs_to :monitored_resource
+  has_many :changes
   # resource is not bound to user, can be used several times
   
   def self.find_create_or_update_batched_for(child_resources, mr_id, user_id)

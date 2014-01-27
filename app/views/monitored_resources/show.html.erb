@@ -1,21 +1,19 @@
 <% content_for :title, 'List of Monitored Resources' %>
 <h2>Monitored Resource: <%= @monitored_resource.title %></h2>
 
-<% unless @monitored_resource.structure_indexed? %>
+<span class="has-tip" title="Execute this once upon creation of a new monitored resource!" data-tooltip>
     <%= link_to "Index Structure", mr_index_structure_path(@monitored_resource.id), :class => 'button tiny' %>
-<% end %>
-<% unless @monitored_resource.changehistory_indexed? %>
-    <% if @monitored_resource.structure_indexed? %>
-        <%= link_to "Index Change History", mr_index_changehistory_path(@monitored_resource.id), :class => 'button tiny' %>
-    <% else %>
-       <span class="has-tip button secondary tiny" title="Change History can only be indexed once structure has been indexed." data-tooltip="" data-width="300">Index Change History</span>
-    <% end %>
-<% end %>
+</span>
+
+<span class="has-tip" title="Execute this once upon creation of a new monitored resource!" data-tooltip>
+    <%= link_to "Index Change History", mr_index_changehistory_path(@monitored_resource.id), :class => 'button tiny' %>
+</span>
 
 <h4>File List</h4>
-<% if @monitored_resource.structure_indexing? %>
+<% if @monitored_resource.jobs.length > 0 %>
     <div class="callout panel">
-      <span class="spin1 spinner"></span><i>Indexing in progress! Currently X jobs are running. Please reload to refresh status!</i>
+      <span class="spin1 spinner"></span><i>Indexing in progress! Currently <%= @monitored_resource.jobs.length %> jobs are running.
+      <%= link_to "Refresh status!" %></i>
     </div>
 <% end %>
 
@@ -23,19 +21,21 @@
 <table id="files-table">
   <thead>
   <tr>
-    <th>File Title</th>
+    <th>ID</th>
+    <th>File Title/ Link to Google</th>
     <th>Created Date</th>
     <th>Last Modified Date</th>
-    <th>Trashed</th>
+    <th>Changes</th>
   </tr>
   </thead>
   <tbody>
   <% @monitored_resource.resources.each do |resource| %>
       <tr>
+        <td><%= link_to resource.id, resources_path(resource) %></td>
         <td><%= link_to resource.shortened_title, resource.alternate_link, :target => "_blank" %></td>
         <td><%= resource.created_date %></td>
         <td><%= resource.modified_date %></td>
-        <td><%= resource.trashed %></td>
+        <td><%= resource.changes.length %></td>
       </tr>
   <% end %>
   </tbody>

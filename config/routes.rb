@@ -9,6 +9,7 @@ GdriveFeed::Application.routes.draw do
   get "monitored_resources/:id/permissions/refresh", to: "monitored_resources#refresh_permissions", as: :mr_refresh_permissions
   get "monitored_resources/:id/permission_groups", to: "monitored_resources#permission_groups", as: :mr_permission_groups
   get "monitored_resources/:id/reports", to: "monitored_resources#reports",as: :mr_reports
+  get "resources/:id", to: "resources#show",as: :resources
   
   devise_for :users, :controllers => { :omniauth_callbacks => "users/omniauth_callbacks" }
   

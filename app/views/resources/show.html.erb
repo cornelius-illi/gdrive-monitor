@@ -1,0 +1,26 @@
+<% content_for :title, 'List of Changes for resource' %>
+<h2>Resource: <%= @resource.title %></h2>
+
+<h4>Changes List</h4>
+<% unless @resource.changes.length.eql?(0) %>
+    <table id="files-table">
+      <thead>
+      <tr>
+        <th>Change-ID</th>
+        <th>Modification Date</th>
+        <th>Last Modifying UserName</th>
+      </tr>
+      </thead>
+      <tbody>
+      <% @resource.changes.each do |change| %>
+          <tr>
+            <td><%= change.change_id %></td>
+            <td><%= change.modification_date %></td>
+            <td><%= change.last_modifying_username %></td>
+          </tr>
+      <% end %>
+      </tbody>
+    </table>
+<% else %>
+    <p><i>No changes could be found!</i></p>
+<% end %>

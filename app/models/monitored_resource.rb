@@ -20,16 +20,6 @@ class MonitoredResource < ActiveRecord::Base
     return !changehistory_indexed_at.blank?
   end
 
-  def structure_indexing?
-    # @todo: add job type/ title to delayed_jobs to be able to distinguish
-    return structure_indexed_at.blank? && (jobs.length > 0)
-  end
-
-  def changehistory_indexing?
-    # @todo: add job type/ title to delayed_jobs to be able to distinguish
-    return changehistory_indexed_at.blank? && (jobs.length > 0)
-  end
-
   def update_metadata(user_token)
     metadata = DriveFiles.retrieve_file_metadata(self.gid, user_token)
     # important, as changes.list needs a criteria when to stop
@@ -85,23 +75,41 @@ class MonitoredResource < ActiveRecord::Base
       if new_resource.is_folder?
         index_structure(user_id, user_token, new_resource.gid)
       end
-
-      unless structure_indexing?
-        update_attribute :structure_indexed_at, Time.now
-      end
     end
   end
   handle_asynchronously :index_structure, :queue => 'index_structure', :owner => Proc.new {|o| o}
 
-  def index_changehistory(link)
-    if link.blank?
-      # start from the beginning changes.list
-    else
-      # continue one page
+  def index_changehistory(user_token)
+    # Changes.list returns results in ascending order (oldest first), results on next page are newer
+    start_change_id = largest_change_id.blank? ? "" : largest_change_id
+    changes = DriveChanges.retrieve_changes_list(start_change_id, user_token)
+
+    # just for speed-up, no need to check all, if no change of interest
+    unless DateTime.parse( changes.last['modificationDate']) < shared_with_me_date
+      changes.each do |metadata|
+        # speed-up
+        next if (DateTime.parse( metadata['modificationDate'] ) < shared_with_me_date)
+
+        # check if resource exists, or change is relevant
+        # @todo: CHANGES SHOULD NEVER BE UPDATED INDEPENDENTLY, ALWAYS INDEX STRUCTURE BEFORE
+        # @todo: --> BEST: only query changes API, use changes to build and update structure
+        resource = Resource.find_by_gid(metadata['fileId'])
+        unless resource.nil?
+          new_change = Change
+          .where(:change_id => metadata['id'])
+          .where(:resource_id => resource.id)
+          .first_or_create
+
+          new_change.update_metadata(metadata)
+        end
+      end
     end
 
-    # @todo: get the changes, filter changes, add change to resources
-    # @todo: extract link for next, crate new job
+    # set new largest_change_id to last retrieved change (assume, that order is correct)
+    update_attribute(:largest_change_id, changes.last['id'])
+    unless changes.length.eql?(0)
+      index_changehistory(user_token)
+    end
   end
   handle_asynchronously :index_changehistory, :queue => 'index_changehistory', :owner => Proc.new {|o| o}
   # *** DELAYED TASKS - END

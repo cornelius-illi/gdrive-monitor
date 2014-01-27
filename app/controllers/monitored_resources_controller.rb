@@ -28,6 +28,7 @@ class MonitoredResourcesController < ApplicationController
   end
 
   def permissions
+
   end
 
   def refresh_permissions
@@ -46,21 +47,15 @@ class MonitoredResourcesController < ApplicationController
   end
 
   def index_structure
-    unless @monitored_resource.structure_indexed?
-      #@monitored_resource.delay(:queue => 'index_structure', :owner => @monitored_resource).index_structure(current_user.id, current_user.token, 'root')
-      @monitored_resource.index_structure(current_user.id, current_user.token, @monitored_resource.gid)
-      redirect_to @monitored_resource
-    else
-      redirect_to @monitored_resource, :notice => "Structure has already been indexed on: #{@monitored_resource.structure_indexed_at.to_s(:db)}"
-    end
+    @monitored_resource.index_structure(current_user.id, current_user.token, @monitored_resource.gid)
+    @monitored_resource.update_attribute(:structure_indexed_at, Time.now) # last indexed at, can be done more than once
+    redirect_to @monitored_resource, :notice => "Structure has been indexed: #{@monitored_resource.structure_indexed_at.to_s(:db)}"
   end
 
   def index_changehistory
-    unless @monitored_resource.changehistory_indexed?
-      @monitored_resource.index_changehistory()
-    else
-      redirect_to @monitored_resource, :notice => "Change History has already been indexed on: #{@monitored_resource.changehistory_indexed_at.to_s(:db)}"
-    end
+    @monitored_resource.index_changehistory(current_user.token)
+    @monitored_resource.update_attribute(:changehistory_indexed_at, Time.now)
+    redirect_to @monitored_resource, :notice => "Change History has been indexed: #{@monitored_resource.changehistory_indexed_at.to_s(:db)}"
   end
 
   private

@@ -11,17 +11,15 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140127162001) do
+ActiveRecord::Schema.define(version: 20140127093721) do
 
   create_table "changes", force: true do |t|
     t.string   "change_id"
-    t.integer  "resource_id"
-    t.string   "etag"
     t.boolean  "deleted"
     t.datetime "modification_date"
     t.string   "last_modifying_username"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.string   "etag"
+    t.integer  "resource_id"
   end
 
   create_table "delayed_jobs", force: true do |t|
@@ -69,8 +67,6 @@ ActiveRecord::Schema.define(version: 20140127162001) do
     t.integer  "user_id"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean  "structure_indexing"
-    t.boolean  "changehistory_indexing"
   end
 
   create_table "permission_groups", force: true do |t|
