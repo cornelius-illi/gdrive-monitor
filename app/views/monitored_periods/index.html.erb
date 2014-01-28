@@ -3,7 +3,30 @@
 
 <%= link_to "Create new", new_monitored_period_path, :class => 'button tiny' %>
 
-<% if @monitored_periods.nil? %>
+<% unless @monitored_periods.blank? %>
+    <table>
+      <thead>
+      <tr>
+        <th>Name</th>
+        <th>Start</th>
+        <th>End</th>
+        <th></th>
+        <th></th>
+      </tr>
+      </thead>
+      <tbody>
+      <% @monitored_periods.each do |period| %>
+          <tr>
+            <td><%= period.name %></td>
+            <td><%= period.start.to_s(:db) %></td>
+            <td><%= period.end.to_s(:db) %></td>
+            <td><%= link_to '', edit_monitored_period_path(period), :class => 'fi-pencil' %></td>
+            <td><%= button_to 'x', period, :method=>:delete, :class=> 'button alert tiny delete' %></td>
+          </tr>
+      <% end %>
+      </tbody>
+    </table>
+<% else %>
     <p><i>There are no monitored periods available, yet. Go create one!</i></p>
 <% end %>
 

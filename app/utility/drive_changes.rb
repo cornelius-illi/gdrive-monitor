@@ -13,6 +13,7 @@ module DriveChanges
     par = { :params => {
         :key => GOOGLE['client_secret'],
         :access_token => user_token,
+        :maxResults => 10,
         :fields => FIELDS_CHANGES_LIST
       }
     }

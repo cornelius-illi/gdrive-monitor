@@ -43,3 +43,8 @@ div.content {
 .side-nav li.divider {
     margin: 16px 0px;
 }
+
+input.delete {
+    padding: 0.325rem 1rem !important;
+    margin-bottom: 0px;
+}

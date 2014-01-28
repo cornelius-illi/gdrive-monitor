@@ -25,6 +25,7 @@ $(function(){
             animation: 'fadeOut'
         }
     });
+
     $(document).ready(function() {
         $('#files-table').dataTable();
     } );

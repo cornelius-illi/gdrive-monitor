@@ -1,9 +1,18 @@
 <% content_for :title, 'List of Changes for resource' %>
 <h2>Resource: <%= @resource.title %></h2>
 
-<h4>Changes List</h4>
-<% unless @resource.changes.length.eql?(0) %>
-    <table id="files-table">
+<ul>
+  <li><b>FileID:</b> <%= @resource.gid %></li>
+  <li><b>created_date:</b> <%= @resource.created_date %></li>
+  <li><b>modified_date:</b> <%= @resource.modified_date %></li>
+  <li><b>last_modifying_username:</b> <%= @resource.last_modifying_username %></li>
+  <li><b>Number of Revisions:</b> <%= @resource.revisions.length %></li>
+  <li><b>Number of collaborators:</b> <%= @resource.collaborators %></li>
+</ul>
+
+<h3>Changes List</h3>
+<% unless @resource.revisions.length.eql?(0) %>
+    <table>
       <thead>
       <tr>
         <th>Change-ID</th>
@@ -12,15 +21,15 @@
       </tr>
       </thead>
       <tbody>
-      <% @resource.changes.each do |change| %>
+      <% @resource.revisions.each do |revision| %>
           <tr>
-            <td><%= change.change_id %></td>
-            <td><%= change.modification_date %></td>
-            <td><%= change.last_modifying_username %></td>
+            <td><%= revision.gid %></td>
+            <td><%= revision.modified_date.to_s(:db) %></td>
+            <td><%= revision.permission.email_address.blank? ? revision.permission.name : revision.permission.email_address %></td>
           </tr>
       <% end %>
       </tbody>
     </table>
 <% else %>
-    <p><i>No changes could be found!</i></p>
+    <p><i>No revisions could be found!</i></p>
 <% end %>

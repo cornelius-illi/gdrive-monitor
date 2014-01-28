@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140127093721) do
+ActiveRecord::Schema.define(version: 20140127203308) do
 
   create_table "changes", force: true do |t|
     t.string   "change_id"
@@ -110,6 +110,16 @@ ActiveRecord::Schema.define(version: 20140127093721) do
     t.integer  "user_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+  end
+
+  create_table "revisions", force: true do |t|
+    t.string   "gid"
+    t.string   "etag"
+    t.integer  "file_size",     limit: 8
+    t.string   "md5_checksum"
+    t.datetime "modified_date"
+    t.integer  "permission_id"
+    t.integer  "resource_id"
   end
 
   create_table "users", force: true do |t|

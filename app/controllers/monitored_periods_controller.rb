@@ -4,7 +4,7 @@ class MonitoredPeriodsController < ApplicationController
   # GET /monitored_periods
   # GET /monitored_periods.json
   def index
-    @monitored_periods = MonitoredPeriod.find_by_user_id(current_user.id)
+    @monitored_periods = MonitoredPeriod.all
   end
 
   # GET /monitored_periods/1
@@ -26,7 +26,7 @@ class MonitoredPeriodsController < ApplicationController
   # POST /monitored_periods.json
   def create
     @monitored_period = MonitoredPeriod.new(monitored_period_params)
-    @monitored_period.user = current_user
+    # @monitored_period.user = current_user
 
     respond_to do |format|
       if @monitored_period.save
