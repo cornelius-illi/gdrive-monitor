@@ -42,6 +42,7 @@ gem 'rest-client'
 
 # install default db records (admin user)
 gem 'seedbank', github: 'james2m/seedbank'
+#gem 'strong_parameters'
 
 # background working
 gem 'delayed_job_web'

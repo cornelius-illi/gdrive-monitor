@@ -39,7 +39,7 @@ class MonitoredResourcesController < ApplicationController
   end
 
   def permission_groups
-    @permission_groups = PermissionGroup.find_by_monitored_resource_id(@monitored_resource.id)
+    @permission_groups = PermissionGroup.where(monitored_resource_id: @monitored_resource.id)
   end
 
   def reports

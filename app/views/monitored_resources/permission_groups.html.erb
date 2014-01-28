@@ -1,10 +1,27 @@
 <% content_for :title, 'List of Permission Groups' %>
 <h2>Permission Groups for <%= @monitored_resource.title %></h2>
 
-<%= link_to "Create new", new_monitored_period_path, :class => 'button tiny' %>
+<%= link_to "Create new", new_permission_group_path(@monitored_resource), :class => 'button tiny' %>
 
-<% if @monitored_periods.nil? %>
+<% if @permission_groups.nil? %>
     <p><i>There are no permission groups available, yet. Go create one!</i></p>
+<% else %>
+    <table>
+      <thead>
+      <tr>
+        <th>Name</th>
+        <th>Permissions</th>
+      </tr>
+      </thead>
+      <tbody>
+      <% @permission_groups.each do |permission_group| %>
+          <tr>
+            <td><%= permission_group.name %></td>
+            <td><%= permission_group.permissions.length %></td>
+          </tr>
+      <% end %>
+      </tbody>
+    </table>
 <% end %>
 
-<%= link_to "Create new", new_monitored_period_path, :class => 'button tiny' %>
+<%= link_to "Create new", new_permission_group_path(@monitored_resource), :class => 'button tiny' %>

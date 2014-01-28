@@ -1,21 +1,32 @@
 <%= form_for(@permission_group) do |f| %>
-  <% if @permission_group.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(@permission_group.errors.count, "error") %> prohibited this permission_group from being saved:</h2>
+    <% if @permission_group.errors.any? %>
+        <div data-alert class="alert-box warning round" id="error_explanation">
+          <h2><%= pluralize(@monitored_period.errors.count, "error") %> prohibited this permission_group from being saved:</h2>
+          <ul>
+            <% @permission_group.errors.full_messages.each do |msg| %>
+                <li><%= msg %></li>
+            <% end %>
+          </ul>
+          <a href="#" class="close">&times;</a>
+        </div>
+    <% end %>
 
-      <ul>
-      <% @permission_group.errors.full_messages.each do |msg| %>
-        <li><%= msg %></li>
-      <% end %>
-      </ul>
+    <%= f.hidden_field :monitored_resource_id %>
+    <div class="row">
+      <div class="large-12 columns">
+        <%= f.label :name %>
+        <%= f.text_field :name %>
+      </div>
     </div>
-  <% end %>
 
-  <div class="field">
-    <%= f.label :name %><br>
-    <%= f.text_field :name %>
-  </div>
-  <div class="actions">
-    <%= f.submit %>
-  </div>
+    <div class="row">
+      <div class="large-12 columns">
+          <%= f.label :permissions %>
+          <%= f.collection_select :permission_ids, @monitored_resource.permissions, :id, :title, {}, { :size=> @monitored_resource.permissions.length, :multiple => true} %>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="large-12 columns"><%= f.submit 'Create new', :class => 'button tiny' %></div>
+    </div>
 <% end %>

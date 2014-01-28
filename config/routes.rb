@@ -12,8 +12,10 @@ GdriveFeed::Application.routes.draw do
   get "resources/:id", to: "resources#show",as: :resources
   
   devise_for :users, :controllers => { :omniauth_callbacks => "users/omniauth_callbacks" }
-  
-  resources :permission_groups
+
+  get "permission_groups/new/:id", to: "permission_groups#new", as: :new_permission_group
+  post "permission_groups", to: "permission_groups#create", as: :permission_groups
+  #resources :permission_groups
   resources :monitored_periods
 
   get "welcome/index"

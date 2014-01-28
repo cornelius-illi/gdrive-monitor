@@ -15,7 +15,17 @@ class PermissionGroupsController < ApplicationController
 
   # GET /permission_groups/new
   def new
+    @monitored_resource = MonitoredResource
+      .where(:id => params[:id])
+      .where(:user_id => current_user.id)
+      .first()
+
+    unless @monitored_resource
+      redirect_to monitored_resources_path, :warning => "Monitored Resource with ID #{params[:id]} could not be found!"
+    end
+
     @permission_group = PermissionGroup.new
+    @permission_group.monitored_resource_id = @monitored_resource.id
   end
 
   # GET /permission_groups/1/edit
@@ -25,16 +35,22 @@ class PermissionGroupsController < ApplicationController
   # POST /permission_groups
   # POST /permission_groups.json
   def create
+    @monitored_resource = MonitoredResource
+    .where(:id => params[:permission_group][:monitored_resource_id])
+    .where(:user_id => current_user.id)
+    .first()
+
+    if @monitored_resource.nil?
+      redirect_to monitored_resources_path, :warning => "Monitored Resource with ID #{params[:id]} could not be found!"
+    end
+
     @permission_group = PermissionGroup.new(permission_group_params)
-    @permission_group.user = current_user
 
     respond_to do |format|
       if @permission_group.save
-        format.html { redirect_to @permission_group, notice: 'Permission group was successfully created.' }
-        format.json { render action: 'show', status: :created, location: @permission_group }
+        format.html { redirect_to mr_permission_groups_path(@monitored_resource), notice: "Permission group #{@permission_group.name} was successfully created." }
       else
         format.html { render action: 'new' }
-        format.json { render json: @permission_group.errors, status: :unprocessable_entity }
       end
     end
   end
@@ -71,6 +87,6 @@ class PermissionGroupsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def permission_group_params
-      params.require(:permission_group).permit(:name)
+      params.require(:permission_group).permit(:name, :monitored_resource_id, :permission_ids => [])
     end
 end
