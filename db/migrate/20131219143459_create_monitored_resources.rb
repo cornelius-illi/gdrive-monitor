@@ -6,8 +6,8 @@ class CreateMonitoredResources < ActiveRecord::Migration
       t.integer   :largest_change_id # required for periodical updates
       t.datetime  :shared_with_me_date
       t.datetime  :lowest_index_date
-      t.datetime  :structure_indexed_at # when the crawler has finished a first complete indexing files.list
-      t.datetime  :changehistory_indexed_at # when the crawler has finished a first complete indexing of changes.list
+      t.datetime  :structure_indexed_at # when the crawler has finished a first complete indexing files.index
+      t.datetime  :changehistory_indexed_at # when the crawler has finished a first complete indexing of changes.index
 
       t.datetime  :created_date
       t.datetime  :modified_date

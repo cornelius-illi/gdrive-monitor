@@ -52,3 +52,7 @@ input.delete {
 select.permissions {
     height: 200px;
 }
+
+.hidden {
+    display: none;
+}

@@ -1,4 +1,4 @@
-<%= form_for(@permission_group) do |f| %>
+<%= form_for [@monitored_resource, @permission_group] do |f| %>
     <% if @permission_group.errors.any? %>
         <div data-alert class="alert-box warning round" id="error_explanation">
           <h2><%= pluralize(@monitored_period.errors.count, "error") %> prohibited this permission_group from being saved:</h2>
@@ -27,6 +27,6 @@
     </div>
 
     <div class="row">
-      <div class="large-12 columns"><%= f.submit 'Create new', :class => 'button tiny' %></div>
+      <div class="large-12 columns"><%= f.submit :class => 'button tiny' %></div>
     </div>
 <% end %>

@@ -1,8 +1,9 @@
 <% content_for :title, 'List of Monitored Resources' %>
+
 <h2>Monitored Resource: <%= @monitored_resource.title %></h2>
 
 <span class="has-tip" title="Execute this once upon creation of a new monitored resource!" data-tooltip>
-    <%= link_to "Index Structure", mr_index_structure_path(@monitored_resource.id), :class => 'button tiny' %>
+    <%= link_to "Index Structure", index_structure_monitored_resource_path(@monitored_resource), :class => 'button tiny' %>
 </span>
 
 <h4>File List</h4>
@@ -14,28 +15,22 @@
 <% end %>
 
 <% unless @monitored_resource.resources.blank? %>
-<table id="files-table">
+<table id="files-table" data-source="<%= monitored_resource_url(@monitored_resource, :format => :json) %>">
   <thead>
   <tr>
     <th>File Title/ Link to Google</th>
-    <th>Details</th>
+    <th><span class="fi-magnifying-glass" style="padding-right: 20px;"></span></th>
     <th>Created Date</th>
     <th>Last Modified Date</th>
     <th><span class="fi-page-multiple" style="padding-right: 20px;"></span></th>
     <th><span class="fi-torsos" style="padding-right: 20px;"></span></th>
+    <th><span class="fi-web" style="padding-right: 20px;"></span></th>
   </tr>
   </thead>
   <tbody>
-  <% @monitored_resource.resources.each do |resource| %>
-      <tr>
-        <td><%= link_to resource.shortened_title, resource.alternate_link, :target => "_blank" %></td>
-        <td><%= link_to "details", resources_path(resource) %></td>
-        <td><%= resource.created_date.to_s(:db) %></td>
-        <td><%= resource.modified_date.to_s(:db) %></td>
-        <td><%= resource.revisions.length %></td>
-        <td><%= resource.collaborators %></td>
-      </tr>
-  <% end %>
   </tbody>
 </table>
 <% end %>
+
+<h4>Files by type:</h4>
+<p>TODO: Count occurrence by mimeType.</p>

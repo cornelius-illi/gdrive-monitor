@@ -1,7 +1,7 @@
 <% content_for :title, 'List of Monitored Resources' %>
 <h2>Monitored Resources</h2>
 
-<%= link_to "Create new", monitored_resources_new_path, :class => 'button tiny' %>
+<%= link_to "Create new", new_monitored_resource_path, :class => 'button tiny' %>
 
 <% unless @monitored_resource.nil? %>
 <div data-alert class="alert-box info radius">
@@ -29,4 +29,4 @@
     </table>
 <% end %>
 
-<%= link_to "Create new", monitored_resources_new_path, :class => 'button tiny' %>
+<%= link_to "Create new", new_monitored_resource_path, :class => 'button tiny' %>

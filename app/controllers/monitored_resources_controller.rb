@@ -5,8 +5,10 @@ class MonitoredResourcesController < ApplicationController
   before_filter :refresh_token!
   before_action :set_monitored_resource, only: [:show, :permissions, :refresh_permissions,
                                                 :reports, :permission_groups, :index_structure, :index_changehistory]
-  
-  def list
+
+  caches_action :show, :format => :json
+
+  def index
     @monitored_resources = current_user.monitored_resources
   end
 
@@ -25,6 +27,11 @@ class MonitoredResourcesController < ApplicationController
   end
   
   def show
+    respond_to do |format|
+      format.html
+      # format.json { render json: ResourcesDatatable.new(view_context) }
+      format.json { render json: @monitored_resource }
+    end
   end
 
   def permissions
@@ -64,7 +71,7 @@ class MonitoredResourcesController < ApplicationController
     @monitored_resource = MonitoredResource.where(:id => params[:id], :user_id => current_user.id).first
   end
 
-  # Never trust parameters from the scary internet, only allow the white list through.
+  # Never trust parameters from the scary internet, only allow the white index through.
   def monitored_resource_params
     par = { :gid => params[:gid], :user_id => current_user.id }
   end

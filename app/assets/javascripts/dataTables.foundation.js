@@ -219,7 +219,7 @@ else {
 					host = an[i];
 					$('li:gt(0)', host).filter(':not(:last)').remove();
 
-					// Add the new list items and their event handlers
+					// Add the new index items and their event handlers
 					$.each( pages, function( i, page ) {
 						klass = page === null ? 'unavailable' :
 							page === oPaging.iPage ? 'current' : '';

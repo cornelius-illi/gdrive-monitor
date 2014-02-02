@@ -255,13 +255,13 @@
 // $f-dropdown-triangle-color: #fff;
 // $f-dropdown-triangle-side-offset: 10px;
 
-// We use these to control styles for the list elements.
-// $f-dropdown-list-style: none;
+// We use these to control styles for the index elements.
+// $f-dropdown-index-style: none;
 // $f-dropdown-font-color: #555;
 // $f-dropdown-font-size: rem-calc(14);
-// $f-dropdown-list-padding: rem-calc(5, 10);
+// $f-dropdown-index-padding: rem-calc(5, 10);
 // $f-dropdown-line-height: rem-calc(18);
-// $f-dropdown-list-hover-bg: #eeeeee  ;
+// $f-dropdown-index-hover-bg: #eeeeee  ;
 // $dropdown-mobile-default-float: 0;
 
 // We use this to control the styles for when the dropdown has custom content.
@@ -381,24 +381,24 @@
 
 // Inline Lists
 
-// $include-html-inline-list-classes: $include-html-classes;
+// $include-html-inline-index-classes: $include-html-classes;
 
-// We use this to control the margins and padding of the inline list.
-// $inline-list-top-margin: 0;
-// $inline-list-opposite-margin: 0;
-// $inline-list-bottom-margin: rem-calc(17);
-// $inline-list-default-float-margin: rem-calc(-22);
+// We use this to control the margins and padding of the inline index.
+// $inline-index-top-margin: 0;
+// $inline-index-opposite-margin: 0;
+// $inline-index-bottom-margin: rem-calc(17);
+// $inline-index-default-float-margin: rem-calc(-22);
 
-// $inline-list-padding: 0;
+// $inline-index-padding: 0;
 
-// We use this to control the overflow of the inline list.
-// $inline-list-overflow: hidden;
+// We use this to control the overflow of the inline index.
+// $inline-index-overflow: hidden;
 
-// We use this to control the list items
-// $inline-list-display: block;
+// We use this to control the index items
+// $inline-index-display: block;
 
-// We use this to control any elments within list items
-// $inline-list-children-display: block;
+// We use this to control any elments within index items
+// $inline-index-children-display: block;
 
 // Joyride
 
@@ -580,7 +580,7 @@
 // $pagination-height: rem-calc(24);
 // $pagination-margin: rem-calc(-5);
 
-// We use these to set the list-item properties
+// We use these to set the index-item properties
 // $pagination-li-float: $default-float;
 // $pagination-li-height: rem-calc(24);
 // $pagination-li-font-color: #222;
@@ -667,7 +667,7 @@
 // $price-desc-line-height: 1.4;
 // $price-desc-bottom-border: dotted 1px #ddd;
 
-// We use these to control the list item styles
+// We use these to control the index item styles
 // $price-item-color: #333;
 // $price-item-padding: rem-calc(15);
 // $price-item-align: center;
@@ -741,10 +741,10 @@
 // We use this to control padding.
 // $side-nav-padding: rem-calc(14 0);
 
-// We use these to control list styles.
-// $side-nav-list-type: none;
-// $side-nav-list-position: inside;
-// $side-nav-list-margin: rem-calc(0 0 7 0);
+// We use these to control index styles.
+// $side-nav-index-type: none;
+// $side-nav-index-position: inside;
+// $side-nav-index-margin: rem-calc(0 0 7 0);
 
 // We use these to control link styles.
 // $side-nav-link-color: $primary-color;
@@ -804,8 +804,8 @@
 // $include-html-nav-classes: $include-html-classes;
 
 // We use these to control margin and padding
-// $sub-nav-list-margin: rem-calc(-4 0 18);
-// $sub-nav-list-padding-top: rem-calc(4);
+// $sub-nav-index-margin: rem-calc(-4 0 18);
+// $sub-nav-index-padding-top: rem-calc(4);
 
 // We use this to control the definition
 // $sub-nav-font-family: $body-font-family;

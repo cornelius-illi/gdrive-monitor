@@ -1,8 +1,8 @@
 require 'test_helper'
 
 class MonitoredResourcesControllerTest < ActionController::TestCase
-  test "should get list" do
-    get :list
+  test "should get index" do
+    get :index
     assert_response :success
   end
 

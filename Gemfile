@@ -32,6 +32,11 @@ gem 'json'
 gem 'foundation-rails'
 gem 'simple-navigation'
 
+# ajax
+gem 'active_model_serializers'
+gem 'will_paginate'
+gem 'actionpack-action_caching'
+
 # auth + oauth2
 gem 'devise'
 gem 'omniauth-google-oauth2' # registration, authorization

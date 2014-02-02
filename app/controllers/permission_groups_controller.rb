@@ -1,10 +1,9 @@
 class PermissionGroupsController < ApplicationController
   before_action :set_permission_group, only: [:edit, :update, :destroy]
 
-  # GET /permission_groups
-  # GET /permission_groups.json
+  # GET /monitored_resources/1/permission_groups
   def index
-    @permission_groups = PermissionGroup.find_by_monitored_resource_id(current_user.id)
+    @monitored_resource = MonitoredResource.find(params[:monitored_resource_id])
   end
 
   # GET /permission_groups/1
@@ -82,10 +81,11 @@ class PermissionGroupsController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_permission_group
+      @monitored_resource = MonitoredResource.find(params[:monitored_resource_id])
       @permission_group = PermissionGroup.find(params[:id])
     end
 
-    # Never trust parameters from the scary internet, only allow the white list through.
+    # Never trust parameters from the scary internet, only allow the white index through.
     def permission_group_params
       params.require(:permission_group).permit(:name, :monitored_resource_id, :permission_ids => [])
     end

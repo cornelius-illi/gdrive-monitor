@@ -6,8 +6,22 @@
   <li><b>created_date:</b> <%= @resource.created_date %></li>
   <li><b>modified_date:</b> <%= @resource.modified_date %></li>
   <li><b>last_modifying_username:</b> <%= @resource.last_modifying_username %></li>
-  <li><b>Number of Revisions:</b> <%= @resource.revisions.length %></li>
-  <li><b>Number of collaborators:</b> <%= @resource.collaborators %></li>
+  <li><b>Number of Revisions:</b> <%= @resource.revisions.length %>
+    <% unless @resource.monitored_resource.permission_groups.nil? %>
+    <ul>
+      <% @resource.revisions_by_permission_group.each do |id, count| %>
+          <li><%= PermissionGroup.find(id).name %>: <%= count %></li>
+      <% end %>
+    </ul>
+    <% end %>
+  </li>
+  <li><b>Number of collaborators:</b> <%= @resource.collaborators.length %>
+    <ul>
+      <% @resource.collaborators.each do |id,count| %>
+        <li><%= Permission.find(id).title %>: <%= count %></li>
+      <% end %>
+    </ul>
+  </li>
 </ul>
 
 <h3>Changes List</h3>
@@ -33,3 +47,5 @@
 <% else %>
     <p><i>No revisions could be found!</i></p>
 <% end %>
+
+<%= link_to 'back', monitored_resource_path(@resource.monitored_resource_id), :class => 'button secondary tiny' %>

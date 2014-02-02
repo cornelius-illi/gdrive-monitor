@@ -9,4 +9,4 @@
     </ul>
 <% end %>
 
-<%= link_to "Refresh Permissions", mr_refresh_permissions_path(@monitored_resource.id), :class => 'button tiny' %>
+<%= link_to "Refresh Permissions", refresh_monitored_resource_permissions_path(@monitored_resource), :class => 'button tiny' %>

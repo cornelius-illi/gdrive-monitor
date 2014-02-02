@@ -22,7 +22,7 @@ class MonitoredResource < ActiveRecord::Base
 
   def update_metadata(user_token)
     metadata = DriveFiles.retrieve_file_metadata(self.gid, user_token)
-    # important, as changes.list needs a criteria when to stop
+    # important, as changes.index needs a criteria when to stop
     lowest_index_date = GOOGLE['lowest_index_date'].to_datetime
 
     sharedwithme_date = DateTime.parse( metadata['sharedWithMeDate'] )
@@ -63,6 +63,7 @@ class MonitoredResource < ActiveRecord::Base
     resources = DriveFiles.retrieve_all_files_for(file_id, user_token)
 
     resources.each do |metadata|
+      # @todo: next if .DS_Store or first char == '.'
       new_resource = Resource
         .where(:gid => metadata['id'])
         .where(:monitored_resource_id => id)
@@ -83,7 +84,7 @@ class MonitoredResource < ActiveRecord::Base
   handle_asynchronously :index_structure, :queue => 'index_structure', :owner => Proc.new {|o| o}
 
   def index_changehistory(user_token)
-    # Changes.list returns results in ascending order (oldest first), results on next page are newer
+    # Changes.index returns results in ascending order (oldest first), results on next page are newer
     start_change_id = largest_change_id.blank? ? "" : largest_change_id
     changes = DriveChanges.retrieve_changes_list(start_change_id, user_token)
 

@@ -69,7 +69,7 @@ class MonitoredPeriodsController < ApplicationController
       @monitored_period = MonitoredPeriod.find(params[:id])
     end
 
-    # Never trust parameters from the scary internet, only allow the white list through.
+    # Never trust parameters from the scary internet, only allow the white index through.
     def monitored_period_params
       params.require(:monitored_periods).permit(:name)
     end
