@@ -3,7 +3,7 @@
 # You can use CoffeeScript in this file: http://coffeescript.org/
 
 jQuery ->
-  $('#files-table').dataTable
+  oTable = $('#files-table').dataTable
     sAjaxSource: $('#files-table').data('source')
     bDeferRender: true
     bProcessing: true

@@ -18,5 +18,7 @@
 # ignore all idea files
 .idea/*
 
+routes.txt
+
 # google drive app config
 /config/google_drive.yml

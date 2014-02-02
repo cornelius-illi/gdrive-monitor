@@ -1,5 +1,12 @@
 <% content_for :title, 'List of Changes for resource' %>
-<h2>Resource: <%= @resource.title %></h2>
+<h2>Resource: <%= @resource.title %> <small>(<%= @resource.mime_type %>)</small></h2>
+
+<% if @resource.jobs.length > 0 %>
+    <div class="callout panel">
+      <span class="spin1 spinner"></span><i>Indexing in progress! Currently <%= @resource.jobs.length %> jobs are running.
+      <%= link_to "Refresh status!" %></i>
+    </div>
+<% end %>
 
 <ul>
   <li><b>FileID:</b> <%= @resource.gid %></li>
@@ -24,28 +31,30 @@
   </li>
 </ul>
 
-<h3>Changes List</h3>
-<% unless @resource.revisions.length.eql?(0) %>
-    <table>
-      <thead>
-      <tr>
-        <th>Change-ID</th>
-        <th>Modification Date</th>
-        <th>Last Modifying UserName</th>
-      </tr>
-      </thead>
-      <tbody>
-      <% @resource.revisions.each do |revision| %>
+<% unless @resource.is_folder? %>
+  <h3>Changes List - <small><%= link_to 'refresh', refresh_revisions_monitored_resource_resource_path(@monitored_resource, @resource) %></small></h3>
+    <% unless @resource.is_folder? || @resource.revisions.length.eql?(0) %>
+        <table>
+          <thead>
           <tr>
-            <td><%= revision.gid %></td>
-            <td><%= revision.modified_date.to_s(:db) %></td>
-            <td><%= revision.permission.email_address.blank? ? revision.permission.name : revision.permission.email_address %></td>
+            <th>Change-ID</th>
+            <th>Modification Date</th>
+            <th>Last Modifying UserName</th>
           </tr>
-      <% end %>
-      </tbody>
-    </table>
-<% else %>
-    <p><i>No revisions could be found!</i></p>
-<% end %>
+          </thead>
+          <tbody>
+          <% @resource.revisions.each do |revision| %>
+              <tr>
+                <td><%= revision.gid %></td>
+                <td><%= revision.modified_date.to_s(:db) %></td>
+                <td><%= revision.permission.email_address.blank? ? revision.permission.name : revision.permission.email_address %></td>
+              </tr>
+          <% end %>
+          </tbody>
+        </table>
+    <% else %>
+        <p><i>No revisions could be found!</i></p>
+    <% end %>
+<%end %>
 
 <%= link_to 'back', monitored_resource_path(@resource.monitored_resource_id), :class => 'button secondary tiny' %>

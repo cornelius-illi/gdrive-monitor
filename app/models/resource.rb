@@ -1,5 +1,6 @@
 class Resource < ActiveRecord::Base
   belongs_to :monitored_resource
+  has_many :jobs, :class_name => "::Delayed::Job", :as => :owner
   has_many :revisions, :order => 'modified_date DESC'
   # resource is not bound to user, can be used several times
 
@@ -33,7 +34,8 @@ class Resource < ActiveRecord::Base
   end
 
   def shortened_title(length = 35)
-    title.size > length+5 ? [title[0,length],title[-5,5]].join("...") : title
+    st = title.size > length+5 ? [title[0,length],title[-5,5]].join("...") : title
+    return is_folder? ? '<span class="fi-folder"></span> ' + st :  st
   end
 
   def collaborators
@@ -43,7 +45,6 @@ class Resource < ActiveRecord::Base
       next if r.permission.nil? # sometimes google data is only partially available
       h[r.permission_id] += 1
     end
-    p h.inspect
     return h
   end
 
@@ -116,6 +117,8 @@ class Resource < ActiveRecord::Base
   # *** DELAYED TASKS - START
 
   def retrieve_revisions(user_token)
+    return if is_folder? # results in: 400 Bad Request
+
     revisions = DriveRevisions.retrieve_revisions_list( gid, user_token )
 
     revisions.each do |metadata|

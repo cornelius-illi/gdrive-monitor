@@ -20,6 +20,17 @@ class MonitoredResource < ActiveRecord::Base
     return !changehistory_indexed_at.blank?
   end
 
+  def mime_count
+    mime_count = Hash.new
+    mime_types = Resource.select(:mime_type).where(:monitored_resource_id => id).uniq
+
+    mime_types.each do |r|
+      mime_count[r.mime_type] = Resource.where(:monitored_resource_id => id, :mime_type => r.mime_type).count
+    end
+
+    mime_count
+  end
+
   def update_metadata(user_token)
     metadata = DriveFiles.retrieve_file_metadata(self.gid, user_token)
     # important, as changes.index needs a criteria when to stop

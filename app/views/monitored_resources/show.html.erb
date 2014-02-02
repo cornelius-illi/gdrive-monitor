@@ -2,8 +2,11 @@
 
 <h2>Monitored Resource: <%= @monitored_resource.title %></h2>
 
-<span class="has-tip" title="Execute this once upon creation of a new monitored resource!" data-tooltip>
+<span class="has-tip" title="To update resource-list and revisions for each resource." data-tooltip>
     <%= link_to "Index Structure", index_structure_monitored_resource_path(@monitored_resource), :class => 'button tiny' %>
+</span>
+<span class="has-tip" title="To update resource-revisions for non-indexed resources" data-tooltip>
+    <%= link_to "Fetch Missing Revisions", missing_revisions_monitored_resource_path(@monitored_resource), :class => 'button tiny' %>
 </span>
 
 <h4>File List</h4>
@@ -30,7 +33,19 @@
   <tbody>
   </tbody>
 </table>
+<p>@TODO: use scopes to get rid of folders in list</p>
 <% end %>
 
-<h4>Files by type:</h4>
-<p>TODO: Count occurrence by mimeType.</p>
+
+<% unless @mime_count.blank? %>
+    <h4>Files by type:</h4>
+    <ul>
+      <% @mime_count.sort_by {|k, v| v}.reverse.each do |type, count| %>
+          <li><b><%= type %>: </b> <%= count %></li>
+      <% end %>
+    </ul>
+    <p>@TODO: use chart</p>
+<% end %>
+
+<h4>Files per period:</h4>
+<p>@TODO: + good visualization here!</p>

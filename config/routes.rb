@@ -7,6 +7,7 @@ GdriveFeed::Application.routes.draw do
     member do
       get 'index_structure'
       get 'index_changehistory'
+      get 'missing_revisions'
     end
 
     resources :permissions do
@@ -16,13 +17,19 @@ GdriveFeed::Application.routes.draw do
     end
 
     resources :permission_groups
-    resources :resources
+    resources :resources do
+      member do
+        get 'refresh_revisions'
+      end
+    end
     resources :reports
   end
 
   resources :monitored_periods
 
   get "welcome/index"
+  get "meta/mime_types", to: "welcome#mime_types"
+
   root :to => "welcome#index"
 
   match "/delayed_job" => DelayedJobWeb, :anchor => false, via: [:get, :post]

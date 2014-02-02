@@ -4,7 +4,8 @@ class MonitoredResourcesController < ApplicationController
   #before_filter :authenticate_user!
   before_filter :refresh_token!
   before_action :set_monitored_resource, only: [:show, :permissions, :refresh_permissions,
-                                                :reports, :permission_groups, :index_structure, :index_changehistory]
+                                                :reports, :permission_groups, :index_structure,
+                                                :index_changehistory, :missing_revisions]
 
   caches_action :show, :format => :json
 
@@ -28,20 +29,27 @@ class MonitoredResourcesController < ApplicationController
   
   def show
     respond_to do |format|
-      format.html
+      format.html { @mime_count = @monitored_resource.mime_count }
       # format.json { render json: ResourcesDatatable.new(view_context) }
       format.json { render json: @monitored_resource }
     end
   end
 
-  def permissions
+  def missing_revisions
+    resources = Resource
+      .joins('LEFT OUTER JOIN revisions ON resources.id=revisions.resource_id')
+      .where('monitored_resource_id=? AND revisions.resource_id IS NULL AND mime_type != "application/vnd.google-apps.folder"',  @monitored_resource.id)
 
+    resources.each do |resource|
+      resource.retrieve_revisions(current_user.token)
+    end
+    redirect_to @monitored_resource, :notice => "Missing Revisions are being refreshed!"
   end
 
   def refresh_permissions
     unless @monitored_resource.blank?
       @monitored_resource.update_permissions(current_user.token)
-      redirect_to mr_permissions_path, :notice => "Permissions refreshed!"
+      redirect_to monitored_resource_permissions(@monitored_resource), :notice => "Permissions refreshed!"
     end
   end
 
