@@ -2,16 +2,15 @@ class Resource < ActiveRecord::Base
   belongs_to :monitored_resource
   has_many :jobs, :class_name => "::Delayed::Job", :as => :owner
   has_many :revisions, :order => 'modified_date DESC'
-  # resource is not bound to user, can be used several times
 
-  GOOGLE_MIME_TYPES = %w(
-    application/vnd.google-apps.folder
+  GOOGLE_FOLDER_TYPE = 'application/vnd.google-apps.folder'.freeze
+  GOOGLE_FILE_TYPES = %w(
     application/vnd.google-apps.drawing
     application/vnd.google-apps.document
     application/vnd.google-apps.spreadsheet
     application/vnd.google-apps.presentation
   ).freeze
-  
+
   def self.find_create_or_update_batched_for(child_resources, mr_id, user_id)
     child_resources.each do |resource|
       new_resource = Resource
@@ -29,8 +28,8 @@ class Resource < ActiveRecord::Base
     return (mime_type.eql? 'application/vnd.google-apps.folder')
   end
 
-  def is_google_mimetype?
-    return GOOGLE_MIME_TYPES.include?(mime_type)
+  def is_google_filetype?
+    return GOOGLE_FILE_TYPES.include?(mime_type)
   end
 
   def shortened_title(length = 35)
@@ -122,15 +121,17 @@ class Resource < ActiveRecord::Base
     revisions = DriveRevisions.retrieve_revisions_list( gid, user_token )
 
     revisions.each do |metadata|
+      # sometimes no lastModifyingUser is available, then exclude from stats
+      next unless metadata.has_key?('lastModifyingUser')
       new_revision = Revision
         .where(:gid => metadata['id'])
         .where(:resource_id => id)
         .first_or_create
 
-      permission = Permission
-        .where(:gid => metadata['lastModifyingUser']['permissionId'] )
-        .where(:monitored_resource_id => monitored_resource.id )
-        .first_or_create
+        permission = Permission
+          .where(:gid => metadata['lastModifyingUser']['permissionId'] )
+          .where(:monitored_resource_id => monitored_resource.id )
+          .first_or_create
 
       new_revision.update_metadata(metadata, permission.id)
     end

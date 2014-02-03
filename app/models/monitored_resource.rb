@@ -1,9 +1,11 @@
 class MonitoredResource < ActiveRecord::Base
-  has_many  :resources, :dependent => :delete_all
+  has_many  :resources, -> { where.not(mime_type: GOOGLE_FOLDER_TYPE) }, :dependent => :delete_all
   has_many  :permissions, :dependent => :delete_all
   has_many  :permission_groups, :dependent => :delete_all
   has_and_belongs_to_many :monitored_periods
   has_many :jobs, :class_name => "::Delayed::Job", :as => :owner
+
+  GOOGLE_FOLDER_TYPE = 'application/vnd.google-apps.folder'.freeze
 
   #def self.jobs
     # to address the STI scenario we use base_class.name.
