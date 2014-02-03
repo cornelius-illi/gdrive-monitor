@@ -1,5 +1,5 @@
 <% content_for :title, 'List of Changes for resource' %>
-<h2>Resource: <%= @resource.title %> <small>(<%= @resource.mime_type %>)</small></h2>
+<h2><%= @resource.title %> <small>(<%= @resource.mime_type %>)</small></h2>
 
 <% if @resource.jobs.length > 0 %>
     <div class="callout panel">
@@ -10,15 +10,14 @@
 
 <ul>
   <li><b>FileID:</b> <%= @resource.gid %></li>
-  <li><b>md5Checksum:</b> <%= @resource.md5_checksum %></li>
   <li><b>created_date:</b> <%= @resource.created_date %></li>
   <li><b>modified_date:</b> <%= @resource.modified_date %></li>
   <li><b>last_modifying_username:</b> <%= @resource.last_modifying_username %></li>
-  <li><b>Number of Revisions:</b> <%= @resource.revisions.length %> <%= @resource.revisions.latest.gid %>
+  <li><b>Number of Revisions:</b> <%= @resource.revisions.length %>
     <% unless @resource.monitored_resource.permission_groups.nil? %>
     <ul>
       <% @resource.revisions_by_permission_group.each do |id, count| %>
-          <li><%= PermissionGroup.find(id).name %>: <%= count %></li>
+          <li><%= id.blank? ? '<i>file-based</i>'.html_safe : PermissionGroup.find(id).name %>: <%= count %></li>
       <% end %>
     </ul>
     <% end %>
@@ -38,8 +37,7 @@
         <table>
           <thead>
           <tr>
-            <th>Change-ID</th>
-            <th>md5Checksum</th>
+            <th>Revision-ID</th>
             <th>Modification Date</th>
             <th>Last Modifying UserName</th>
           </tr>
@@ -47,8 +45,7 @@
           <tbody>
           <% @resource.revisions.each do |revision| %>
               <tr>
-                <td><%= revision.gid %></td>
-                <td><%= revision.md5_checksum %></td>
+                <td><%= link_to revision.gid, @resource.export_link('txt', revision.gid) %></td>
                 <td><%= revision.modified_date.to_s(:db) %></td>
                 <td><%= revision.permission.email_address.blank? ? revision.permission.name : revision.permission.email_address %></td>
               </tr>

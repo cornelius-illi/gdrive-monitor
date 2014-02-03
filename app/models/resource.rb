@@ -1,7 +1,7 @@
 class Resource < ActiveRecord::Base
   belongs_to :monitored_resource
   has_many :jobs, :class_name => "::Delayed::Job", :as => :owner
-  has_many :revisions, :order => 'modified_date DESC'
+  has_many :revisions, -> { order('modified_date DESC') }
 
   GOOGLE_FOLDER_TYPE = 'application/vnd.google-apps.folder'.freeze
   GOOGLE_FILE_TYPES = %w(
@@ -10,6 +10,13 @@ class Resource < ActiveRecord::Base
     application/vnd.google-apps.spreadsheet
     application/vnd.google-apps.presentation
   ).freeze
+
+  GOOGLE_FILE_TYPES_DOWNLOAD = {
+      'application/vnd.google-apps.presentation' => { :path_segment => 'presentations', :types => ['pdf','txt','pptx'] },
+      'application/vnd.google-apps.document' => { :path_segment => 'documents', :types => ['pdf','txt'] },
+      'application/vnd.google-apps.spreadsheet' => { :path_segment => 'spreadsheets', :types => ['pdf','txt'] },
+      'application/vnd.google-apps.drawing' => { :path_segment => 'drawings', :types => ['pdf','txt'] }
+  }.freeze
 
   def self.find_create_or_update_batched_for(child_resources, mr_id, user_id)
     child_resources.each do |resource|
@@ -64,6 +71,18 @@ class Resource < ActiveRecord::Base
     intersection = perm_ids & perm_group_ids
     # two cases are relevant: all match, none matches -> one group did all the work
     return !((intersection).length.eql?(perm_ids.length) || intersection.length.eql?(0))
+  end
+
+  def has_latest_revision?
+    # @todo: use file_etag in the future as checksum does only apply to non google-file-types
+    # select distinct resources.mime_type from resources JOIN revisions ON revisions.resource_id=resources.id WHERE revisions.md5_checksum IS NOT NULL ORDER BY resources.mime_type;
+    md5_checksum.blank? ? false : (md5_checksum.eql? revisions.latest.md5_checksum)
+  end
+
+  def export_link(format=txt, revision=nil)
+    revision = revision.blank? ? "" : "&revision=#{revision}"
+    p GOOGLE_FILE_TYPES_DOWNLOAD[mime_type].inspect
+    return "https://docs.google.com/feeds/download/#{GOOGLE_FILE_TYPES_DOWNLOAD[mime_type][:path_segment]}/Export?id=#{gid}&exportFormat=#{format}#{revision}"
   end
 
   def revisions_by_permission_group
@@ -132,7 +151,20 @@ class Resource < ActiveRecord::Base
         permission = Permission
           .where(:gid => metadata['lastModifyingUser']['permissionId'] )
           .where(:monitored_resource_id => monitored_resource.id )
-          .first_or_create
+          .first_or_initialize
+
+        # if permission has just been created, get metadata
+        if permission.id.blank?
+          perm_metadata = DriveFiles.retrieve_permission(gid,permission.gid, user_token)
+          permission.update_attributes(
+              :name => perm_metadata['name'],
+              :email_address => perm_metadata['emailAddress'],
+              :domain => perm_metadata['domain'],
+              :role => perm_metadata['role'],
+              :perm_type => perm_metadata['type'],
+          )
+        end
+
 
       new_revision.update_metadata(metadata, permission.id)
     end

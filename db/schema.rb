@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140203145345) do
+ActiveRecord::Schema.define(version: 20140203175204) do
 
   create_table "changes", force: true do |t|
     t.string   "change_id"
@@ -123,6 +123,7 @@ ActiveRecord::Schema.define(version: 20140203145345) do
     t.integer  "resource_id"
     t.text     "diff"
     t.float    "percental_change"
+    t.float    "resource_etag"
   end
 
   create_table "users", force: true do |t|

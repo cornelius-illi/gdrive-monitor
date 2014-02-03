@@ -13,4 +13,13 @@ class WelcomeController < ApplicationController
 
     @mime_count.sort_by {|_key, value| value}
   end
+
+  def resources_without_checksum
+    # list all resources without checksum, group by type
+  end
+
+  def comments_by_mime_type
+
+  end
+
 end

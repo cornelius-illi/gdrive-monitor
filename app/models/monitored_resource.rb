@@ -68,6 +68,20 @@ class MonitoredResource < ActiveRecord::Base
           :perm_type => params['type'],
       )
     end
+
+    resource_bound_permissions = Permission.where(:monitored_resource_id => id, :domain => nil)
+    resource_bound_permissions.each do |permission|
+      revision = Revision.select(:resource_id).where(:permission_id => permission.id).first
+      resource = Resource.where(:id => revision.resource_id).first
+      metadata = DriveFiles.retrieve_permission(resource['gid'], permission.gid, user_token)
+      permission.update_attributes(
+          :name => metadata['name'],
+          :email_address => metadata['emailAddress'],
+          :domain => metadata['domain'],
+          :role => metadata['role'],
+          :perm_type => metadata['type'],
+      )
+    end
   end
 
 
@@ -89,7 +103,7 @@ class MonitoredResource < ActiveRecord::Base
         index_structure(user_id, user_token, new_resource.gid)
       else # get revisions (does not apply for folders, have none)
         # fetch revisions only, if checksum of file changed
-        unless new_resource.md5_checksum.eql?( new_resource.revisions.latest.md5_checksum )
+        unless new_resource.has_latest_revision?
           new_resource.retrieve_revisions(user_token)
         end
       end

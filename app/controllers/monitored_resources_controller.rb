@@ -46,13 +46,6 @@ class MonitoredResourcesController < ApplicationController
     redirect_to @monitored_resource, :notice => "Missing Revisions are being refreshed!"
   end
 
-  def refresh_permissions
-    unless @monitored_resource.blank?
-      @monitored_resource.update_permissions(current_user.token)
-      redirect_to monitored_resource_permissions(@monitored_resource), :notice => "Permissions refreshed!"
-    end
-  end
-
   def permission_groups
     @permission_groups = PermissionGroup.where(monitored_resource_id: @monitored_resource.id)
   end
