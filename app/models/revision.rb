@@ -2,6 +2,8 @@ class Revision < ActiveRecord::Base
   belongs_to :resource
   belongs_to :permission
 
+  scope :latest, order('modified_date DESC').first
+
   def update_metadata(metadata, permission)
     # FIELDS: deleted,file(etag,lastModifyingUserName),fileId,id,modificationDate
     update_attributes(

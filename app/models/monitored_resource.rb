@@ -85,12 +85,13 @@ class MonitoredResource < ActiveRecord::Base
 
       new_resource.update_metadata(metadata)
 
-      if new_resource.is_folder?
-        # create new delayed_job, if type is folder
+      if new_resource.is_folder? # create new delayed_job, if type is folder
         index_structure(user_id, user_token, new_resource.gid)
-      else
-        # get revisions (folders do not have revisions)
-        new_resource.retrieve_revisions(user_token)
+      else # get revisions (does not apply for folders, have none)
+        # fetch revisions only, if checksum of file changed
+        unless new_resource.md5_checksum.eql?( new_resource.revisions.latest.md5_checksum )
+          new_resource.retrieve_revisions(user_token)
+        end
       end
     end
   end

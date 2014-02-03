@@ -94,6 +94,7 @@ class Resource < ActiveRecord::Base
         :alternate_link => metadata['alternateLink'],
         :created_date => metadata['createdDate'],
         :etag => metadata['etag'],
+        :md5_checksum => metadata['md5Checksum'],
         :file_extension => metadata['fileExtension'],
         :file_size => metadata['fileSize'],
         :kind => metadata['kind'],

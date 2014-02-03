@@ -1,5 +1,5 @@
 module DriveFiles
-  FIELDS_FILES_GET = 'alternateLink,createdDate,etag,fileExtension,fileSize,kind,ownerNames,lastModifyingUserName,mimeType,modifiedDate,shared,sharedWithMeDate,title,labels(trashed,viewed)'
+  FIELDS_FILES_GET = 'alternateLink,createdDate,etag,md5Checksum,fileExtension,fileSize,kind,ownerNames,lastModifyingUserName,mimeType,modifiedDate,shared,sharedWithMeDate,title,labels(trashed,viewed)'
   FIELDS_FILES_LIST = 'items(id,' + FIELDS_FILES_GET + ')'
   FIELDS_PERMISSIONS_LIST = 'items(domain,emailAddress,etag,id,kind,name,role,type,value)'
   

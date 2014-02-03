@@ -10,10 +10,11 @@
 
 <ul>
   <li><b>FileID:</b> <%= @resource.gid %></li>
+  <li><b>md5Checksum:</b> <%= @resource.md5_checksum %></li>
   <li><b>created_date:</b> <%= @resource.created_date %></li>
   <li><b>modified_date:</b> <%= @resource.modified_date %></li>
   <li><b>last_modifying_username:</b> <%= @resource.last_modifying_username %></li>
-  <li><b>Number of Revisions:</b> <%= @resource.revisions.length %>
+  <li><b>Number of Revisions:</b> <%= @resource.revisions.length %> <%= @resource.revisions.latest.gid %>
     <% unless @resource.monitored_resource.permission_groups.nil? %>
     <ul>
       <% @resource.revisions_by_permission_group.each do |id, count| %>
@@ -38,6 +39,7 @@
           <thead>
           <tr>
             <th>Change-ID</th>
+            <th>md5Checksum</th>
             <th>Modification Date</th>
             <th>Last Modifying UserName</th>
           </tr>
@@ -46,6 +48,7 @@
           <% @resource.revisions.each do |revision| %>
               <tr>
                 <td><%= revision.gid %></td>
+                <td><%= revision.md5_checksum %></td>
                 <td><%= revision.modified_date.to_s(:db) %></td>
                 <td><%= revision.permission.email_address.blank? ? revision.permission.name : revision.permission.email_address %></td>
               </tr>
