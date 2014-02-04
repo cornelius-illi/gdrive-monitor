@@ -18,6 +18,9 @@
 # ignore all idea files
 .idea/*
 
+# ignore all downloaded resources
+./public/resources/*
+
 routes.txt
 
 # google drive app config
