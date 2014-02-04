@@ -27,6 +27,10 @@ module DriveFiles
   def self.retrieve_permission(fileId,permissionId, user_token)
     return self.gdrive_api_permission_get(fileId, permissionId, user_token)
   end
+
+  def self.download(url, user_token)
+    return self.gdrive_api_download(url, user_token)
+  end
   
   private
   def self.gdrive_api_file_list(query, user_token)
@@ -65,5 +69,11 @@ module DriveFiles
         :fields => FIELDS_PERMISSIONS_GET }}
     response = JSON::parse(response)
     return response
+  end
+
+  def self.gdrive_api_download(url,user_token)
+    resource = RestClient::Resource.new(url)
+    # can throw -> RestClient::Unauthorized: 401 Unauthorized
+    return resource.get( :Authorization => 'Bearer ' + user_token)
   end
 end

@@ -37,17 +37,27 @@
         <table>
           <thead>
           <tr>
-            <th>Revision-ID</th>
+            <th>Revision</th>
             <th>Modification Date</th>
             <th>Last Modifying UserName</th>
+            <th>Download</th>
+            <th>Changed (in %)</th>
+            <th>Additive (in %)</th>
           </tr>
           </thead>
           <tbody>
           <% @resource.revisions.each do |revision| %>
-              <tr>
-                <td><%= link_to revision.gid, @resource.export_link('txt', revision.gid) %></td>
+              <tr class="<%= revision.is_weak? ? 'weak' : '' %>">
+                <td><%= revision.gid %></td>
                 <td><%= revision.modified_date.to_s(:db) %></td>
                 <td><%= revision.permission.email_address.blank? ? revision.permission.name : revision.permission.email_address %></td>
+                <td class="centered"><%= link_to @resource.export_link('txt', revision.gid), :title => 'Download from Google' do %><span class="fi-download"></span> <% end %> |
+                  <% if revision.has_local_resource? %>
+                      <%= link_to revision.local_resource_path, :title => 'Download local version' do %><span class="fi-archive"></span><% end %>
+                  <% end %>
+                </td>
+                <td><%= number_to_percentage (revision.percental_change*100) unless revision.percental_change.blank? %></td>
+                <td><%= number_to_percentage (revision.percental_add*100) unless revision.percental_add.blank? %></td>
               </tr>
           <% end %>
           </tbody>

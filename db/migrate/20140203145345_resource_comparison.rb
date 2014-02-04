@@ -4,6 +4,7 @@ class ResourceComparison < ActiveRecord::Migration
 
     add_column :revisions, :diff, :text
     add_column :revisions, :percental_change, :float
+    add_column :revisions, :percental_add, :float
   end
 
   def self.down
@@ -11,5 +12,6 @@ class ResourceComparison < ActiveRecord::Migration
 
     remove_column :revisions, :diff
     remove_column :revisions, :percental_change
+    remove_column :revisions, :percental_add
   end
 end

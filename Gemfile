@@ -55,6 +55,10 @@ gem 'delayed_job_active_record'
 gem 'daemons'
 gem 'whenever'
 
+# diffing: http://diff-lcs.rubyforge.org/
+gem 'diff-lcs'
+# gem diffy
+
 group :doc do
   # bundle exec rake doc:rails generates the API under doc/api.
   gem 'sdoc', require: false

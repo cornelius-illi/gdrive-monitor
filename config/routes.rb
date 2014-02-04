@@ -20,6 +20,8 @@ GdriveFeed::Application.routes.draw do
     resources :resources do
       member do
         get 'refresh_revisions'
+        get 'download_revisions'
+        get 'calculate_diffs'
       end
     end
     resources :reports

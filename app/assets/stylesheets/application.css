@@ -56,3 +56,11 @@ select.permissions {
 .hidden {
     display: none;
 }
+
+table tr.weak td {
+    color: #B0B0B0;
+}
+
+table tr td.centered {
+    text-align: center;
+}

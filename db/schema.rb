@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140203175204) do
+ActiveRecord::Schema.define(version: 20140203145345) do
 
   create_table "changes", force: true do |t|
     t.string   "change_id"
@@ -121,9 +121,10 @@ ActiveRecord::Schema.define(version: 20140203175204) do
     t.datetime "modified_date"
     t.integer  "permission_id"
     t.integer  "resource_id"
+    t.float    "resource_etag"
     t.text     "diff"
     t.float    "percental_change"
-    t.float    "resource_etag"
+    t.float    "percental_add"
   end
 
   create_table "users", force: true do |t|

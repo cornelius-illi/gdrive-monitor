@@ -1,0 +1,179 @@
+﻿Current vision:
+
+
+“Gerard needs a solution for interfacing with data to answer questions and enhance executive decision making.”
+
+
+We believe executives should be able to intuitively and instantly interface with data to help make decisions that steer the future of a company. They shouldn’t have to rely on IT staff and software they don’t understand to access and visualize information that helps them make important decisions. 
+
+
+Our solution will bring an information platform to the boardroom which is custom built for high-level executives by improving upon standard BI packages in several key ways. One, our platform will be tied to the boardroom with an intuitive natural interface. Two, it will represent the state of the company in a form that provides context to discussions or presentations in the boardroom. Blah, blah...
+
+
+
+
+Dark Horse options:
+
+
+
+
+
+Infosculpture
+Assumption:         The interface for Siemens data should be electronic.
+Dark Horse:        The interface for Siemens data should be mechanical.
+   * Different mechanical aspects will represent key attributes of Siemens (e.g. the height of a mechanical lever may represent the stock price relative to the previous day). 
+   * Only the C-class executives and upper management will be aware of the interpretation, but it can be displayed publicly as a work of art in the building lobby.
+
+
+
+
+
+BoardPod
+Assumption:         All Siemens executives should be together.
+Dark Horse:        All Siemens executives should be apart.
+Assumption:        All Siemens executives should be in the city of Munich.
+Dark Horse:        No Siemens executive should be in any city.
+   * One-person pods are helicopter deployed into remote locations like mountains, lakes, plains, etc. They contain amenities for 48 hours, full connectivity, teleconferencing equipment, and all company tools to access information. Instead of holding a board meeting, participants take an excursion to their favorite destinations to get inspired. They still work to make decisions together, but instead of being stuffed into a boardroom they are in an environment where their mind is clear.  As a trek is required to reach the BoardPod, the executive’s respective O2 levels are higher, heartrate is higher.  The overall experience is invigorating.  How will executive decision-making be advantaged if decisions were made in this environment?
+   * This is not a vacation home, but rather a single room meant to focus the mind to enhance decision making. C-class executives will be able to hike/travel/boat/etc. to a single room stocked to support them for 48 hours. The room will contain everything necessary to the employee for work, comfort, and entertainment purposes. This darkhorse challenges the idea that we need more data or a better representation of the existing data to make better decisions; rather, we may make better decisions with the existing data if we have a different mindset.
+
+
+
+MarkerBoardRoom
+Assumption:         The boardroom needs maximum technology & data.
+Dark Horse:        The boardroom needs no technology & data.
+   * Boardroom consists of a single-supported circular table with marker board finish.  All walls are also marker board finish.  No electronic technology is permitted, and frequency jammers are installed around perimeter of room to guarantee this policy is enforced.
+
+
+Immersive experience
+Assumption:         The screen is for projection purposes.
+Dark Horse:        The room is for projection purposes.
+   * Projectors can be displayed on every wall in a boardroom to create a fully immersive experience for upper executives. The room turns into a separate Siemens site that is of particular interest to the topic of discussion.
+   * For example, executives may discuss the state of a particular mining operation in the energy sector, and the room can transform into the mine with access to talk to employees at that location.
+   * One possibility is using full 360deg cameras (all angles at once) at remote sites, that map to the walls of a circular (or hemispherical) room, providing immersion
+
+
+Boardbus/boardyacht/boardjet to project location
+Assumption:         The meeting shall take place in a Munich conference room.
+Dark Horse:        The meeting shall take place at a non-Munich asset.
+   * Executives can be sent to locations of interest to a particular board meeting to get fully immersed with the location/employees.
+   * During transportation to the off-site location, board members can be prepped and have a meeting on a specially designed bus/yacht/jet.
+   * Compared to the example in the ‘immersive experience’ idea, instead of bringing the remote location to the executives, you bring the executives to the remote location.
+
+LoungeRoom
+Assumption:         The boardroom shall be formal.
+Dark Horse:        The boardroom shall be casual.
+   * The boardroom generally consists of a table, chairs, screens and full conferencing capabilities. All of those are boring. Why not create an exciting or engaging environment. Executives can share a beer or play darts while discussing business matters.
+   * This room can also create a feeling of home and familiarity to make the executives feel comfortable.
+
+
+
+
+
+Transparent Conference Room
+Assumption:         The meeting shall be held in an opaque room with acoustical privacy.
+Dark Horse:        The meeting shall be held in a transparent room with no acoustical privacy.
+   * Whereas democracies are interested in celebrating (figuratively, literally, architecturally) their respective transparency in decision making, what advantages exist in a publicly-traded multi-national corporation adopting the same policy, if any at all?
+
+Future tech for a collaborative environment
+Assumption:         ?
+Dark Horse:        ?
+   * Holograms, 3d capture tools, projection mapping, tangibles. What is the craziest, most innovative interface we can imagine for future executives to access and visualize information to help make decisions? This is fully welcoming sci-fi from movies like Iron Man and Minority Report and taking it to the next level by creating a collaborative rather than single user experience.
+   * One idea is to deck out the ceiling with kinects and projectors such that all objects on the large boardroom table are detected and projected onto. Executives can make hand gestures to interact, move tangibles around, and projectors display content onto everything to create a shared decision making environment like no other.
+
+
+Collective intelligence
+Assumption:         ?
+Dark Horse:        ?        
+   * A large group of people will generally make a better decision than a panel of experts--this phenomenon is referred to as ‘collective intelligence.’ The executives are concerned with the health and state of a company as well as what action items should be taken. Asking a large group of employees can provide valuable data on what decisions to take and how well the company is performing.
+   * This can be implemented by asking employees to rate the performance of their division or group at the end of the day when they submit their project hours. If there are important decision to be made in the company, these can also be sent out.
+
+
+Stack Exchange
+Assumption:         ?
+Dark Horse:        ?        
+   * Siemens executives want to query for information instantly and receive an answer. The problem is that their IT sucks and even if it didn’t computers can’t provide meaningful answers to complex queries. It may take days or weeks for a secretary or IT person to find the person in the company who can find the answer and get the results back to the executives.
+   * How do professionals get fast and accurate answers to their questions? They use Stack Exchange. Let’s create a system where when executives can post questions to the set of relevant employees, and employees provide answers (with proof via data) to receive points which provide rewards and reputation used for promotions.
+   * For example, a question comes up in a weekly review of energy systems regarding how much cost savings their wind turbine system provides to customers. The executives don’t know, so they hit the ‘energy systems’ button on a wall or table panel and state the Q. The Q is transcribed and posted to employees of energy systems. Bob, who is a new but sharp sales guy for the wind turbines, knows the answer exactly, and posts back with some plots as proof. 
+   * The executives get their answer back in the quickest way possible, from somebody they would never have consulted otherwise.
+   * Bob gets answer points, which provide him with monetary/stock rewards, and add to his reputation, which eventually helps him get promoted to a sales manager.
+
+
+Boardroom In a Suitcase
+Assumption:         Technology to facilitate a meeting shall be fixed in a room.
+Dark Horse:        Technology to facilitate a meeting shall be collapsible and mobile.
+   * How much technology is necessary to transport to a remote location (beach, mountain face, lakeside) to establish an environment for an executive meeting?
+   * Similar to the ‘pod’ and ‘boardbus’ ideas, this idea explores how a change of location can change the mentality of an executive. Instead of separating executives or sending them to a specific Siemens location, the entire meeting can take place on a beach or in a ‘vacation’ setting.
+
+
+Meeting with an audience
+Assumption:         ?
+Dark Horse:        ?        
+   * How does a meeting change when you make it entirely transparent to everybody within a company? The boardroom can be moved out of a specific room and put into an open courtyard for people to attend as an audience.
+   * The meeting can also be broadcasted within a company so all employees have access.
+
+
+Robo CEO
+Assumption:         Machines are limited in their ability to answer complex questions / “why”-questions.
+Dark Horse:        A machine can be as intelligent as a human and knows more data.
+   * A humanoid robot makes the 0th board member, he is present at every board meeting, keeps a history of what happend when and can be asked about the company, past meetings etc. 
+   * The robot will answer elaborately and very human-like. Explain things that aren’t obvious etc. 
+
+
+Clairvoyant crystal ball
+Assumption:         Rich data is needed for decision making
+Dark Horse:        Simplest data and info is better
+Assumption:         Board members are highly trained people that want the complex indicators,  fancy charts and big tables with lots of numbers
+Dark Horse:        Board members really just want answers to one specific question in one moment.
+   * Whiteboards all around, no tech (like MarkerBoardRoom) Only one (of course also white) table in the middle with a crystal ball on it. When you hold your hands around it you can ask the oracle all questions about the company and it will answer.
+   * It can’t display charts, tables etc. This makes the answers (and questions that can be answered) very simple. (we envision: Q: Are we making profit at the moment? A: Yes. Q: How many solar panels did we sell last year? A: 3124.) 
+
+
+Mighty Knowledge Cap
+Assumption:         Executives speak only to the people in the meeting
+Dark Horse:        They talk to a machine to have their personal questions answered
+   * Executives wear a cap outfitted with a microphone and ear-plugs. When they have a question, they ask it and the knowledge cap processes the question and gives the answer to the executives through the ear-plugs
+
+
+Board Meeting on USS Enterprise 
+Assumption:         Meetings should be held in Munich
+Dark Horse:        Meetings should be held on the bridge of the USS Enterprise 
+   * Like in BoardPod Board members have an invigorating experience, but collectively. This experience is amplified by the atmosphere in a well known location where important decisions have been made (while fighting klingons) and the fortune of big enterprises™ are steered. 
+   * http://www.youtube.com/watch?v=KT5JiINlbhw 
+
+
+Continuous collective decision making
+        Assumption: (Decision-)Meetings are always held at a specific time slot
+        Dark Horse: (Decision-)Meetings are held asynchronously
+* Whenever a decision needs to be made, all executives are notified (e.g. via a headset everybody is wearing). Then they can ask the system questions about the project/decision (e.g. what’s the margin, how much profit…) and can then accept or deny the request. There is no phone call between everybody, the decision making has to happen during this session, preventing lengthy discussions that lead nowhere.
+
+
+Tangible 3D-Bars
+Assumption:         Data is displayed on two-dimensional charts on a flat screen
+Dark Horse:        Data is displayed as physical bars in the actual room
+   * Classical bar charts come to the physical room in the middle of the table and can actually be touched and manipulated. Data can be queried by natural language and is displayed in a natural, physical way.
+
+
+Meeting with an audience
+Assumption:         
+Dark Horse:        
+Notes (don’t delete):
+Due next week:
+version 1.0, just do something (paper mock-up or system)
+version 2.0, if its working keep going with it (completed, usable, testable)
+version 3.0, deliver (final new proto or a refined proto from v2.0)
+
+
+age assumption of the executive
+siemens proprietary assumption
+employee tv in the boardroom
+how to engage german executives
+tangible business process modeling
+ishi at media lab
+physical interaction with data
+scania boardroom
+daily updates to give a hierarchy of discussion topics
+big data opinions from the employees
+make everything public/open field and transparency
+zappos transparency and horizontal structure
+holacracy at zappos
+talk to adi about his projections

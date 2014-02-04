@@ -37,10 +37,10 @@
 </div>
 <div class="small-10 columns content">
   <!-- sub-navigation //-->
-  <% unless @monitored_resource.blank? %>
+  <% if !@monitored_resource.blank? and @resource.blank? %>
       <div data-magellan-expedition="fixed">
         <dl class="sub-nav">
-          <dt>Navigation:</dt>
+          <dt>Monitored Resource:</dt>
           <dd class="<%= 'active' if current_page?( monitored_resource_url(@monitored_resource)) %>">
             <%= link_to 'List Files', monitored_resource_path(@monitored_resource) %>
           </dd>
@@ -49,6 +49,24 @@
           </dd>
           <dd class="<%= 'active' if current_page?( monitored_resource_permission_groups_url(@monitored_resource) ) %>">
             <%= link_to 'Permission Groups', monitored_resource_permission_groups_path(@monitored_resource) %>
+          </dd>
+        </dl>
+      </div>
+  <% elsif !@monitored_resource.blank? && !@resource.blank? %>
+      <div data-magellan-expedition="fixed">
+        <dl class="sub-nav">
+          <dt>Resource:</dt>
+          <dd class="<%= 'active' if current_page?( monitored_resource_path(@monitored_resource)) %>">
+            <%= link_to '« back', monitored_resource_path(@monitored_resource) %>
+          </dd>
+          <dd class="<%= 'active' if current_page?( refresh_revisions_monitored_resource_resource_path(@monitored_resource, @resource) ) %>">
+            <%= link_to 'Refresh Revisions', refresh_revisions_monitored_resource_resource_path(@monitored_resource, @resource) %>
+          </dd>
+          <dd class="<%= 'active' if current_page?( download_revisions_monitored_resource_resource_path(@monitored_resource, @resource) ) %>">
+            <%= link_to 'Download Revisions', download_revisions_monitored_resource_resource_path(@monitored_resource, @resource) %>
+          </dd>
+          <dd class="<%= 'active' if current_page?( calculate_diffs_monitored_resource_resource_path(@monitored_resource, @resource) ) %>">
+            <%= link_to 'Calculate Diffs', calculate_diffs_monitored_resource_resource_path(@monitored_resource, @resource) %>
           </dd>
         </dl>
       </div>

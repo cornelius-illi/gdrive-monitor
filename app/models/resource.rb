@@ -79,9 +79,14 @@ class Resource < ActiveRecord::Base
     md5_checksum.blank? ? false : (md5_checksum.eql? revisions.latest.md5_checksum)
   end
 
+  def calculate_revision_diffs(again=false)
+    revisions.each do |revision|
+      revision.calculate_diff(again)
+    end
+  end
+
   def export_link(format=txt, revision=nil)
     revision = revision.blank? ? "" : "&revision=#{revision}"
-    p GOOGLE_FILE_TYPES_DOWNLOAD[mime_type].inspect
     return "https://docs.google.com/feeds/download/#{GOOGLE_FILE_TYPES_DOWNLOAD[mime_type][:path_segment]}/Export?id=#{gid}&exportFormat=#{format}#{revision}"
   end
 
@@ -133,6 +138,10 @@ class Resource < ActiveRecord::Base
     update_metadata(metadata)
   end
 
+  def download_path
+    return "public/resources/r-#{id.to_s}"
+  end
+
   # *** DELAYED TASKS - START
 
   def retrieve_revisions(user_token)
@@ -165,11 +174,36 @@ class Resource < ActiveRecord::Base
           )
         end
 
-
       new_revision.update_metadata(metadata, permission.id)
     end
   end
   handle_asynchronously :retrieve_revisions, :queue => 'revisions', :owner => Proc.new {|o| o}
 
-  # *** DELAYED TASKS - START
+  def download_revisions(format='txt',token)
+    # pre-condition: revisions should only be downloaded for diffing and diffing only makes sense for text-based resource formats
+    return if is_folder? || !is_google_filetype?
+
+    unless File.directory?( download_path )
+      FileUtils.mkdir_p( download_path )
+    end
+
+    revisions.each do |revision|
+      file_path = File.join( download_path, revision.gid) + '.' + format
+      next if File.exists?(file_path) # downloaded before
+
+      download_revision(revision.gid,file_path,format,token)
+    end
+
+  end
+  handle_asynchronously :download_revisions, :queue => 'downloads', :owner => Proc.new {|o| o}
+
+
+  def download_revision(revision,path,format,token)
+    response = DriveFiles.download( export_link(format, revision), token)
+    if response
+      File.open(path, "wb") { |f| f.write( response ) }
+    end
+  end
+  handle_asynchronously :download_revision, :queue => 'downloads', :owner => Proc.new {|o| o}
+  # *** DELAYED TASKS - END
 end

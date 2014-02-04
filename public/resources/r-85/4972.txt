@@ -1,0 +1,62 @@
+﻿Current vision:
+
+
+“Gerard needs a solution for interfacing with data to answer questions and enhance executive decision making.”
+
+
+We believe executives should be able to intuitively and instantly interface with data to help make decisions that steer the future of a company. They shouldn’t have to rely on IT staff and software they don’t understand to access and visualize information that helps them make important decisions. 
+
+
+Our solution will bring an information platform to the boardroom which is custom built for high-level executives by improving upon standard BI packages in several key ways. One, our platform will be tied to the boardroom with an intuitive natural interface. Two, it will represent the state of the company in a form that provides context to discussions or presentations in the boardroom. Three, the 
+
+
+Ideas:
+* Infosculpture: a physical sculpture representation of the current state of the company
+   * Different mechanical aspects will represent key attributes of Siemens (e.g. the height of a mechanical lever may represent the stock price relative to the previous day). 
+   * Only the C-class executives and upper management will be aware of the interpretation, but it can be displayed publicly as a work of art a lobby
+* Pod: a new perspective on the idea of a board meeting
+   * One-person pods are helicopter deployed into remote locations like mountains, lakes, plains, etc. They contain amenities for 48 hours, full connectivity, teleconferencing equipment, and all company tools to access information. Instead of holding a board meeting, participants take an excursion to their favorite destinations to get inspired. They still work to make decisions together, but instead of being stuffed into a boardroom they are in an environment where their mind is clear.
+   * This is not a vacation home, but rather a single room meant to focus the mind to enhance decision making. C-class executives will be able to hike/travel/boat/etc. to a single room stocked to support them for 48 hours. The room will contain everything necessary to the employee for work, comfort, and entertainment purposes. This darkhorse challenges the idea that we need more data or a better representation of the existing data to make better decisions; rather, we may make better decisions with the existing data if we have a different mindset.
+* Immersive experience
+   * Projectors can be displayed on every wall in a boardroom to create a fully immersive experience for upper executives. The room turns into a separate Siemens site that is of particular interest to the topic of discussion.
+   * For example, executives may discuss the state of a particular mining operation in the energy sector, and the room can transform into the mine with access to talk to employees at that location.
+   * One possibility is using full 360deg cameras (all angles at once) at remote sites, that map to the walls of a circular (or hemispherical) room, providing immersion
+* Boardbus/boardyacht/boardjet to project location
+   * Executives can be sent to locations of interest to a particular board meeting to get fully immersed with the location/employees.
+   * During transportation to the off-site location, board members can be prepped and have a meeting on a specially designed bus/yacht/jet.
+   * Compared to the example in the ‘immersive experience’ idea, instead of bringing the remote location to the executives, you bring the executives to the remote location.
+* Lounge room, not “boredroom”
+   * The boardroom generally consists of a table, chairs, screens and full conferencing capabilities. All of those are boring. Why not create an exciting or engaging environment. Executives can share a beer or play darts while discussing business matters.
+   * This room can also create a feeling of home and familiarity to make the executives feel comfortable.
+* Future tech for a collaborative environment
+   * Holograms, 3d capture tools, projection mapping, tangibles. What is the craziest, most innovative interface we can imagine for future executives to access and visualize information to help make decisions? This is fully welcoming sci-fi from movies like Iron Man and Minority Report and taking it to the next level by creating a collaborative rather than single user experience.
+   * One idea is to deck out the ceiling with kinects and projectors such that all objects on the large boardroom table are detected and projected onto. Executives can make hand gestures to interact, move tangibles around, and projectors display content onto everything to create a shared decision making environment like no other.
+* Collective intelligence
+   * A large group of people will generally make a better decision than a panel of experts--this phenomenon is referred to as ‘collective intelligence.’ The executives are concerned with the health and state of a company as well as what action items should be taken. Asking a large group of employees can provide valuable data on what decisions to take and how well the company is performing.
+   * This can be implemented by asking employees to rate the performance of their division or group at the end of the day when they submit their project hours. If there are importan
+* Stack Exchange
+   * Siemens executives want to query for information instantly and receive an answer. The problem is that their IT sucks and even if it didn’t computers can’t provide meaningful answers to complex queries. 
+* Meeting on the beach
+* Meeting with an audience
+
+
+Due next week:
+version 1.0, just do something
+version 2.0, if its working keep going with it
+version 3.0, deliver
+
+
+age assumption of the executive
+siemens proprietary assumption
+employee tv in the boardroom
+how to engage german executives
+tangible business process modeling
+ishi at media lab
+physical interaction with data
+scania boardroom
+daily updates to give a hierarchy of discussion topics
+big data opinions from the employees
+make everything public/open field and transparency
+zappos transparency and horizontal structure
+holacracy at zappos
+talk to adi about his projections
