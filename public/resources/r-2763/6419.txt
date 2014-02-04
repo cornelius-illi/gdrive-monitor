@@ -1,0 +1,179 @@
+﻿7 This is how we roll (Team & Project Management) 
+
+
+This is how we roll! But who are we? The following section shall introduce the global team and give an insight on how we worked together as a team. Therefore we will talk about communication and supporting tools used and present the separate tasks, which had to be solved during the fall semester. At the end of this chapter the team does a reflection of the project. Also each member has a chance to present his or her personal view on the project, teamwork and progress. (CS)
+
+
+
+
+The Design Team (TJ)
+
+
+We are a joint project between the Aalto University in Helsinki, Finland and the Hasso Plattner Institute in Potsdam, Germany and consisting of 4 German and 3 Finnish team members. 
+
+
+[a]
+
+
+Team photo with member names and their background 
+
+
+The Finish Team:
+
+
+Delete this row later!
+Photo
+	Name + Email?
+	Short Description
+	
+
+	Clemens Westrup
+	
+
+	
+
+	Katja Virta
+	
+
+	
+
+	Martti Jerkku
+	
+
+	
+
+The German Team:
+
+
+Delete this row later!
+Photo
+	Name + Email?
+	Short Description
+	
+
+	Christopher Schmidt
+	
+
+	
+
+	Tino Junge
+	Tino the communication representative
+	
+
+	Manuel Hegner 
+	
+
+	
+
+	Rui-Paulo Ruhrländer
+	
+
+	
+
+
+
+Communication & Tools
+
+
+Communication in the team changed over time. Of course within each local team (German/Finnland) the exchange of information happened almost always face-to-face, whereas for the global communication calls using Google hangouts were used.
+At the beginning these hangouts happened twice a week, with one call having a set time on Wednesdays and another one on-demand Fridays or Mondays, depending on the demand. The hangout would include all members of the local teams.
+We quickly realized that having all members participate in the calls created a huge overhead. For example through time spent waiting until all members were present or through discussions that erupted within the teams, were everyone participated. Soon the whole idea to share the key information was lost and we spent a lot of time in the hangouts without a lot of benefit.
+Thus we changed the communication behaviour and introduced one to one hangouts, where a representative of each team presented new insights to the other team. With only 2 persons in a hangout we found out that there was less distraction and the process of passing the key information was shorter and more effective. We also changed to rather unscheduled on-demand calls, still at least once a week, to allow sharing information when it was really needed. Although the communicator has to pass on the information into the local team after the hangout, the exchange of key findings and insights improved and the time spent for it is reduced.
+For the future we will also start changing the responsible person for the one to one hangout, in order to encourage teambuilding.
+(CS)
+
+
+Hangouts & Skype
+
+
+Google hangouts is the main communication channel for global and German local communication. We use it to pass messages asynchronosly via the chat, mostly within a whole group. Therefore we are using a German, Finnish and Global hangout groupchat. Other than chatting hangouts and sometimes skype is used for phone and/or videocalls, depending on the participating members and their personal preference.(CS)
+
+
+Mail
+
+
+Besides the hangouts, which is the main communication channel within the global team, we are also using e-mail. E-mail is a second channel, whose primarily use is the communication with our liason at Bayer. All relevant e-mail correspondence between our team’s representative and the liason is forwarded to all team members using a mailinglist.(CS)
+
+
+
+
+Drive & OwnCloud
+
+
+We found out that using Google drive is very helpful for storing and sharing information and that some of the integrated Google collaboration tools were good as well. Google docs is an example which works well when working on smaller written documents together. We also tried out Google draw in order to create and design diagrams or drawings together, but found the functionality a little bit restricting. We quickly found another solution to support us when creating these diagrams and drawings.
+In order to store larger inputs like videos we use OwnCloud as this is hosted within the HPI and we have more storage available compared to Google drive. OwnCloud also comes in handy for storing more private data, that should not be shared with any third-party other than the HPI or Aalto, since again it is hosted within the HPI.
+
+
+kippt
+
+
+Kippt is a webservice, which stores links that you want to save for later and share with friends. We found that service very useful, as we did a lot of online research to familiarize ourselves with the topic. By storing links to the relevant sources in a shared store everyone was able to read through the important input. As the main kippt list was growing quite fast, it was soon necessary to seperate the links into relevant topics and use several lists instead.
+
+
+
+
+
+
+
+Murally
+
+
+When it comes to collaboration tools Google drawings was mentioned above as an example that did not work that well for our use case. Therefore our team is using Murally now. Murally is a visual collaborative tool, that we use to structure data, like the local teams would do on a whiteboard with post-it’s. Although the physical whiteboard is a quicker way to interact and is used a lot within the local team, we found murally very useful when we worked in a global team on the same board. It offers the possibility that everyone can add ideas, remove or rearrange them. For us the murals created a basis on which both teams could build on top of.
+
+
+
+
+Trello
+
+
+Besides communication and collaboration tools, we also used a task management tool in order to schedule and distribute the work. For that specific task we use Trello, which allows the creation of task-boards, where tasks are arranged in lists. In our case a new board is created for every week and all relevant tasks to achieve a certain goal by the end of the week were added in the “ToDo”-list of the board. As soon as a team member starts to work on a task, he or she assigns him- or herself and moves the task into the “Doing” list. Once finished it will be moved in a third and las  Trello helps us stay focussed and keep an overview of what currently needs to be done, who is working on which task and what has already been achieved. We find that in a global team it is especially important to know who is working on which task, as you cannot communicate all the time with your partner team without creating a huge overhead.
+In order to maintain the Trello 
+In order to keep a certain structure in our work, we set goals for every week 
+
+
+Deliverables (basically just a list linking to actual deliverbles in the document) (tj)
+Personas
+Posters
+Interviews
+Brochure
+        CFP
+CEP
+        Presentation 
+Documentation
+
+
+
+
+Due Date
+	Deliverable
+	Description
+	October 24-29
+	Team Formation
+	Team was formed during the ME310 Kickoff week in Stanford, setting up communitcation infrastructure 
+	November 14
+	Interviews & Persona
+	Benchmarking of the topic with Interviews and creating the first Personas
+	November 21
+	Point of View
+	Setting up the first PoV from the insights we got from the interviews with Bayer employees 
+	December 5
+	CFP/CEP
+	Created Uber-Bracelet, Prezi and Software-Paper-Prototype
+	December 12
+	Fall Presentation 
+	Presented the first commonly created prototype and insights from benchmarking & needfinding
+	December 19
+	Fall Documentation
+	Document the Design process
+	
+
+
+
+Budget
+        Finland
+        Germany (@CS)
+Looking back (better name for how did it go?)
+Project Log        
+        Reflections
+        Individual Reflections
+[a]With or without our DataPharmers team name?

@@ -1,0 +1,6 @@
+﻿Prototypes testing design assumptions
+
+
+Uber-Bracelet
+        Paper Prototype: User interface (German CEP)
+        Storyboard Prototype: Update Procedure (German CFP)

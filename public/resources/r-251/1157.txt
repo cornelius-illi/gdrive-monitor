@@ -1,0 +1,66 @@
+﻿Point of View: 
+Jacqueline needs to be in a comfortable and practical position during “morning preparation” because usually elderly stand in front of the sink everthough it makes them tired.
+
+
+
+
+Prototype: Dark Horse Prototype
+Purpose: provide a seat easily accessible and a sink/mirror/storage spaces that fit for this sitting position and a standing position
+
+
+Description: We created a column shelf with a movable sink and movable device. There are 2 positions : one high when you are standing in front of this furniture. Then when you sit on the toilet seat, or a seat next to the furniture, you can bring the sink to you, bring the mirror to you and adjust the inclination, and bring other storage spaces to you. They rotate around the column (90 deg) to come to you.
+We have to find a system to adjust the height of the furniture depending whether it is in front of the seat or not.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+On this picture, you just see the furniture (one version of it :) ) and when you sit you can bring the shelf, for instance, here she brings the table/drawer under the sink
+Next steps:
+
+
+* Go deeper in that prototype with the storage space ideas, table ideas,... there is a lot more to explore
+* Video recording : go deeper in the understanding of what people do precisely in their bathroom in the morning preparation : what products do they use? When? How long? ...
+* Try with elderly our prototype / how ? 
+   * florence’s grandma this weekend
+* Show the documentation to people to have their reactions (use it as a catalogue…)
+* Do the partnership with Fondation Favier
+* Go deeper in 2 quick wins (magnetic shower, soap dispenser, …)

@@ -1,0 +1,252 @@
+﻿Understanding & Needfinding
+
+Given the challenge from Bayer and the teams relatively little knowledge about the processes in the pharmaceutical industry it was very important to first learn more about the pharmaceutical industry and health care industry in general. 
+
+In order to achieve this goal, a lot of online research as well as, interviews with all different players in the healthcare environment were undertaken. In this chapter we are going to present the key findings from the research phase, including a detailed view on real-life evidence. 
+The Vision of RLE
+Definition
+Real life evidence, often also referred to as real world evidence, is a term used in the healthcare industry to describe the process of proving a drug’s properties, based on data collected outside of controlled clinical trials, after the drug has been approved by the governmental authority and has hit the market.
+History
+The term real life evidence is relatively new, although many of the used procedures have already existed for a long time. The term emerged because of a change in the healthcare industry that demands stronger evidence from the real life compared to 10 to 15 years ago. Looking at the drug’s approval process back then, the pharmaceutical industry, which had developed a new drug, carried out multiple clinical studies in different settings and handed in all the results to the regulating authority. After one to two years and many adjustments demanded by the authority, the drug would be approved, when all requirements were met and benefits shown. During this process the price for the drug was also set. Thereafter the pharmaceutical company would perform studies on the new released drug, for example regarding safety, on a voluntary basis on their own.This process has changed lately in a way, that other stakeholders are now demanding more proof from the pharmaceutical companies.
+Reasons
+Health insurance companies are one of those stakeholders. They are requiring increasingly sophisticated proof of the efficiency of a drug in a real world setting in order to decide on their internal policies regarding, which customer should receive a certain drug. From the pharmaceutical point of view this can be seen as a restriction or as an opportunity to closer work with the insurance companies in order to more efficiently proof drugs superiority over others in a certain targeted patient group.
+The other key stakeholder playing an important role in regards to real life evidence are governmental authorities.For them safety of the drug is a major driver, forcing pharmaceutical companies to continue studying their drugs after market access. In the US for example, in 2007, the laws were changed, allowing the US Food and Drug Administration, short FDA, to demand ongoing post approval studies from the pharmaceutical companies as part of the drug’s approval [ref].
+
+
+One of the key driving factors for the just described change in the process was the technological advancement in the IT-sector and the use of it in the whole health care environment, especially in the field of big data. As each stakeholder, including insurance companies, pharmaceutical industry, hospitals and physicians, researchers and governmental institutes, is capturing an ever growing amount of data on the health care processes. Especially interesting are the patient record data in regards to drug usage and efficiency for the real life evidence, but also any studies on the drugs impact on patients outside the clinical setting, in the real world, are of high relevance.
+Future Challenges
+Real Life Evidence is a relatively young discipline and therefore many challenges still have to be resolved.
+One of the issues of Real Life Evidence is that the cooperation between the stakeholders is still in an early phase and could be stronger. 
+A huge problem for example is the topic of data sharing, as mentioned above every stakeholder is collecting more and more data, but how can we benefit from this data? So far privacy issues in regards to the data are a first barrier restricting the development of a data sharing culture within the whole healthcare environment. Once the legal issues have been resolved it can be focussed on the next barrier, which is the ability to meaningful combine data from a statistical point of view. As soon as these two major barriers have been removed we see a lot of potential in RLE in the field of personalized medicine for example.
+
+
+So in an ideal world closer cooperation between the stakeholder can benefit everyone in the healthcare environment and cut costs by billions a year in the US alone [ref].
+
+Research 
+To understand the actual potential of real life evidence in pharmaceutical research it is vital to observe this topic from all possible perspectives. Like already mentioned, our team did not have a vast knowledge on this field to start with. We were not seeing this as problem, but rather as an opportunity, as we were able to observe this topic from a neutral point of view. As a starting point our design brief describes how real life evidence can be used internally at Bayer, for example in the market access process of a new drug. After researching the topic it fastly came evident that the potential of real life evidence is much more than that. To cover as many aspects to real life evidence as possible our team has done lots of research and benchmarking in various fields. In our research we have so far covered the following topics. First, the healthcare system will be briefly introduced to give an idea about the environment where the project we are working on is set. Secondly, the drug development process will be introduced to give a short description about our liaisons interest in our project. After that we will discuss the topics of data sources and the quantified self-movement. Both of them going into a similar direction, giving us an idea where RLE data comes from and what it can look like.
+
+
+Health Care System
+To understand the environment of medical research it is vital to understand who are the key players and decision makers occurring in the healthcare system. Since our design brief does not require us to work on any specific country, but rather tackle the challenge from a global perspective, we have to start by finding common factors that affect the health care in each region. After general desk research we were able to point out the following stakeholders at the field that we are working:
+
+
+
+
+
+Private healthcare
+Private healthcare refers to every provider that is privately funded, which can include hospitals, clinics, doctors and nurses. The term is more often used in European countries and other economies that also a have public healthcare system. Although these institutions are privately funded they are in almost all the cases regulated by the government. Examples of private healthcare clinics would be Terveystalo in Finland and the Helios Hospital Group in Germany.
+Public health care
+Public health care differs from the public ones by being funded by the government. The fund is very often controlled directly by the government or by an agency of the government for the benefit of the entire country’s population. Social health insurance is usually required from the citizens to be applicable for public health care services. In Finland KELA is the social insurance institution and its directly funded from taxes. 
+Pharmacies
+Pharmacies in our context mean drugstores that are selling prescription and non-prescription medicine and pharmaceuticals. Besides its role as a distributor of drugs to patients, it also acts as an intermediary between medicine manufacturers and the government since provided medicine is in most of the regions regulated by the government. Using sales data from pharmacies to evaluate patients behaviour for example is really difficult, as pharmacies are often small in size and privately owned. This makes it hard to get a useable sample size. 
+
+
+Social (public) health insurance
+Social health insurance are government-sponsored program that serves the purpose to maintain, improve or restore the health of the insured person. Usually this insurance is instituted as a program of health care reforms. Funding mechanisms of the health insurance vary among the countries but usually the primary source is taxes or premiums paid by participants, which are based their income.
+Private health Insurance
+Private health insurances are provided by private insurance companies. These insurances are directly paid by the participants or his/her employer. For benefits like a higher coverage amount and access to private sector health services, the insured person pays a higher price compared to social health insurance. Sometimes the services with public health insurance can be limited to certain practitioners, that the insurance company cooperates with.
+Pharmaceutical industry
+Pharmaceutical industries are the first sector to look at when trying to understand the environment of our project. Pharmaceutical companies, like Bayer, are medicine manufacturers who are developing and producing drugs to be used for licensed medical purposes. Due to the high impact on users (patients) health, these companies are strictly controlled by a variety of laws and regulations set by regional governments. 
+Governmental Authorities
+Like mentioned in the previous paragraphs different governmental authorities have huge impact on the national health care. The department that is focusing on issues and topics concerning general health of citizens is often called a ministry of health or the health department. Health governance differs in each country but some similarities can be found.
+For example, in Finland the main governmental authority controlling the healthcare sector is called the Ministry of Social Affairs and Health (MSAH) and it is responsible for social and health policy planning, supervision and implementation. As part of the Council of State this ministry is preparing new law proposals and advising government on the implementation process of relevant law reforms. MSAH is responsible for the following sectors:
+* health and welfare promotion, disease prevention, and social problems
+* social- and health care services
+* medicine regulations
+* national health protection and radiation hazards
+* regulation of chemicals and genomic technologies
+* income security
+* equal values
+In addition, MSAH has subdivisions (such as the pricing board and the legal affairs committee) among which the certain tasks are divided.  
+In terms of our project it is very important to understand the complexity of governance of healthcare. Like said before these systems vary in different countries but it is necessary to realize which governmental authorities are involved and what roles they are playing. If thinking from the perspective of a medicine manufacturer, governments are often controlling the drug regulations and reimbursement prices that have to be taken into account in production management.
+Healthcare IT
+When speaking about healthcare IT it usually refers to any software solution that is improving healthcare. This includes various companies, IT solutions and an increasing amount of start ups that are developing IT innovations for the use in the medical and healthcare sector. As an example of a HIT player we can mention the Finnish start up, NetMedi, which is developing software to enhance communication between doctors and patients. 
+
+
+The Drug Development Process 
+When starting to develop a new drug it takes approximately 12 years until it is out in the market. This process requires many different steps and lots of clinical research and testing. Only after 10 years the drug is ready to be launched. However, this is not the point where the process ends. After laboratory and clinical tests a new drug has to be also tested in non controlled environment which might take another 2 to 4 years depending on the drug and the required research on efficacy. The process is described in the following image:
+
+
+
+(http://www.bayerpharma.com/en/research-and-development/processes/index.php)
+
+
+This is where the Real Life Evidence comes into the picture in terms of new drug development. Even when the drug has been approved and validated to enter the market the research has to continue to monitor efficacy of the drug in a real world setting. Even if the drug would have proved to have positive performance in clinical trials it might cause unwanted side effects after longer periods of time, when mixed with other drugs used by the patient or when used by a distinctive part of the population. 
+
+
+As an example we can use H1N1 (Pandemrix) vaccination that was developed and released after only 3 years, in order to prevent people getting swine flu contagion. However due to its fast development process and lack of testing it soon proved to cause narcolepsy symptoms in children. Therefore, it was argued to have more negative than positive effects to young users. This kind of situation could have been prevented by better clinical testing. Of course when a pandemic as H1N1 occurs it is impossible to run longer research with more clinical trials, therefore the real life evidence has to work very effective with regards to monitoring the drugs safety after its release.
+Data sources
+One necessary topic to research was data sources, as these build the foundation on which the real life evidence is based. As the healthcare environment differs from country to country, so do the data sources and their distribution between the stakeholders. We try to present the data sources with the highest relevance for real life evidence and their potential owners, taking the US as a reference country.
+From the pharmaceutical perspective the most valuable data sources are their own clinical trials. Of course this is the most accessible data for them, as it is stored in-house. These trials are also following a distinct procedure and answering certain questions, which were defined by the company themselves, prior to the execution of a trial, making them even more useful. One of the shortcomings of the clinical trial data is the limited number of patients. Furthermore these trials are only within an artificial environment that is not comparable to the real world.
+Another very important data source are medical record databases from health care providers, which include mainly hospitals, but also associations like the American cancer society or Kaiser Permanente. The data from the medical record provides a helpful resource for studies as the effect of drugs in a real world setting can be examined. Unfortunately availability of the records is rather scarce, because sharing the data is depending on the countries legal requirements and laws a huge issue, in regards to privacy.
+A third category for data sources, which are currently already used in RLE studies, are claims databases from payers in the healthcare environment. The data provided in these databases allows doing analysis on the economical impact of a certain drug. Allowing pharmaceutical companies, that analyze such databases, to combine results on effectiveness of a drug from clinical trials with results on economical benefits of the product in comparison to current similar products. The economical analysis can go beyond comparing the costs of a new drug to another already existing one, but also include follow-up costs resulting from failure of a drug. This enables to create more complex statements on the financial benefits of a drug.
+A not yet widely considered data source, which yields some potential, is patient preference and behavior data from apps. This includes tracked data on fitness, when doing sports, or on a person’s pulse and blood pressure. All of which goes in the direction of personalized health. In the patient behavior section tracked data on purchase history could also be of interest, for example to retrieve data on their diet from the items purchased in a supermarket. But these fields would need to be further investigated whether or not they really proof to be of value.
+
+
+The Quantified Self Movement 
+A recent trend that came along with the advances in wearable technology is the so called quantified self movement. This term describes the tendency of measuring all possible aspects of your personal condition especially through modern sensor technology. It is driven by the eternal human dream of understanding ones own nature and gaining control over the inevitable death. Well or maybe just by wanting to know how much calories you burned in your last workout. But by bringing these dreams just a little closer for everybody it actually gains increasing popularity in various areas, mainly because the technology becomes affordable and ubiquitous. 
+There are wristbands to track your heartbeat and skin temperature while you’re climbing mountains, tons of apps for your smartphone or smart watch to measure things like your sleep quality or your physical activity and web services to add your medical data records and share opinions on treatments or services with other users to receive helpful analyses and tips. 
+Given the assumption that all this data was accessible in a single place one could imagine the statistical power this would give at hand. But even with a partial image of those health metrics the idea of gaining data of sufficient quality for scientifically accurate evidence about drug efficacy and safety could be a realistic and promising approach for medical research, development and marketing.
+A closely related term is the so-called biohacking that can be described as using the shortened feedback loops about your health condition that are enabled by those quantified self methods to experiment with your behaviour in order to achieve a better performance. As an example one could use a health monitor to measure the sleep quality and various features of your physical condition and try if they can be improved by varying your amount of sleep, the timing of your sleep or maybe by experimenting with your nutrition. 
+There is a strong community spirit in the quantified self and biohacking scene with active groups and meetups in many cities (references: http://quantifiedself.com/, http://quantifiedself.fi/). Also there is a huge scene of startups and tech companies evolving around this topic (http://mobihealthnews.com/26570/9-new-takes-on-self-tracking-on-indiegogo/). 
+Quantified Self & Biohacking Meetup Finland 05.11.2013
+To get a feeling of the hot topics and gain some background knowledge about this field we went to visit the main event of the Finnish scene that took place in the Startup Sauna in early November of 2013 (http://quantifiedself.fi/2013/10/28/quantified-self-biohacking-finland-main-event-5-11/). We listened to a few talks dealing with using new technologies to understand yourself and improve on your own health. It was interesting to see the broad field of backgrounds that people came from and the different takes on biohacking. There is a continuum reached from curing diseases over preventive health practices to optimizing one's physical performance and from experiments with nutrition, sleep and productive working methodologies. We got some contacts and conducted some spontaneous interviews with a few early adopters and startup representatives. That gave us a good idea on what is going on in the finnish healthcare startup scene. 
+Benchmarking mobile and web services
+The easiest way to get started with a bit of awareness about what’s going on with your own body is using web services to log certain aspects yourself. If you are equipped with a smartphone or maybe even a “smart watch” or other “smart” wearables you already have a great start in terms of automatic measurements which is of course the ultimate goal, giving rise to the power of self-quantification. The major mobile app stores are filled with sleep tracking apps using accelerometers, running apps using your GPS and so forth. 
+In addition, we figured out that some private clinics have already started to gather patient data to electronic medical record database in case the patient allows that. This way the individual patient can access his/her own medical records and also allow access for external parties if wanted. This enables for example already done clinical test to be shared between different hospitals to avoid overlapping work.
+As an example the Finnish private clinic Terveystalo offers this option for its patients. One of our team member allowed Terveystalo to collect his data to an electronic medical report form. What surprised us was that Terveystalo was able to track all the clinic visit, prescriptions and diagnoses from last 10 years. 
+Prescription report from Terveystalo - Omaterveys website
+According to our research patients have never before had such an easy access to their own medical records. Of course the options are still pretty limited but from our perspective those existing systems have to be further inspected due to the vast opportunities in medical research.
+Advanced tools to quantify your life
+If you want to go even further there are a plenty of tools specifically designed on monitoring certain aspects of your life. Since this field is so quickly evolving it is impossible to keep track of all the devices and services out there but we will give an overview of the different categories of tools and introduce some popular and interesting examples. 
+The first thing that comes to mind thinking about body measurements are sports trackers and naturally by far the largest proportion of products are designed for this very intent. Measuring your physical performance isn’t necessarily a new thing, speedometers have been around for years. But with the new possibilities of accelerometers, gps-chips, optical heart rate monitors and other gadgets being integrated into tiny devices these tools reach a new level. A broad class of these devices are sports watches and wristbands, one popular example being the Nike Fuelband (see image, http://en.wikipedia.org/wiki/File:Nike_FuelBand.jpg, by Peter Parkes). These bring the possibilities to keep track of different metrics like steps taken, distance travelled, calories burned, hours slept, sleeping quality and more (See appendix for a list of devices). 
+Beyond that there is another take on self-tracking using tools that are specifically designed for measuring health and medical condition. The motivation on using these can differ. It goes from people using it because they are required to track their health because they have a specific disease like diabetes mellitus and need to measure their blood sugar, or those who are just interested in improving on their health, analogous to the users of sports trackers improving on their physical performance. Devices for the former group are obviously the most interesting one from a medical perspective since those are designed exactly for the purpose of measuring specific health features. A finnish company called Mendor that was also present at the Quantified Self Meetup Event Finland offers its customers a device to measure their glucose levels and this information is then being uploaded so the users can review their performance and be reminded of their glucose intake. The potential of information that could be gained by analyzing blood samples is huge and if this data would be available for a pharma company it could offer great material for medicine studies. 
+Finding representative users / Personas 
+As a part of a product design process we developed potential user personas for our final product. A persona is a fictional character with specified features such as attitude, behaviour, hobbies and habits that the potential user of the designed product might have. These personas are good characters to reflect when thinking about user experience and design aims.
+Developing user personas for our project seemed to be a much harder task than expected. According to our design brief anyone using or working in the healthcare sector should be benefitting from our final product. Therefore, we needed to look at a rougher picture of the healthcare system than the one we had generated before.
+Healthcare simplified
+
+
+In the beginning we thought that there would be only two directions for a persona. Either it is an employee of Bayer involved in the RLE project (medicine manufacturer) or any persona who has used some medicine during his/her lifetime  (patient). Both of the options seemed to be worth to further inspect and built our upcoming prototypes around them.
+1st persona: The Biohacker, Niko Mylläri
+
+his persona was developed to be a extreme user in terms of our project. Niko Mylläri is a biohacker that quantifies himself as part of the daily routine including nutritional, medical and physical health by using different kinds of smartphone and computer applications. He does that to store and analyze his personal data to stay healthier and prevent illnesses. A poster defining the character in more detail including a timeline of his typical day is included in the appendix. This persona was made in regards to conversations with real life biohackers at the Biohacking event that was attended.
+
+
+2nd persona: Philip Berg GMAC team leader
+
+
+
+Philip Berg was developed based on interviews that we had done with Bayer employees. Global market access seemed to be a very interesting and an understandable department where the real world evidence is highly necessary. In addition Xarelto’s (heart stroke prevention drug) market entry process had been discussed in many of the interviews. Regarding to this knowledge that we had we developed Philip to be an GMAC team leader whose task it is to achieve market access for Xarelto in the French market.
+
+
+
+
+
+
+Interviews (Procedure, Summary and Results) 
+why who how?
+Interviews are a great way to get new perspectives and insight about researched topics. Like it has been many times mentioned in ME310 lectures: the real magic happens out in the world. According to this we in our design team also want to believe that the best way to learn and develop the project to the direction of successful project is to speak with people and share opinions around our topic. 
+As a part of our research we carried out a number of interviews with experts in the field that we are currently working with our project but also with people with different expertise that we found interesting or in other way related to our topic.
+In this section conducted interviews will be summarized briefly. As a interview method we wanted to use open group discussion where we used interview guides (developed by us) to give direction for the discussion if necessary. Group discussion was selected since its usually the most comfortable way to communicate with interviewees and they can focus on the topics that they most preferably discuss about. The interviews were done to widen our knowledge and vision around the topic of real life evidence and health care sector. Many interviews were carried out also among Bayer employees since they know the key problem point in company’s internal data sharing procedures. 
+Each interview brief includes short introduction of the person being interviewed, reasoning behind the interview and the key findings.
+Katri Aaltonen 
+TItle: Researcher at Finnish Social Insurance Agency (Kela) 
+Date: 12.11.2013
+Reasoning:  In her work she does research and statistical analysis from medical and patient data owned by the government. In addition she has a professional knowledge about governmental databases and how those databases are created, shared and used.
+Key Insights  
+* Tools for handling and visualizing data are very old school (SAS based)
+* Finnish government has great amount of healthcare date but it is not easily accessible for  external parties 
+* Medical (approval) process is very complex on all levels and varies by country and continent. 
+* Many governmental bodies are working closely with Kela and using shared their data sources.
+Annabelle Shakespeare 
+Title: Head HEOR of Arterial Indications, GMAC, Xarelto
+Date: 27.11.2013
+Reasoning: Xarelto is one of the pilot products in Bayers RLE project. Therefore she has good perspective on Bayers current RLE activities. According to this she is also one of the potential users of our final product.
+Key Insights 
+* Bayer is lacking some data sources that could be useful in GMAC processes
+* Data gathered outside the clinical trials is much broader 
+* Existing RLE data is messy
+* RLE data is not complete since its from non controlled environment 
+* Patient involvement in data generation would be potential for Bayers RLE project
+Thomas Evers
+Title: Global Market Access / HEOR Project Manager at Bayer HealthCare
+Date: 27.11.2013
+Reasoning: He is one of the project members in Bayer RLE project. Works in the GMAC team and has a good perspective how RLE is and could be used at their department. 
+Key Insights 
+* Every department gather RLE data in different ways at Bayer
+* Self gathered data is difficult to use in medical research if its not validated 
+* Normally RLE data is gathered by physicians and doctors
+Sonja Linso
+Title: Communications Coordinator, Insurance Company Relations 
+Date: 13.11.2013
+Reasoning: She knows process of forwarding patient data from private hospital for insurance companies. Therefore, she knows what is essential data for both of the parties. In addition she can describe what kind reporting is required from the doctors by insurance companies and how does the information flow work. 
+Key Insights
+* Biggest workload for private clinics are different employee insurances
+* Cooperating insurance companies have full access to patient data that is reported to DocotorEx data system
+* Patient data is used only for internal studies and research
+* Non cooperating insurance companies are receiving requested patient records by fax or email
+Juho Rousu
+Title: Associate professor, Department of Information and Computer Science at Aalto University
+Date: 20.11.2013
+Reasoning: Has a great expertise in data mining and integrating data sources. Interview was done to find out more about sources of open medical data. In addition, we were looking for advice for other related topics to be researched.
+Key Insights 
+* Data gathering processes from PubMed and PubChem publication libraries might be worth for further look
+* We are able to contact Med. Prof. Sampsa Hautaniemi for interview about data anonymization if using Rousu as a reference
+* Integrating data from social media and QS sources with medical records is difficult but might give new insights for medical research
+* Helsinki University Medical Research Department should be contacted about their patient data opening project.
+Jouni Tuomisto
+Title: Chief Researcher at THL (Finnish National Institute of Health and Welfare)
+Date: 03.12.2013
+Reasoning: Works with modeling and reviewing national health data and is developing ways to open these research data silos for public purposes. According to that he is most likely to have opinions to anonymization and privacy issues. In addition, topic of opening data silos is new and interesting area for us to hear about.
+Key Insights 
+* Organizations are sitting on their data and accessing it in a ways that they are used to
+* Bureaucracy in data source access processes requires lots of money which is consuming lots of research money and time
+* Kai Kuikkaniemi (HIIT) would be good person to contact to learn more about using self quantified data for research purposes. 
+Todd Williamson
+Title:  Vice President, Health Economics & Outcomes Reimbursement, Bayer HealthCare
+Date: 16.12.2013
+Reasoning:  Has been developing RLE systems in the USA.  Therefore, he has a good perspective on already existing systems and what could be improved
+Key Insights 
+* Measuring economic value is one of the topics where RLE is already used at Bayer
+* Retrospective database analysis can be achieved within a calendar year in at Bayer USA (6 - 8 month)
+* Creation of value stories is the main concept to get refunded from payers.
+Ariane Tschirschnitz 
+Title: Pharmacology student 
+Date: 21.11.2013
+Reasoning: She worked at as an intern at Ratiopharm entering notifications on drugs side effects in their system.
+Key Insights 
+* Pharmaceutical companies in Germany need to have an “Stufenplanbeauftragter”, who leads the decision process in phase IV of a drug in the case a side effect occurs
+* Notifications on side effects from the same patient are sent to the pharmaceutical company multiple times, as they are sent from different organisations 
+
+
+Saskia Götze
+Title: Nurse working with COPD and coma patients 
+Date: 12.11.2013
+Reasoning: This interview was conducted in order to learn more about the health care system and how nurses are getting information on drugs and using them on patients.  
+Key Insights
+* Information on drugs from red list, pharmacy or included leaflet
+* Doctor decides on drugs for patient and is the person informed, when side effect occurs
+Franziska Jahn
+Title: Nurse working at intensive care unit
+Date: 13.11.2013
+Reasoning: This interview was also conducted in order to learn more about the health care system and how nurses are getting information on drugs and using them on patients.  
+Key Insights 
+* She gets her information on drugs from the Medi-Pocket (smaller red list)
+* Combination of drugs can cause unwanted side-effects or even eliminate their intended effects
+* Drugs may have multiple names
+Dr. med Erdmann
+Title: Ear-Nose-Throat Doctor
+Date: 12.11.2013
+Reasoning: This interview was conducted in order to get a deeper understanding of the health care system, especially how doctors are getting information on drugs and how they decide on the usage of drugs for their patients, as well as the interaction with pharmaceutical companies.
+Key Insights
+* Information on drugs can be found in the red list, yellow list or from the software IFAP-index
+* Important changes on drugs are distributed via the red hand
+* Contacts pharmaceutical companies when side effects of drugs occur
+Univ.-Prof.Dr.rer.nat. Ralf-Dieter Hilgers
+Title: Director of the medical statistics department at RWTH Aachen University
+Date:  25.11.2013
+Reasoning: We conducted this interview to get an opinion of academia on RLE, especially from the point of view of medical statistics. 
+Key Insights 
+* Very good and powerful statistical analyses tools are available (mainly SAS) these could also be used for RLE; do not reinvent the wheel; a new system should implement good interfaces
+* Identify data sources with high quality might be essential for generating valid evidence
+* “Anwendungsbeobachtungen”  (AWB) conducted by pharma might be used as one good source
+Brian Cuffel
+Title: Vice president HEOR, Bayer Healthcare, GMACS
+Date: 04.12.2013
+Reasoning: Brian has already 10 years of RLE experience mainly at the Real World Center of Excellence at Pfizer. 
+Key Insights 
+* RLE does not have the same quality as randomized controlled studies
+* Payers data is sometimes even better than the data from pharma
+* Other industries big data approaches looked at while working at Pfizer were not promising
+* Combining data from different sources questionable, nice to have, but not sure if it will work
+* Count of publications of the database is used in as a measure for quality
+Sampsa Hautaniemi
+Title: Professor of Systems Biology
+Date: 13.12.2013
+Reasoning: Interview about data anonymization and integration processes. He has a vast knowledge about data mining for medical research and what is going on at that sector at the moment. In addition, he knows medical treatment processes very well and how different kinds of data sources are / can be used in those.
+Key Insights 
+* Helsinki Haartman hospital has over 200 databases
+* Treatment procedures of certain illnesses vary within the country and each treatment / illness have their own conference on optimizing those processes nationwide 
+* People lie about medicine intake -> health records can be wrong
+* Measuring quality of life is hard but would be essential

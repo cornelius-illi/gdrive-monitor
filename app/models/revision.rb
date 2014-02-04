@@ -13,7 +13,18 @@ class Revision < ActiveRecord::Base
     result = percental_change.blank? ? 0.0 : percental_change
     unless merged.nil?
       merged.each do |revision|
-        result += revision.percental_change
+        result += revision.percental_change.blank? ? 0.0 : revision.percental_change
+      end
+    end
+    return result
+  end
+
+  def total_percental_add_abs
+    result = percental_add.blank? ? 0.0 : percental_add.abs
+    unless merged.nil?
+      merged.each do |revision|
+        # additive is using absolute value in this case
+        result += revision.percental_add.abs
       end
     end
     return result
@@ -24,7 +35,7 @@ class Revision < ActiveRecord::Base
     unless merged.nil?
       merged.each do |revision|
         # additive is using absolute value in this case
-        result += revision.percental_add.abs
+        result += revision.percental_add.blank? ? 0.0 : revision.percental_add
       end
     end
     return result
@@ -54,7 +65,8 @@ class Revision < ActiveRecord::Base
   end
 
   def set_is_weak
-    is_weak = (total_percental_change < (weak_threshold)) ? (total_percental_add < (weak_threshold)) : false
+    is_weak = (total_percental_change < (weak_threshold)) ? (total_percental_add_abs < (weak_threshold)) : false
+    is_weak = false if previous().nil?
     update_attribute(:is_weak, is_weak)
   end
 
@@ -65,25 +77,23 @@ class Revision < ActiveRecord::Base
   end
 
   def merge_if_weak
+    p "!!! MERGE IF WEAK #{gid}"
     previous = previous()
     # return, if there is no previous revision or it has already been set (due to recursion)
-    return if previous.blank? || !revision_id.blank?
+    return if previous.blank? || !previous.revision_id.blank?
 
     # same modifier + max. X minutes in between revision
     if (permission_id.eql? previous.permission_id) &&
         ((modified_date - MERGE_TIME_THRESHOLD) <= previous.modified_date)
       # previous will be merged with me. latest revision stays
-      master_id = revision_id.blank? ? id : revision_id
-      previous.update_attribute(:revision_id, master_id)
+      master = revision_id.blank? ? id : revision_id
+      previous.update_attribute(:revision_id, master)
     end
 
-    # start recursion
     previous.merge_if_weak
-
-    # end recursion
-    set_is_weak()
   end
 
+  # DELAYED - START
   def calculate_diff(again=false)
     # pre-conditions: has to be a google-file-type and local resource has to be available
     return unless (resource.is_google_filetype? || has_local_resource?)
@@ -120,6 +130,8 @@ class Revision < ActiveRecord::Base
         :percental_add => ((chars.length-chars_prev.length)/chars_prev.length.to_f)
     )
   end
+  handle_asynchronously :calculate_diff, :queue => 'diffs', :owner => Proc.new {|o| o}
+  # DELAYED - END
 
   private
   def calculate_changes(seq1,seq2)

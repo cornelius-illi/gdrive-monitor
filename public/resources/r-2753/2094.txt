@@ -1,0 +1,51 @@
+﻿Vision and Next Steps 
+
+The last months were a deep dive into the problem space. We conducted a lot of research, benchmarking and needfinding. We gained a lot of insights and already worked through some ideas. 
+Defining the vision 
+For our net steps we will build on top of some of the aforementioned insights. We will test our prototypes further and try to incorporate all the received feedback into them in the hope that the evolving prototypes really fit the needs of the Bayer employees. In this way we will try to find the best process to share knowledge about data sources between all RLE employees. We will also try to find the best user interface for sch a collection of knowledge about data sources. An easy way to find and compare them, as well as an easy way to actually get the data from the source. We will improve and expand our prototypes further and further until they are perfect.
+New directions 
+On the other hand we will try to work in different directions than the one before. Next to trying to improve or create software, we will look into improving the communication of Bayer employees working with RLE and we will try to make the process of sharing knowledge a more rewarding experience. Both are essential to the overall RLE experience as we have learned
+
+Next Steps to look into
+* can a small/wearable device do a meaningful analysis? 
+* e.g. can blood samples be analyzed in a small device or do you need a lab to get accurate results?
+* same applies for a “toilet tracker” can it be analyzed to produce meaningful medical results?
+* what exactly is done in clinical trials to get data, can we do it? do they take blood samples, would urine samples be enough?
+* Prototype Scenario as Uber bracelet follow-up: Medical scenario, have a tracker that shares your information with your doctor and a medical company and assist you on your treatment and gives feedback on your process of recovery from an illness (or on your preventive health care) => the app could be your “doctor” and give you analysis results and tell you how you’re doing (or if you should visit a real doctor)
+
+
+
+
+Project Timeline for the spring 2014
+
+
+Date
+	Deliverable
+	Description
+	16.1.2014
+	Dark Horse Prototype
+	Prototype(s) with maximum craziness and reward potential 
+	23.1.2014
+	Dark Horse Prototype 2.0
+	Iteration of the first DHP
+	6.2.2014
+	Funky Prototype
+	Prototype a multifunctional system
+	27.2.2014
+	Functional System Prototype
+	Prototype a multifunctional system
+	6.3.2014
+	Functional System Prototype 2.0
+	Iteration of the first FP
+	13.3.2014
+	Winter Presentation
+	Presentation of the Winter term session 
+	no date yet
+	Winter Documentation
+	Documentation of the Winter term session 
+	no date yet
+	Travel to Germany
+	Work together in the whole team in Potsdam and enjoying Beer
+	no date yet
+	Travel to Finland
+	Work together in the whole team in Helsinki and enjoying Sauna

@@ -86,8 +86,10 @@ class Resource < ActiveRecord::Base
   end
 
   def merge_weak_revisions
-    revisions.each do |revision|
-      revision.merge_if_weak
+    revisions.first.merge_if_weak
+
+    revisions.each do |r|
+      r.set_is_weak()
     end
   end
 

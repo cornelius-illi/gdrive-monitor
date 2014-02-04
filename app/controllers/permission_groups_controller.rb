@@ -15,12 +15,12 @@ class PermissionGroupsController < ApplicationController
   # GET /permission_groups/new
   def new
     @monitored_resource = MonitoredResource
-      .where(:id => params[:id])
+      .where(:id => params[:monitored_resource_id])
       .where(:user_id => current_user.id)
       .first()
 
-    unless @monitored_resource
-      redirect_to monitored_resources_path, :warning => "Monitored Resource with ID #{params[:id]} could not be found!"
+    if @monitored_resource.nil?
+      redirect_to monitored_resources_path, :notice => "Monitored Resource with ID #{params[:id]} could not be found!"
     end
 
     @permission_group = PermissionGroup.new
@@ -47,7 +47,7 @@ class PermissionGroupsController < ApplicationController
 
     respond_to do |format|
       if @permission_group.save
-        format.html { redirect_to mr_permission_groups_path(@monitored_resource), notice: "Permission group #{@permission_group.name} was successfully created." }
+        format.html { redirect_to monitored_resource_permission_groups_path(@monitored_resource), notice: "Permission group #{@permission_group.name} was successfully created." }
       else
         format.html { render action: 'new' }
       end

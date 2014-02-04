@@ -1,0 +1,232 @@
+﻿7 This is how we roll (Team & Project Management) 
+
+
+The following section shall give an insight on how we worked together as a team. Therefore we will talk about communication and supporting tools used and present the separate tasks, which had to be solved during the fall semester. At the end of this chapter each team member has a chance to present his or her personal view on the project, teamwork and progress. (CS)
+
+
+Teaching Team - Our Mentors
+
+
+We as a team already had the chance to introduce ourselves. But as we are learning a new process to solve a given challenge, we could not do that without further help. The teaching teams in Finland and Germany provide us with all the help needed to understand and apply the design thinking process on our challenge. 
+In Finnish team is coached by Markku Koskela (markku.koskela@aalto.fi), Maria Solovjew (maria.solovjew@aalto.fi), Goran Bjelajac (goran.bjelajac@aalto.fi), Maud Bocquillod (maud.bocquillod@aalto.fi) and is supervised by Dr. Jari Juhanko (jari.juhanko@aalto.fi).
+The coach for the German team is Kai-Adrian Rollmann (kai-adiran.rollmann@student.hpi.uni-potsdam.de) a former ME310 student, who has worked last year in a project together with team from Finland and Japan. With his knowledge of the process and his own experience he is very resourceful and knows exactly how to he can support the team best. Being really enthusiastic about ME310 he is a perfect motivator for the team. Besides our coach there are also Franziska Häger (franziksa.haeger@hpi.uni-potsdam.de), Thomas Kowark (thomas.kowark@hpi.uni-potsdam.de) and Dr. Matthias Uflacker (matthias.uflacker@hpi.uni-potsdam.de), who are the supervisors of the ME310 course on the German side.
+
+
+
+
+Communication & Tools
+
+
+Communication in the team changed over time. Of course within each local team (German/Finland) the exchange of information happened almost always face-to-face, whereas for the global communication calls using Google hangouts were used.
+At the beginning these hangouts happened twice a week, with one call having a set time on Wednesdays and another one on-demand Fridays or Mondays, depending on the demand. The hangout would include all members of the local teams.
+We quickly realized that having all members participate in the calls created a huge overhead. For example through time spent waiting until all members were present or through discussions that erupted within the teams, were everyone participated. Soon the whole idea to share the key information was lost and we spent a lot of time in the hangouts without a lot of benefit.
+Thus we changed the communication behavior and introduced one to one hangouts, where a representative of each team presented new insights to the other team. With only 2 persons in a hangout we found out that there was less distraction and the process of passing the key information was shorter and more effective. We also changed to rather unscheduled on-demand calls, still at least once a week, to allow sharing information when it was really needed. Although the communicator has to pass on the information into the local team after the hangout, the exchange of key findings and insights improved and the time spent for it is reduced.
+For the future we will also start changing the responsible person for the one to one hangout, in order to encourage teambuilding.
+(CS)
+
+
+
+
+Hangouts & Skype
+
+
+
+Google hangout is the main communication channel for global and German local communication. We use it to pass messages asynchronously via the chat, mostly within a whole group. Therefore we are using a German, Finnish and Global hangout group chat. Other than chatting hangouts and sometimes Skype is used for phone and/or video calls, depending on the participating members and their personal preference. Google Hangouts was chosen at the beginning, because it allows having video calls with multiple persons, without purchasing any additional features. Video calling helps a lot to stay focused and emphasizes the teamwork. It is also from advantage to see possible reactions and feelings from people on the other side, helping to better understand their opinions. (CS)
+
+
+
+
+Mail
+
+
+
+Besides the hangout, which is the main communication channel within the global team, we are also using e-mail. E-mail is a second channel; whose primarily use is the communication with our liaison at Bayer. All relevant e-mail correspondence between our team’s representative and the liaison is forwarded to all team members using a mailing list. (CS)
+
+
+
+
+Drive & OwnCloud
+
+
+
+We found out that using Google drive is very helpful for storing and sharing information and that some of the integrated Google collaboration tools were good as well. Google document is an example, which works well when working on smaller written documents together. We also tried out Google draw in order to create and design diagrams or drawings together, but found the functionality a little bit restricting. We quickly found another solution to support us when creating these diagrams and drawings.
+In order to store larger inputs like videos we use OwnCloud as this is hosted within the HPI and we have more storage available compared to Google drive. OwnCloud also comes in handy for storing more private data that should not be shared with any third-party other than the HPI or Aalto, since again it is hosted within the HPI. (CS)
+
+
+
+
+kippt
+
+
+
+Kippt is a web service, which stores links that you want to save for later and share with friends. We found that service very useful, as we did a lot of online research to familiarize ourselves with the topic. By storing links to the relevant sources in a shared store everyone was able to read through the important input. As the main kippt list was growing quite fast, it was soon necessary to separate the links into relevant topics and use several lists instead. (CS)
+
+
+
+
+
+Murally
+
+
+
+When it comes to collaboration tools Google drawings was mentioned above as an example that did not work that well for our use case. Therefore our team is using Murally now. Murally is a visual collaborative tool that we use to structure data, like the local teams would do on a whiteboard with post-its. Although the physical whiteboard is a quicker way to interact and is used a lot within the local team, we found Murally very useful when we worked in a global team on the same board. It offers the possibility that everyone can add ideas, remove or rearrange them. For us the murals created a basis on which both teams could build on top of. (CS)
+
+
+
+
+Trello
+
+
+
+Besides communication and collaboration tools, we also used a task management tool in order to schedule and distribute the work. For that specific task we use Trello, which allows the creation of task-boards, where tasks are arranged in lists. In our case a new board is created for every week and all relevant tasks to achieve a certain goal by the end of the week were added in the “ToDo”-list of the board. As soon as a team member starts to work on a task, he or she assigns it to him- or herself and moves the task into the “Doing” list. Once finished it will be moved in a third and last list “Done” of the board.
+By keeping such a strict structure and process, we are able to stay very focused on the goal for the week. It also enables us to keep track of who is working on which task right now in order to support them or add valuable ideas to the right persons in the team. Also it avoids doing work twice. We also find it helpful to have one team member responsible to maintain the Trello boards and keep an overview on the progress. (CS)
+
+
+
+
+Axure RP Pro
+
+
+
+Axure RP Pro is a wireframing and rapid prototyping tool. It compiles the created prototypes to HTML and Javascript files so that they can be made easily accessible via the internet. Its feature the create dynamic prototypes using linked prototype pages makes it the ideal software to create a virtual representation of paper prototypes. We used this tool to create the German CEP that is presented in chapter 5. (MH)
+
+
+Prezi
+
+
+
+Prezi is an online service for creating presentations. With Prezi presentations are more like storyboards, as you can jump around between the slides, include bigger pictures, through zooming out or more detailed once with zooming into one slide or a bunch of them. It is also nice to use in a team, as one can work in collaboratively fashion on the same presentation with everyone adding and editing the slides at the same time. The German team used Prezi because of the just mentioned features for two different things. The first and most obvious was to collaboratively work on presentations we had to prepare during the quarter. The second use was to create a storyboard for our CFP, using the above-described guiding features.  (CS)
+
+
+
+
+Reflections
+ 
+The following reflections serve as a summary on the communication & tool section. We want to consider not every tool on itself, with its pro’s and con’s, but also look at the big picture, when many different tools are used within the team. In some of the distinct tool sections we already provided reasons for the choice of tools and we do not want to elaborate on that any further. For us it is very important that we only use a single tool for a distinct task. Meaning, for example that for storing important links, we only use kippt and don’t rely on a Google document with links in it as well. This helps us to avoid getting out of synchronization and starting to do work twice. Fortunately we were able to agree on the most important tools right at the beginning of the project. These were Google Hangouts for video calls and chat, Google Drive for storing smaller documents, Google Documents, OwnCloud for larger or private documents and Trello for task management. The other tools were added, as we realized that the functionality of the tools chosen was not sufficient or not easy to handle for certain tasks.
+This enabled us to improve our performance for certain tasks. For example the creation of a knowledge map regarding the market access process or the first research interviews, as we did these in Murally, which allowed everyone to add what they found out, using virtual post-it’s.
+But with a growing number of tools, it started to become increasingly difficult to keep track of everything and the importance of a well-maintained task management system grew. We had already started using Trello, but every team members was responsible to track their own work. That included the whole Trello process described earlier, from adding to moving the task to finish at the end. Unfortunately this did not work well and we lost track of who is really working on which task at the moment, especially in the global team. Therefore we introduced a responsible person for Trello in each local team. This person has to have an overview of the current tasks and needs to keep track of these in Trello. This allows everyone to have a better picture of what is being worked on during the week and how we progressed.
+Overall we are pretty satisfied with the support we get from the tools used and with the communication flow within the local, as well as the global team. (CS)
+
+
+
+
+Deliverables (basically just a list linking to actual deliverbles in the document) (tj)
+Posters  & Brochure missing 
+
+
+
+
+
+
+Due Date
+	Deliverable
+	Description
+	October 24-29
+	Team Formation
+	Team was formed during the ME310 Kickoff week in Stanford, setting up communitcation infrastructure 
+	November 14
+	Interviews & Persona
+	Benchmarking of the topic with Interviews and creating the first Personas
+	November 21
+	Point of View
+	Setting up the first PoV from the insights we got from the interviews with Bayer employees 
+	December 5
+	CFP/CEP
+	Created Uber-Bracelet, Prezi and Software-Paper-Prototype
+	December 12
+	Fall Presentation 
+	Presented the first commonly created prototype and insights from benchmarking & needfinding
+	December 19
+	Fall Documentation
+	Document the Design process
+	
+
+
+
+Project Budget
+Finland
+The finnish subteam had a budget of 6000€ but didn’t spend a single cent yet.
+
+
+Germany
+
+
+Period
+	Purchase Description
+	Purchased From
+	Purpose
+	Cost
+	Budget remaining
+	
+
+	
+
+	
+
+	
+
+	
+
+	5000 €
+	Fall
+	Fall presentation incentives
+	Edeka
+	Fall presentation
+	5,56 €
+	4994,44 €
+	
+
+
+
+Project Log        
+This is the graph for this project log
+
+
+
+
+Individual Reflections
+
+
+In the following part every team member has the chance to present their personal view on the project, in regards to the challenge, the team, their experience, their feelings and the ME310 course in general. 
+
+
+Christopher
+
+
+I really like the topic we are working on. The health care industry is an interesting field especially from an IT perspective, since their a lot of opportunities where IT can improve existing processes, in order to support doctors, patients treatment or the pharmaceutical industry. As big data is currently a hot topic, I really like our challenge that puts big data in combination with the pharmaceutical industry and I believe that there is a lot of potential in it. The challenge is also not that easy transferable to the design thinking process, which forces us to think about both harder and work harder, hopefully benefiting in a way better understanding of both. For the phases we went through so far it has worked and I believe to have gathered a better understanding of the design thinking process.
+Besides that I really enjoyed the ME310 course so far, because I am working in a very good team and it is a great experience to cooperate with a real business partner. Adding to the charm of ME310 for me is the distribution of the team with students from two universities in different countries working together. I have enjoyed it so far and I am looking forward to work even closer together, once we have the chance to visit our partner team. 
+
+
+The last point is also my strongest wish for the next terms, to work closer together and to focus on one idea. As we have been researching in different directions so far, which was good for the exploration phase, but should change, as soon as we have a very good lead to follow. 
+
+
+Clemens
+As the confusion rises over us like a dark shadow on the horizon, slowly approaching and closing in on us, I actually become more and more excited about our project. Understanding is all about asking the right questions and when you start familiarizing yourself with a new topic you will most probably not start off with the most important ends. But you end up with new hints and directions and you ask more questions. And it feels good to realize from time to time that even though there are lots of dead ends you start to get a feeling for asking better questions that again bring you a little bit further into grasping the whole problem space and seeing it’s possible opportunities. 
+Due to the complex nature that our prohect
+
+
+Katja
+
+
+Manuel
+
+
+I really like the task we got. It was something that could really change something in Bayer. Something that would really be realized by Bayer. The problem turned out to be a lot more complicated than I though at first. Still I think we worked very well so far. We had a lot of good ideas and learned alot. I ecpecially liked the teamwork in the German team. We worked well together and understood each other while still keeping each other on course. I think we were as successful in using Design Thinking as was possible given the hard task. We were shown that designing is not always that easy. There can be a lot of problems, particular if you work in a very difficult subject like the pharmaceutical process.
+Despite the difficult start I am confident that we will make a lot of progress in the next month. I feel like we have overcome most of the special obstacles of our challenge and are on the verge of working really efficient.
+
+
+Martti
+
+
+Paulo
+I think our task this year is a very challenging one and therefore it is interesting to work on it. It is sometimes difficult to combine the product oriented design thinking approach with the more concept oriented task. Our topic is not something we are confronted with every day, so we needed to spend a lot of work into really understanding the topic. Additionally it is quite hard for us because even inside the Bayer company the RLE topic is quite new which makes it harder to find users and elaborate the right insights. I am really grateful for the trust Bayer shows to us, especially because it is such a new and important topic for them. 
+
+
+
+
+
+
+Tino
+
+
+So far I’m pretty happy with the progress we made so far. I still remember our first weeks where we had some issues with getting to know the whole field especially about RLE in Bayer and finding the right user. But with the input we got and some really interesting and meaningful interviews with Bayer employees we are now hopefully heading now or soon in the right direction. We still have to evaluate our first ideas with more users, but as soon as we get more valuabe feedback it will hopefully gives us a better feeling and understanding what are the real needs of our user.

@@ -48,7 +48,7 @@
       <% @resource.revisions.exclude_merged.each do |revision| %>
           <tr class="<%= revision.is_weak? ? 'weak' : '' %> <%= revision.merged.blank? ? '' : 'strong' %>">
             <td><%= revision.gid %>
-              <% if !revision.merged.blank? %><span class="fi-page-multiple"></span><% end %>
+              <% if !revision.merged.blank? %><span class="fi-page-multiple"></span> (<%= revision.merged.length+1  %>)<% end %>
             </td>
             <td><%= revision.modified_date.to_s(:db) %></td>
             <td><%= revision.permission.email_address.blank? ? revision.permission.name : revision.permission.email_address %></td>
