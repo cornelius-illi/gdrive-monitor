@@ -1,0 +1,69 @@
+﻿Web Case Profile Structure
+
+
+Building blocks and properties for the web case construction
+Differentiate between: Company (program level), project
+
+
+
+
+Background
+
+
+* The situation before DT (e.g. industry or market challenges, recent trends and developments)
+* Description of the particular “wicked” problem for the case organization (the “original problem”)
+* Actors involved, obstacle and hurdles
+* Other problem-solving approaches and initiatives which already failed
+* ...
+
+
+Challenge
+
+
+* Description of the “reframed” and explored problem space
+* * ...
+
+
+Approach / Insight
+
+
+* The iterated solution that worked best in field test (the)
+* ...
+
+
+Implementation
+
+
+* ...
+
+
+
+
+Impact
+
+
+* ...
+
+
+________________
+
+
+
+
+General Background Info and Data Sources for Triangulation
+
+
+* The “DT-Setup” (Organizational Environment) → before vs. after
+   * Space
+   * Name of internal Innovation Program
+   * Processes
+* .
+* .
+* .
+* 
+
+
+
+
+
+Case Profile

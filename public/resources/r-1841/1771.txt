@@ -1,0 +1,88 @@
+﻿Web Case Profile Structure
+
+
+Building blocks and properties for the web case construction
+Differentiate between: Company (program level), project
+________________
+
+
+Intro Brief: The problem; the context; DT’s contribution (see Jeanne Liedtka)
+
+
+Background
+
+
+* The context and situation before DT (e.g. the business problem, industry or market challenges, recent trends and developments)
+* Description of the original ambition to consider Design Thinking, e.g. a particular “wicked” problem for the case organization (the “original problem”) or a curiosity for new methods
+* Actors involved, obstacle and hurdles
+* Other problem-solving approaches and initiatives which already failed
+* ...
+
+
+Challenge
+
+
+* Description of the “reframed” and explored problem space
+* Existing and competing alternative solutions
+* ...
+
+
+Approach / Insight
+
+
+* The iterated solution that worked best in field test (the surprising insight which led to this problem solving approach)
+* ...
+
+
+Implementation
+
+
+* unforeseen events, diffculties and positive highlights during implementation
+* if project: e.g. ways to the market → set-up of the in-market experiments
+* if culture: e.g. steps of implementation → order of events
+* ...
+
+
+
+
+Impact
+
+
+* Description of DT’s contribution to the (re)solution of the problem (trade-offs) at hand and description on how it changed the world on a more meta-level → differentiate here between inner (myself + organization) and outer world (clients, industry, etc. …)
+* if data available → showcase KPI’s
+
+
+________________
+
+
+
+
+General Background Info and Data Sources for Triangulation = 
+Basic Elements to construct the Case
+
+
+* The “DT-Setup” (Organizational Environment) → before vs. after
+   * Space
+   * Name of internal Innovation Program
+   * Processes
+* Imagery: Sketches, photos, drafts, and other artefacts from the DT process/initiative/introduction time → ask for usage and publication rights → prepare allowance paper I
+* Take photographs → get approval for “best-of images” afterwards → allowance paper II
+* Links to existing videos on the case (YouTube, Vimeo, etc.)
+* Personal quotes of C-Level managers (at best: CEO); quotes of other key employees from the story
+* Quotes from: customers, users, media, experts (e.g. analysts, award jourors, shareholders, etc.)
+________________
+
+
+
+
+Possible Sources to construct the Case
+
+
+* Our questionnaire data
+* personal interview(s)
+* Social web: LinkedIn, Slideshare, Scribd, Issuu, communities, etc.
+* Books
+* etc.
+
+
+Example case → highlight and make tutorial (it’s a way of storytelling)

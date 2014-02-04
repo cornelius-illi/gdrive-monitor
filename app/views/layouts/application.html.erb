@@ -68,6 +68,9 @@
           <dd class="<%= 'active' if current_page?( calculate_diffs_monitored_resource_resource_path(@monitored_resource, @resource) ) %>">
             <%= link_to 'Calculate Diffs', calculate_diffs_monitored_resource_resource_path(@monitored_resource, @resource) %>
           </dd>
+          <dd class="<%= 'active' if current_page?( calculate_diffs_monitored_resource_resource_path(@monitored_resource, @resource) ) %>">
+            <%= link_to 'Merge Weak Revisions', merge_revisions_monitored_resource_resource_path(@monitored_resource, @resource) %>
+          </dd>
         </dl>
       </div>
   <% end %>

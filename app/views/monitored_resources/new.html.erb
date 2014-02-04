@@ -5,7 +5,7 @@
 <% @folders.each do |folder| %>
 	<li><i class="fi-folder"></i> 
 		<% unless @monitored_resources_ids.include? folder['id'] %>
-		<%= link_to folder['title'], mr_create_path(folder['id']) %>
+		<%= link_to folder['title'], create_with_path(folder['id']) %>
 		<%else %>
 			<%= folder['title'] %>
 		<% end%>

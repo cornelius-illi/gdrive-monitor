@@ -19,7 +19,7 @@ class MonitoredResourcesController < ApplicationController
     @monitored_resources = current_user.monitored_resources # for navigation only
   end
   
-  def create
+  def create_with
       @monitored_resource = MonitoredResource.where(monitored_resource_params).first_or_create
       @monitored_resource.update_metadata(current_user.token)
       @monitored_resource.update_permissions(current_user.token)

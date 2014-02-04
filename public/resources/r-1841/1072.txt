@@ -1,0 +1,73 @@
+﻿Web Case Profile Structure
+
+
+Building blocks and properties for the web case construction
+Differentiate between: Company (program level), project
+
+
+
+
+Background
+
+
+* The context and situation before DT (e.g. the business problem, industry or market challenges, recent trends and developments)
+* Description of the original ambition to consider Design Thinking, e.g. a particular “wicked” problem for the case organization (the “original problem”) or a curiosity for new methods
+* Actors involved, obstacle and hurdles
+* Other problem-solving approaches and initiatives which already failed
+* ...
+
+
+Challenge
+
+
+* Description of the “reframed” and explored problem space
+* Existing and competing alternative solutions
+* ...
+
+
+Approach / Insight
+
+
+* The iterated solution that worked best in field test (the surprising insight which led to this problem solving approach)
+* ...
+
+
+Implementation
+
+
+* unforeseen events, diffculties and positive highlights during implementation
+* if project: e.g. ways to the market → set-up of the in-market experiments
+* if culture: e.g. steps of implementation → order of events
+* ...
+
+
+
+
+Impact
+
+
+* Description of DT’s contribution to the (re)solution of the problem (trade-offs) at hand and description on how it changed the world on a more meta-level → differentiate here between inner (myself + organization) and outer world (clients, industry, etc. …)
+* if data available → showcase KPI’s
+
+
+________________
+
+
+
+
+General Background Info and Data Sources for Triangulation
+
+
+* The “DT-Setup” (Organizational Environment) → before vs. after
+   * Space
+   * Name of internal Innovation Program
+   * Processes
+* .
+* .
+* .
+* 
+
+Example case → highlight and make tutorial (it’s a way of storytelling)
+
+
+Case Profile

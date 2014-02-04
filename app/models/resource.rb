@@ -76,12 +76,18 @@ class Resource < ActiveRecord::Base
   def has_latest_revision?
     # @todo: use file_etag in the future as checksum does only apply to non google-file-types
     # select distinct resources.mime_type from resources JOIN revisions ON revisions.resource_id=resources.id WHERE revisions.md5_checksum IS NOT NULL ORDER BY resources.mime_type;
-    md5_checksum.blank? ? false : (md5_checksum.eql? revisions.latest.md5_checksum)
+    (md5_checksum.blank? || revisions.blank?) ? false : (md5_checksum.eql? revisions.latest.md5_checksum)
   end
 
   def calculate_revision_diffs(again=false)
     revisions.each do |revision|
       revision.calculate_diff(again)
+    end
+  end
+
+  def merge_weak_revisions
+    revisions.each do |revision|
+      revision.merge_if_weak
     end
   end
 

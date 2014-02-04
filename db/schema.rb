@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140203145345) do
+ActiveRecord::Schema.define(version: 20140204183935) do
 
   create_table "changes", force: true do |t|
     t.string   "change_id"
@@ -125,6 +125,14 @@ ActiveRecord::Schema.define(version: 20140203145345) do
     t.text     "diff"
     t.float    "percental_change"
     t.float    "percental_add"
+    t.integer  "chars_changes"
+    t.integer  "words_changes"
+    t.integer  "lines_changes"
+    t.integer  "chars_count"
+    t.integer  "words_count"
+    t.integer  "lines_count"
+    t.integer  "revision_id"
+    t.boolean  "is_weak",                    default: false
   end
 
   create_table "users", force: true do |t|

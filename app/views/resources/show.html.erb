@@ -31,40 +31,40 @@
   </li>
 </ul>
 
-<% unless @resource.is_folder? %>
-  <h3>Changes List - <small><%= link_to 'refresh', refresh_revisions_monitored_resource_resource_path(@monitored_resource, @resource) %></small></h3>
-    <% unless @resource.is_folder? || @resource.revisions.length.eql?(0) %>
-        <table>
-          <thead>
-          <tr>
-            <th>Revision</th>
-            <th>Modification Date</th>
-            <th>Last Modifying UserName</th>
-            <th>Download</th>
-            <th>Changed (in %)</th>
-            <th>Additive (in %)</th>
+<h3>Changes List - <small>Showing: <%= @resource.revisions.exclude_merged.length %> of <%= @resource.revisions.length %> revisions.</small></h3>
+<% unless @resource.is_folder? || @resource.revisions.length.eql?(0) %>
+    <table>
+      <thead>
+      <tr>
+        <th>Revision</th>
+        <th>Modification Date</th>
+        <th>Last Modifying UserName</th>
+        <th>Download</th>
+        <th>Changed (in %)</th>
+        <th>Additive (in %)</th>
+      </tr>
+      </thead>
+      <tbody>
+      <% @resource.revisions.exclude_merged.each do |revision| %>
+          <tr class="<%= revision.is_weak? ? 'weak' : '' %> <%= revision.merged.blank? ? '' : 'strong' %>">
+            <td><%= revision.gid %>
+              <% if !revision.merged.blank? %><span class="fi-page-multiple"></span><% end %>
+            </td>
+            <td><%= revision.modified_date.to_s(:db) %></td>
+            <td><%= revision.permission.email_address.blank? ? revision.permission.name : revision.permission.email_address %></td>
+            <td class="centered"><%= link_to @resource.export_link('txt', revision.gid), :title => 'Download from Google' do %><span class="fi-download"></span> <% end %> |
+              <% if revision.has_local_resource? %>
+                  <%= link_to revision.local_resource_path_web, :title => 'Download local version' do %><span class="fi-archive"></span><% end %>
+              <% end %>
+            </td>
+            <td><%= number_to_percentage (revision.total_percental_change*100) unless revision.total_percental_change.blank? %></td>
+            <td><%= number_to_percentage (revision.total_percental_add*100) unless revision.total_percental_add.blank? %></td>
           </tr>
-          </thead>
-          <tbody>
-          <% @resource.revisions.each do |revision| %>
-              <tr class="<%= revision.is_weak? ? 'weak' : '' %>">
-                <td><%= revision.gid %></td>
-                <td><%= revision.modified_date.to_s(:db) %></td>
-                <td><%= revision.permission.email_address.blank? ? revision.permission.name : revision.permission.email_address %></td>
-                <td class="centered"><%= link_to @resource.export_link('txt', revision.gid), :title => 'Download from Google' do %><span class="fi-download"></span> <% end %> |
-                  <% if revision.has_local_resource? %>
-                      <%= link_to revision.local_resource_path, :title => 'Download local version' do %><span class="fi-archive"></span><% end %>
-                  <% end %>
-                </td>
-                <td><%= number_to_percentage (revision.percental_change*100) unless revision.percental_change.blank? %></td>
-                <td><%= number_to_percentage (revision.percental_add*100) unless revision.percental_add.blank? %></td>
-              </tr>
-          <% end %>
-          </tbody>
-        </table>
-    <% else %>
-        <p><i>No revisions could be found!</i></p>
-    <% end %>
-<%end %>
+      <% end %>
+      </tbody>
+    </table>
+<% else %>
+    <p><i>No revisions could be found!</i></p>
+<% end %>
 
 <%= link_to 'back', monitored_resource_path(@resource.monitored_resource_id), :class => 'button secondary tiny' %>

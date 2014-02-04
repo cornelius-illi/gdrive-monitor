@@ -1,9 +1,9 @@
 GdriveFeed::Application.routes.draw do
   devise_for :users, :controllers => { :omniauth_callbacks => "users/omniauth_callbacks" }
 
-  resources :monitored_resources do
-    get 'create'
+  get 'monitored_resources/create_with/:gid', :to => 'monitored_resources#create_with', :as => 'create_with'
 
+  resources :monitored_resources do
     member do
       get 'index_structure'
       get 'index_changehistory'
@@ -22,6 +22,7 @@ GdriveFeed::Application.routes.draw do
         get 'refresh_revisions'
         get 'download_revisions'
         get 'calculate_diffs'
+        get 'merge_revisions'
       end
     end
     resources :reports
