@@ -19,7 +19,7 @@
 .idea/*
 
 # ignore all downloaded resources
-./public/resources
+/public/resources
 
 routes.txt
 

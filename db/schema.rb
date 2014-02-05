@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140204183935) do
+ActiveRecord::Schema.define(version: 20140205074656) do
 
   create_table "changes", force: true do |t|
     t.string   "change_id"
@@ -133,6 +133,7 @@ ActiveRecord::Schema.define(version: 20140204183935) do
     t.integer  "lines_count"
     t.integer  "revision_id"
     t.boolean  "is_weak",                    default: false
+    t.integer  "collaboration_id"
   end
 
   create_table "users", force: true do |t|

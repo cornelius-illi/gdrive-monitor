@@ -93,6 +93,14 @@ class Resource < ActiveRecord::Base
     end
   end
 
+  def find_collaborations
+    revisions.first.find_and_create_collaboration
+
+    revisions.each do |r|
+      r.set_is_weak()
+    end
+  end
+
   def export_link(format=txt, revision=nil)
     revision = revision.blank? ? "" : "&revision=#{revision}"
     return "https://docs.google.com/feeds/download/#{GOOGLE_FILE_TYPES_DOWNLOAD[mime_type][:path_segment]}/Export?id=#{gid}&exportFormat=#{format}#{revision}"

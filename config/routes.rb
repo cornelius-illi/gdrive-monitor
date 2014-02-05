@@ -1,6 +1,7 @@
 GdriveFeed::Application.routes.draw do
   devise_for :users, :controllers => { :omniauth_callbacks => "users/omniauth_callbacks" }
 
+  # @todo: use :only => [:show, :...] in resources to be able to override create method
   get 'monitored_resources/create_with/:gid', :to => 'monitored_resources#create_with', :as => 'create_with'
 
   resources :monitored_resources do
@@ -23,6 +24,8 @@ GdriveFeed::Application.routes.draw do
         get 'download_revisions'
         get 'calculate_diffs'
         get 'merge_revisions'
+        get 'find_collaborations'
+        get 'merged_revisions/:rev_id', :action => :merged_revisions, :as => 'merged_revisions'
       end
     end
     resources :reports

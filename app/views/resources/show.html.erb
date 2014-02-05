@@ -31,7 +31,9 @@
   </li>
 </ul>
 
-<h3>Changes List - <small>Showing: <%= @resource.revisions.exclude_merged.length %> of <%= @resource.revisions.length %> revisions.</small></h3>
+<h3>Changes List - <small>Showing: <%= @resource.revisions.exclude_collaborated_and_merged.length %> of <%= @resource.revisions.length %> revisions.
+    <% nbr_weak = Revision.count_weak(@resource.revisions.exclude_collaborated_and_merged) %>
+    <% if nbr_weak > 0 %>(<%= nbr_weak %> weak)<% end %></small></h3>
 <% unless @resource.is_folder? || @resource.revisions.length.eql?(0) %>
     <table>
       <thead>
@@ -45,10 +47,14 @@
       </tr>
       </thead>
       <tbody>
-      <% @resource.revisions.exclude_merged.each do |revision| %>
+      <% @resource.revisions.exclude_collaborated_and_merged.each do |revision| %>
           <tr class="<%= revision.is_weak? ? 'weak' : '' %> <%= revision.merged.blank? ? '' : 'strong' %>">
-            <td><%= revision.gid %>
-              <% if !revision.merged.blank? %><span class="fi-page-multiple"></span> (<%= revision.merged.length+1  %>)<% end %>
+            <td><%= link_to_if (!revision.collaboration.blank? || !revision.merged.blank?), revision.gid,
+                merged_revisions_monitored_resource_resource_path(@monitored_resource, @resource, revision.id),
+                :data => { 'reveal-id' => "modal", 'reveal-ajax' => "true" }, :class => 'reveal-link' %>
+              <% if !revision.collaboration.blank? %><span class="fi-torsos-all"></span> (<%= revision.collaboration.length+1 %>)
+                  <% if Revision.collaboration_is_global?(revision.collaboration, @resource.monitored_resource_id) %><span class="fi-web"></span><% end %>
+              <% elsif !revision.merged.blank? %><span class="fi-page-multiple"></span> (<%= revision.merged.length+1  %>)<% end %>
             </td>
             <td><%= revision.modified_date.to_s(:db) %></td>
             <td><%= revision.permission.email_address.blank? ? revision.permission.name : revision.permission.email_address %></td>
@@ -66,5 +72,10 @@
 <% else %>
     <p><i>No revisions could be found!</i></p>
 <% end %>
+
+<div id="modal" class="reveal-modal" data-reveal>
+  <div id="modalContent"></div>
+  <a class="close-reveal-modal">&#215;</a>
+</div>
 
 <%= link_to 'back', monitored_resource_path(@resource.monitored_resource_id), :class => 'button secondary tiny' %>
