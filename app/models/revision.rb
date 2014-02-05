@@ -27,6 +27,8 @@ class Revision < ActiveRecord::Base
     collection_of_revisions.each do |revision|
       perm_ids << revision.permission_id
     end
+    # remove duplicates
+    perm_ids.uniq!
 
     # definition: at least one permission from a different permission group
     perm_group_ids = Array.new

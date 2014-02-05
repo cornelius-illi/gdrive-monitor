@@ -26,7 +26,7 @@ $(function(){
         }
     });
 
-    
+
     $(document).ready(function() {
         $('#files-table').dataTable();
     } );
