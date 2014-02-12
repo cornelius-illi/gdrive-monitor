@@ -58,7 +58,7 @@
             </td>
             <td><%= revision.modified_date.to_s(:db) %></td>
             <td><%= revision.permission.email_address.blank? ? revision.permission.name : revision.permission.email_address %></td>
-            <td class="centered"><%= link_to @resource.export_link('txt', revision.gid), :title => 'Download from Google' do %><span class="fi-download"></span> <% end %> |
+            <td class="centered"><%= link_to @resource.links.values.first, :title => 'Download from Google' do %><span class="fi-download"></span> <% end %> |
               <% if revision.has_local_resource? %>
                   <%= link_to revision.local_resource_path_web, :title => 'Download local version' do %><span class="fi-archive"></span><% end %>
               <% end %>

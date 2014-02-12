@@ -5,7 +5,7 @@ class MonitoredResourcesController < ApplicationController
   before_filter :refresh_token!
   before_action :set_monitored_resource, only: [:show, :permissions, :refresh_permissions,
                                                 :reports, :permission_groups, :index_structure,
-                                                :index_changehistory, :missing_revisions]
+                                                :index_changehistory, :missing_revisions, :download_revisions]
 
   caches_action :show, :format => :json
 
@@ -35,6 +35,8 @@ class MonitoredResourcesController < ApplicationController
     end
   end
 
+  # Downlaods revisions for files that have none (revisions.eql? 0)
+  # can be removed once the 401 - unauthorized request can be handled!
   def missing_revisions
     resources = Resource
       .joins('LEFT OUTER JOIN revisions ON resources.id=revisions.resource_id')
@@ -44,6 +46,14 @@ class MonitoredResourcesController < ApplicationController
       resource.retrieve_revisions(current_user.token)
     end
     redirect_to @monitored_resource, :notice => "Missing Revisions are being refreshed!"
+  end
+
+  def download_revisions
+    @monitored_resource.resources.google_resources.each do |resource|
+      # each function call will result in a new delayed job, each revision download in another one
+      resource.download_revisions(current_user.token)
+    end
+    redirect_to @monitored_resource, :notice => "Revisions are being downloaded! This might take a while!"
   end
 
   def permission_groups

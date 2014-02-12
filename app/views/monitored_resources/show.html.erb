@@ -8,6 +8,9 @@
 <span class="has-tip" title="To update resource-revisions for non-indexed resources" data-tooltip>
     <%= link_to "Fetch Missing Revisions", missing_revisions_monitored_resource_path(@monitored_resource), :class => 'button tiny' %>
 </span>
+<span class="has-tip" title="To update resource-revisions for non-indexed resources" data-tooltip>
+    <%= link_to "Download Revisions", download_revisions_monitored_resource_path(@monitored_resource), :class => 'button tiny' %>
+</span>
 
 <h4>File List</h4>
 <% if @monitored_resource.jobs.length > 0 %>

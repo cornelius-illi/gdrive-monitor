@@ -1,5 +1,5 @@
 class ResourceSerializer < ActiveModel::Serializer
-  attributes :shortened_title, :details, :created_date, :modified_date, :revision_count, :collaborators_count, :globally
+  attributes :title_with_icon, :details, :created_date, :modified_date, :revision_count, :collaborators_count, :globally
 
   def details
     return '<a href="' + monitored_resource_resource_url(object.monitored_resource_id, object.id) + '" class="fi-magnifying-glass"></a>'
@@ -19,6 +19,10 @@ class ResourceSerializer < ActiveModel::Serializer
 
   def collaborators_count
     return object.collaborators.length
+  end
+
+  def title_with_icon
+    object.is_google_filetype? ? "<img src=\"#{object.iconLink}\" width=\"16\" height=\"16\" alt=\"\" title=\"\" />&nbsp;#{object.shortened_title}" : object.shortened_title
   end
 
   def globally

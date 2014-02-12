@@ -3,6 +3,8 @@ class Resource < ActiveRecord::Base
   has_many :jobs, :class_name => "::Delayed::Job", :as => :owner
   has_many :revisions, -> { order('modified_date DESC') }
 
+  scope :google_resources, -> { where("mime_type IN('application/vnd.google-apps.drawing','application/vnd.google-apps.document','application/vnd.google-apps.spreadsheet','application/vnd.google-apps.presentation')") }
+
   GOOGLE_FOLDER_TYPE = 'application/vnd.google-apps.folder'.freeze
   GOOGLE_FILE_TYPES = %w(
     application/vnd.google-apps.drawing
@@ -12,10 +14,18 @@ class Resource < ActiveRecord::Base
   ).freeze
 
   GOOGLE_FILE_TYPES_DOWNLOAD = {
-      'application/vnd.google-apps.presentation' => { :path_segment => 'presentations', :types => ['pdf','txt','pptx'] },
-      'application/vnd.google-apps.document' => { :path_segment => 'documents', :types => ['pdf','txt'] },
-      'application/vnd.google-apps.spreadsheet' => { :path_segment => 'spreadsheets', :types => ['pdf','txt'] },
-      'application/vnd.google-apps.drawing' => { :path_segment => 'drawings', :types => ['pdf','txt'] }
+      'application/vnd.google-apps.presentation' => { :url => 'https://docs.google.com/feeds/download/presentations/Export?id=',
+                                                      :types => ['pptx','pdf','txt'], :local_download_type => 'txt',
+                                                      :iconLink => 'https://ssl.gstatic.com/docs/doclist/images/icon_11_presentation_list.png' },
+      'application/vnd.google-apps.document' => { :url => 'https://docs.google.com/feeds/download/documents/export/Export?id=',
+                                                  :types => ['docx','odt','rtf','html','pdf','txt'], :local_download_type => 'txt',
+                                                  :iconLink => 'https://ssl.gstatic.com/docs/doclist/images/icon_11_document_list.png' },
+      'application/vnd.google-apps.spreadsheet' => { :url => 'https://docs.google.com/feeds/download/spreadsheets/Export?key=',
+                                                     :types => ['pdf','ods','xlsx'], :local_download_type => 'xlsx',
+                                                     :iconLink => 'https://ssl.gstatic.com/docs/doclist/images/icon_11_spreadsheet_list.png' },
+      'application/vnd.google-apps.drawing' => { :url => 'https://docs.google.com/feeds/download/drawings/Export?id=',
+                                                 :types => ['pdf','svg', 'jpeg', 'png'], :local_download_type => 'svg',
+                                                 :iconLink => 'https://ssl.gstatic.com/docs/doclist/images/icon_11_drawing_list.png' }
   }.freeze
 
   def self.find_create_or_update_batched_for(child_resources, mr_id, user_id)
@@ -37,6 +47,11 @@ class Resource < ActiveRecord::Base
 
   def is_google_filetype?
     return GOOGLE_FILE_TYPES.include?(mime_type)
+  end
+
+  def iconLink
+    return nil unless GOOGLE_FILE_TYPES_DOWNLOAD.has_key?(mime_type)
+    GOOGLE_FILE_TYPES_DOWNLOAD[mime_type][:iconLink]
   end
 
   def shortened_title(length = 35)
@@ -101,9 +116,28 @@ class Resource < ActiveRecord::Base
     end
   end
 
-  def export_link(format=txt, revision=nil)
+  def links
+    res = { :alternate_link => alternate_link }
+    return res unless GOOGLE_FILE_TYPES_DOWNLOAD.has_key?( mime_type )
+
+    GOOGLE_FILE_TYPES_DOWNLOAD[mime_type][:types].each do |type|
+      res[type] = "#{GOOGLE_FILE_TYPES_DOWNLOAD[mime_type][:url]}#{gid}&exportFormat=#{type}"
+    end
+    return res
+  end
+
+  # generates the download link for a revision; without revision id -> downloads current
+  def download_revision_link(revision=nil)
+    return nil unless GOOGLE_FILE_TYPES_DOWNLOAD.has_key?( mime_type )
+
     revision = revision.blank? ? "" : "&revision=#{revision}"
-    return "https://docs.google.com/feeds/download/#{GOOGLE_FILE_TYPES_DOWNLOAD[mime_type][:path_segment]}/Export?id=#{gid}&exportFormat=#{format}#{revision}"
+    return "#{GOOGLE_FILE_TYPES_DOWNLOAD[mime_type][:url]}#{gid}&exportFormat=#{revisions_download_format}#{revision}"
+  end
+
+  def revisions_download_format
+    return nil unless GOOGLE_FILE_TYPES_DOWNLOAD.has_key?( mime_type )
+
+    GOOGLE_FILE_TYPES_DOWNLOAD[mime_type][:local_download_type]
   end
 
   def revisions_by_permission_group
@@ -195,7 +229,7 @@ class Resource < ActiveRecord::Base
   end
   handle_asynchronously :retrieve_revisions, :queue => 'revisions', :owner => Proc.new {|o| o}
 
-  def download_revisions(format='txt',token)
+  def download_revisions(token)
     # pre-condition: revisions should only be downloaded for diffing and diffing only makes sense for text-based resource formats
     return if is_folder? || !is_google_filetype?
 
@@ -204,18 +238,28 @@ class Resource < ActiveRecord::Base
     end
 
     revisions.each do |revision|
-      file_path = File.join( download_path, revision.gid) + '.' + format
-      next if File.exists?(file_path) # downloaded before
+      file_path = File.join( download_path, revision.gid) + '.' + revisions_download_format
+      # skip, if downloaded before
+      next if File.exists?(file_path)
 
-      download_revision(revision.gid,file_path,format,token)
+      download_revision(revision.gid,file_path,token)
     end
 
+    # download the current version
+    current = "current-#{modified_date.to_time.to_i}.#{revisions_download_format}"
+    current_path = File.join( download_path, current)
+    unless File.exists?(current_path)
+      # delete all files that were previously downloaded as THE current version
+      Dir.glob( "#{download_path}/current-*" ).each { |f| File.delete(f) }
+      # nil is for current
+      download_revision(nil,current_path,token)
+    end
   end
   handle_asynchronously :download_revisions, :queue => 'downloads', :owner => Proc.new {|o| o}
 
 
-  def download_revision(revision,path,format,token)
-    response = DriveFiles.download( export_link(format, revision), token)
+  def download_revision(revision,path,token)
+    response = DriveFiles.download( download_revision_link(revision), token)
     if response
       File.open(path, "wb") { |f| f.write( response ) }
     end

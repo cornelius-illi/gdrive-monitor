@@ -7,7 +7,7 @@ jQuery ->
     sAjaxSource: $('#files-table').data('source')
     bDeferRender: true
     bProcessing: true
-    aoColumns: [{"mDataProp":"shortened_title"},
+    aoColumns: [{"mDataProp":"title_with_icon"},
       { "mDataProp":"details"},
       { "mDataProp":"created_date"},
       { "mDataProp":"modified_date"},

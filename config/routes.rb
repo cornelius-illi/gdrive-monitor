@@ -9,6 +9,7 @@ GdriveFeed::Application.routes.draw do
       get 'index_structure'
       get 'index_changehistory'
       get 'missing_revisions'
+      get 'download_revisions'
     end
 
     resources :permissions do

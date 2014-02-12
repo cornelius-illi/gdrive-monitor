@@ -112,6 +112,7 @@ class MonitoredResource < ActiveRecord::Base
   handle_asynchronously :index_structure, :queue => 'index_structure', :owner => Proc.new {|o| o}
 
   def index_changehistory(user_token)
+    return nil # should not be called currently -> using revisions
     # Changes.index returns results in ascending order (oldest first), results on next page are newer
     start_change_id = largest_change_id.blank? ? "" : largest_change_id
     changes = DriveChanges.retrieve_changes_list(start_change_id, user_token)
