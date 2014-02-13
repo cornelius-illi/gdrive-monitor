@@ -4,14 +4,15 @@
 
 jQuery ->
   oTable = $('#files-table').dataTable
-    sAjaxSource: $('#files-table').data('source')
-    bDeferRender: true
     bProcessing: true
-    aoColumns: [{"mDataProp":"title_with_icon"},
-      { "mDataProp":"details"},
-      { "mDataProp":"created_date"},
-      { "mDataProp":"modified_date"},
-      { "mDataProp":"revision_count"},
-      { "mDataProp":"collaborators_count"},
-      { "mDataProp":"globally"}]
-    aaSorting: [[3, 'desc']]
+    bServerSide: true
+    sAjaxSource: $('#files-table').data('source')
+    aaSorting: [[2, 'desc']],
+    aoColumns: [
+        { "sWidth": "40%" },
+        { "sWidth": "20%" },
+        { "sWidth": "20%" },
+        { "sWidth": "10%" },
+        { "sWidth": "5%" },
+        { "sWidth": "5%" },
+    ],

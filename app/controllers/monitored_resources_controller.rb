@@ -30,8 +30,8 @@ class MonitoredResourcesController < ApplicationController
   def show
     respond_to do |format|
       format.html { @mime_count = @monitored_resource.mime_count }
-      # format.json { render json: ResourcesDatatable.new(view_context) }
-      format.json { render json: @monitored_resource }
+      format.json { render json: ResourcesDatatable.new(view_context, @monitored_resource) }
+      #format.json { render json: @monitored_resource }
     end
   end
 
