@@ -56,7 +56,7 @@ class ResourcesDatatable
   def mark_date(created_date)
     res = created_date.to_s(:db)
     if !period.empty? && created_date < period[:start_date]
-      res = "<span style=\"color: red;\">#{created_date.to_s(:db)}</span>"
+      res = "<span class=\"red\">#{created_date.to_s(:db)}</span>"
     end
     res
   end

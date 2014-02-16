@@ -68,3 +68,7 @@ table tr.strong td {
 table tr td.centered {
     text-align: center;
 }
+
+.red {
+    color: #FF0000;
+}

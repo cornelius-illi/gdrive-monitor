@@ -54,7 +54,7 @@ class MonitoredResource < ActiveRecord::Base
     filters.each do |key,value|
       case key
         when :sSearch
-          where.first << " AND resources.title LIKE '%%s%'"
+          where.first << " AND resources.title LIKE '%%%s%%'"
           where.push value
         when :filter_periods
           # all resources that have been modified (not only created)
