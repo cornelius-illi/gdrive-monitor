@@ -21,20 +21,31 @@
 <% end %>
 
 <% unless @monitored_resource.resources.blank? %>
-<table id="files-table" data-source="<%= monitored_resource_url(@monitored_resource, :format => :json) %>">
-  <thead>
-  <tr>
-    <th>Resource Title</th>
-    <th>Created Date</th>
-    <th>Last Modified Date</th>
-    <th><span class="fi-page-multiple" style="padding-right: 20px;"></span></th>
-    <th><span class="fi-torsos" style="padding-right: 20px;"></span></th>
-    <th><span class="fi-web" style="padding-right: 20px;"></span></th>
-  </tr>
-  </thead>
-  <tbody>
-  </tbody>
-</table>
+    <div>
+      <label for="filter_periods">Filter by Period:</label>
+      <% periods_array = [['--- none ---','']].concat MonitoredPeriod.all.order('start_date ASC').map { |period| [period.title, period.id] } %>
+      <%= select_tag(:filter_periods, options_for_select(periods_array) ) %>
+    </div>
+    <div class="row">
+      <label for="filter_mimetype">Filter by MimeType:</label>
+      <% mimetype_array = Resource.mimetypes_for_monitored_resource(@monitored_resource.id) %>
+      <%= select_tag(:filter_mimetype, options_for_select(mimetype_array) ) %>
+    </div>
+
+    <table id="files-table" data-source="<%= monitored_resource_url(@monitored_resource, :format => :json) %>">
+      <thead>
+      <tr>
+        <th>Resource Title</th>
+        <th>Created Date</th>
+        <th>Last Modified Date</th>
+        <th><span class="fi-page-multiple" style="padding-right: 20px;"></span></th>
+        <th><span class="fi-torsos" style="padding-right: 20px;"></span></th>
+        <th><span class="fi-web" style="padding-right: 20px;"></span></th>
+      </tr>
+      </thead>
+      <tbody>
+      </tbody>
+    </table>
 <% end %>
 
 <% unless @mime_count.blank? %>

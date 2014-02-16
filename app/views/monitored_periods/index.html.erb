@@ -18,8 +18,8 @@
       <% @monitored_periods.each do |period| %>
           <tr>
             <td><%= period.name %></td>
-            <td><%= period.start.to_s(:db) %></td>
-            <td><%= period.end.to_s(:db) %></td>
+            <td><%= period.start_date.to_s(:db) %></td>
+            <td><%= period.end_date.to_s(:db) %></td>
             <td><%= link_to '', edit_monitored_period_path(period), :class => 'fi-pencil' %></td>
             <td><%= button_to 'x', period, :method=>:delete, :class=> 'button alert tiny delete' %></td>
           </tr>

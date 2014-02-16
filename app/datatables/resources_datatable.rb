@@ -9,8 +9,8 @@ class ResourcesDatatable
   def as_json(options = {})
     {
         sEcho: params[:sEcho].to_i,
-        iTotalRecords: @monitored_resource.resources.count,
-        iTotalDisplayRecords: resources.total_entries,
+        iTotalRecords: fetch_count(),
+        iTotalDisplayRecords: fetch_count(true),
         aaData: data
     }
   end
@@ -21,46 +21,58 @@ class ResourcesDatatable
   def data
     resources.map do |resource|
       [
-          title_with_icon(resource),
-          resource.created_date.to_s(:db),
-          resource.modified_date.to_s(:db),
-          resource.revisions.length,
-          resource.collaborators.length,
-          globally(resource)
+          title_with_icon( shortened_title(resource['title']), resource['id'] ),
+          resource['created_date'].to_datetime.to_s(:db),
+          resource['modified_date'].to_datetime.to_s(:db),
+          resource['revisions'],
+          resource['permissions'],
+          resource['permission_groups']
       ]
     end
   end
 
-  def globally(object)
-    globally = object.global_collaboration? ? 'check' : 'x'
-    return '<span class="fi-' + globally + '"><span class="hidden">' + globally +'</span></span>'
+  def shortened_title(title, length = 35)
+    title.size > length+5 ? [title[0,length],title[-5,5]].join("...") : title
   end
 
-  def title_with_icon(object)
-    link = link_to object.shortened_title, monitored_resource_resource_path(object.monitored_resource_id, object.id)
-    object.is_google_filetype? ? "<img src=\"#{object.iconLink}\" width=\"16\" height=\"16\" alt=\"\" title=\"\" />&nbsp;#{link}" : link
+  def title_with_icon(title, id)
+    link = link_to title, monitored_resource_resource_path(@monitored_resource.id, id)
+    #object.is_google_filetype? ? "<img src=\"#{object.iconLink}\" width=\"16\" height=\"16\" alt=\"\" title=\"\" />&nbsp;#{link}" : link
   end
 
   def resources
     @resources ||= fetch_resources
   end
 
+  def fetch_count(showFiltered=false)
+    filters = check_for_filters
+    @monitored_resource.resources_analysed_total_entries(filters, showFiltered)
+  end
+
   def fetch_resources
-    unless sort_column.nil?
-      resources = @monitored_resource.resources.order("#{sort_column} #{sort_direction}")
-    else
-      resources = @monitored_resource.resources
+    # filter_periods, filter_mimetype
+    filters = check_for_filters
+    @monitored_resource.resources_analysed( page(), per_page(), filters, sort_column, sort_direction )
+  end
+
+  def check_for_filters
+    filters = Hash.new
+    if params[:sSearch].present? && !params[:sSearch].blank?
+      filters[:sSearch] = params[:sSearch]
     end
 
-    resources = resources.page(page).per_page(per_page)
-    if params[:sSearch].present?
-      resources = resources.where("title like :search", search: "%#{params[:sSearch]}%")
+    if params[:filter_periods].present? && !params[:filter_periods].blank?
+      filters[:filter_periods] = params[:filter_periods]
     end
-    resources
+
+    if params[:filter_mimetype].present? && !params[:filter_mimetype].blank?
+      filters[:filter_mimetype] = params[:filter_mimetype]
+    end
+    filters
   end
 
   def page
-    params[:iDisplayStart].to_i/per_page + 1
+    params[:iDisplayStart].to_i/per_page
   end
 
   def per_page
@@ -69,7 +81,7 @@ class ResourcesDatatable
 
   # :title_with_icon, :created_date, :modified_date, :revision_count, :collaborators_count, :globally
   def sort_column
-    columns = %w[title created_date modified_date]
+    columns = %w[resources.title resources.created_date resources.modified_date revisions permissions permission_groups]
     columns[params[:iSortCol_0].to_i]
   end
 

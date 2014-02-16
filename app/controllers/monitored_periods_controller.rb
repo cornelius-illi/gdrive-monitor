@@ -44,7 +44,7 @@ class MonitoredPeriodsController < ApplicationController
   def update
     respond_to do |format|
       if @monitored_period.update(monitored_period_params)
-        format.html { redirect_to @monitored_period, notice: 'Monitored Period was successfully updated.' }
+        format.html { redirect_to monitored_periods_path, notice: 'Monitored Period was successfully updated.' }
         format.json { head :no_content }
       else
         format.html { render action: 'edit' }
@@ -71,6 +71,6 @@ class MonitoredPeriodsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white index through.
     def monitored_period_params
-      params.require(:monitored_periods).permit(:name)
+      params.require(:monitored_period).permit(:name, :end_date, :start_date)
     end
 end

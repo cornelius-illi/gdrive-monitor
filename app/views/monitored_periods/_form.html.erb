@@ -20,16 +20,16 @@
 
     <div class="row">
       <div class="large-6 columns">
-        <%= f.label :start %>
-        <%= f.datetime_local_field :start %>
+        <%= f.label :start_date %>
+        <%= f.datetime_local_field :start_date %>
       </div>
       <div class="large-6 columns">
-        <%= f.label :end %>
-        <%= f.datetime_local_field :end %>
+        <%= f.label :end_date %>
+        <%= f.datetime_local_field :end_date %>
       </div>
     </div>
 
     <div class="row">
-      <div class="large-12 columns"><%= f.submit 'Create new', :class => 'button tiny' %></div>
+      <div class="large-12 columns"><%= f.submit :class => 'button tiny' %></div>
     </div>
 <% end %>

@@ -6,12 +6,73 @@ class MonitoredResource < ActiveRecord::Base
   has_many :jobs, :class_name => "::Delayed::Job", :as => :owner
 
   GOOGLE_FOLDER_TYPE = 'application/vnd.google-apps.folder'.freeze
+  GOOGLE_FILE_TYPES = %w(
+    application/vnd.google-apps.drawing
+    application/vnd.google-apps.document
+    application/vnd.google-apps.spreadsheet
+    application/vnd.google-apps.presentation
+  ).freeze
 
   #def self.jobs
     # to address the STI scenario we use base_class.name.
     # downside: you have to write extra code to filter STI class specific instance.
     #Delayed::Job.find_all_by_owner_type(self.base_class.name)
   #end
+
+  def resources_analysed(page=0,per_page=10, filters=[], sort_column='resources.modified_date', sort_direction='asc')
+      offset = page*per_page
+
+      where_sql = create_where_statement filters
+
+      query = "SELECT resources.id, resources.title, resources.created_date, resources.modified_date, COUNT(revisions.id) as revisions,
+      COUNT(DISTINCT revisions.permission_id) as permissions, COUNT(DISTINCT permission_groups_permissions.permission_group_id) as permission_groups
+      FROM resources JOIN revisions ON revisions.resource_id=resources.id JOIN permissions ON permissions.id=revisions.permission_id
+      JOIN permission_groups_permissions ON permission_groups_permissions.permission_id=permissions.id #{where_sql}
+      GROUP BY resources.id ORDER BY #{sort_column} #{sort_direction} LIMIT #{offset},#{per_page};"
+
+      # connection = ActiveRecord::Base.connection
+      ActiveRecord::Base.connection.execute(query)
+  end
+
+  def resources_analysed_total_entries(filters, doSearch=true)
+    if doSearch
+      where_sql = create_where_statement filters
+    else
+      where_sql = ActiveRecord::Base.send(:sanitize_sql_array, ["WHERE resources.monitored_resource_id=%s AND mime_type !='application/vnd.google-apps.folder'", id])
+    end
+
+    query = "SELECT COUNT(resources.id) count FROM resources #{where_sql}"
+
+    # connection = ActiveRecord::Base.connection
+    result_set = ActiveRecord::Base.connection.execute(query)
+    result_set.first['count']
+  end
+
+  def create_where_statement(filters)
+    where = ["WHERE resources.monitored_resource_id=%s AND mime_type !='application/vnd.google-apps.folder'", id]
+
+    filters.each do |key,value|
+      case key
+        when :sSearch
+          where.first << " AND resources.title LIKE '%%s%'"
+          where.push value
+        when :filter_periods
+          # all resources that have been modified (not only created)
+          period = MonitoredPeriod.find( value.to_i )
+          where.first << " AND (resources.modified_date > '#{period.start_date}' AND resources.modified_date < '#{period.end_date}' )"
+        when :filter_mimetype
+          if value.eql? 'GOOGLE_FILE_TYPES'
+            where.first << " AND resources.mime_type IN ('#{ GOOGLE_FILE_TYPES.join("','") }')"
+          else
+            where.first << " AND resources.mime_type='%s'"
+            where.push value
+          end
+        else
+          # do nothing
+      end
+    end
+    ActiveRecord::Base.send(:sanitize_sql_array, where)
+  end
 
   def structure_indexed?
     # structure_indexed?.nil? || structure_indexed?.empty?
@@ -40,7 +101,7 @@ class MonitoredResource < ActiveRecord::Base
 
     sharedwithme_date = DateTime.parse( metadata['sharedWithMeDate'] )
     lowest_index_date = sharedwithme_date if (lowest_index_date < sharedwithme_date )
-    
+
     update_attributes(
       :created_date => metadata['createdDate'],
       :modified_date => metadata['modifiedDate'],
@@ -51,7 +112,7 @@ class MonitoredResource < ActiveRecord::Base
       :title => metadata['title']
     )
   end
-  
+
   def update_permissions(user_token)
     permissions = DriveFiles.retrieve_file_permissions(gid, user_token)
     permissions.each do |params|

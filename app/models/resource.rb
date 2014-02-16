@@ -41,6 +41,12 @@ class Resource < ActiveRecord::Base
     end
   end
 
+  def self.mimetypes_for_monitored_resource(mr_id)
+    query = ActiveRecord::Base.send(:sanitize_sql_array, ["SELECT DISTINCT resources.mime_type FROM resources WHERE monitored_resource_id=%s ORDER BY mime_type",mr_id])
+    results = ActiveRecord::Base.connection.execute(query)
+    [ ['--- none ---',''], ['GOOGLE_FILE_TYPES','GOOGLE_FILE_TYPES'] ].concat results.map {|result| [result[0], result[0]]}
+  end
+
   def is_folder?
     return (mime_type.eql? 'application/vnd.google-apps.folder')
   end
