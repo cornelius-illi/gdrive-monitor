@@ -24,7 +24,7 @@ class MonitoredResource < ActiveRecord::Base
 
       where_sql = create_where_statement filters
 
-      query = "SELECT resources.id, resources.title, resources.created_date, resources.modified_date, COUNT(revisions.id) as revisions,
+      query = "SELECT resources.id, resources.title, resources.created_date, resources.modified_date, resources.mime_type, COUNT(revisions.id) as revisions,
       COUNT(DISTINCT revisions.permission_id) as permissions, COUNT(DISTINCT permission_groups_permissions.permission_group_id) as permission_groups
       FROM resources JOIN revisions ON revisions.resource_id=resources.id JOIN permissions ON permissions.id=revisions.permission_id
       JOIN permission_groups_permissions ON permission_groups_permissions.permission_id=permissions.id #{where_sql}
