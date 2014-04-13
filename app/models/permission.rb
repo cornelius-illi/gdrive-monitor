@@ -6,6 +6,10 @@ class Permission < ActiveRecord::Base
     return email_address.blank? ? "#{name}@#{domain}" : email_address
   end
 
+  def unique_title
+    return "(##{id}): #{title}"
+  end
+
   def title_usage
     "#{title} (#{revisions.length})"
   end

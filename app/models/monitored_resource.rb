@@ -20,9 +20,9 @@ class MonitoredResource < ActiveRecord::Base
     #Delayed::Job.find_all_by_owner_type(self.base_class.name)
   #end
 
-  def report_for_period(period)
+  def report_for_period_group(period_group)
     reports.each do |report|
-      return report if report.monitored_period_id.eql?(period.id)
+      return report if report.period_group_id.eql?(period_group.id)
     end
     return nil
   end

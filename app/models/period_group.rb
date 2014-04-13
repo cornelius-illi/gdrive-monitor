@@ -1,5 +1,5 @@
 class PeriodGroup < ActiveRecord::Base
-  has_many :monitored_periods
+  has_many :monitored_periods, -> { order('start_date ASC') }
 
   # @param [MonitoredResource] monitored_resource
   def consolidate_results_for(monitored_resource)

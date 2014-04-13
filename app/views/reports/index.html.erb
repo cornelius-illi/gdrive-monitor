@@ -36,48 +36,39 @@
               <thead class="analytics">
               <tr>
                 <th>Name</th>
-                <% period_group.monitored_periods.each do |period| %>
-                    <th><%= period.name %></th>
+                <% period_group.monitored_periods.each_with_index do |period,j| %>
+
+                    <th <%= 'class="reference"'.html_safe if j.eql? 0  %>><a class="active-report-col" href="#period-<%= j+1 %>"><%= period.name %></a></th>
                 <% end %>
               </tr>
               </thead>
               <tbody>
-              <tr>
-                <td class="table-new-chapter" colspan="<%= period_group.monitored_periods.length+1 %>">Overall Statistics</td>
-              </tr>
-              <%
-                 consolidated_results = period_group.consolidate_results_for(@monitored_resource)
-                 nbr_of_periods = consolidated_results.length-1
-              %>
-              <% consolidated_results.first.each_with_index do |key, i| %>
-                <tr>
-                    <td><b><%= key %></b></td>
-                    <% (1..nbr_of_periods).each do |j| %>
-                    <% diff_string = ""
-                       if j > 1
-                          diff =  ((consolidated_results[j][i] - consolidated_results[1][i])/consolidated_results[j][i].to_f)*100
-                          diff_string = (diff < 0) ? ", <span class=\"negative\"><span class=\"fi-arrow-down\"></span> #{number_to_percentage(diff)}</span>" :
-                                  ", <span class=\"positive\"><span class=\"fi-arrow-up\"></span> #{number_to_percentage(diff)}</span>"
-                          if diff.to_i == 0
-                            diff_string = ", 0%"
-                          end
-                        end
-                    %>
-                    <td><%= consolidated_results[j][i] %><%= diff_string.html_safe %></td>
-                    <% end %>
-                </tr>
+              <% report = @monitored_resource.report_for_period_group(period_group) %>
+              <% report.data.each do |k, chapter| %>
+                <% unless chapter[:name].blank? %>
+                  <tr>
+                    <td class="table-new-chapter" colspan="<%= period_group.monitored_periods.length+1 %>"><%= chapter[:name] %></td>
+                  </tr>
+                <% end %>
+                <% chapter[:values].each do |section| %>
+                      <% unless section[:name].blank? %>
+                          <tr>
+                            <td></td>
+                            <td class="table-new-section" colspan="<%= period_group.monitored_periods.length %>"><%= section[:name] %></td>
+                          </tr>
+                      <% end %>
+                      <% section[:values].each do |metric| %>
+                        <tr>
+                          <td><% if metric[:type] == 'METRIC' %><b><%= metric[:name] %></b><% else %><%= metric[:name] %><% end %></td>
+                          <% metric[:values].each_with_index do |value,l| %>
+                            <td <%= 'class="reference"'.html_safe if l.eql? 0  %>><%= value %></td>
+                          <% end %>
+                        </tr>
+                      <% end %>
+                <% end %>
               <% end %>
-                  <tr>
-                    <td class="table-new-chapter" colspan="<%= period_group.monitored_periods.length+1 %>">Statistics by permission/ permission group</td>
-                  </tr>
-                  <tr>
-                    <td></td>
-                    <td class="table-new-section" colspan="<%= period_group.monitored_periods.length %>">Revisions</td>
-                  </tr>
               </tbody>
             </table>
-
-            <p>&nbsp;</p>
           </div>
       <% end %>
     </div>

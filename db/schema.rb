@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140410114528) do
+ActiveRecord::Schema.define(version: 20140413091609) do
 
   create_table "changes", force: true do |t|
     t.string   "change_id"
@@ -114,11 +114,11 @@ ActiveRecord::Schema.define(version: 20140410114528) do
 
   create_table "reports", force: true do |t|
     t.text     "data"
-    t.integer  "monitored_period_id"
     t.integer  "monitored_resource_id"
     t.integer  "report_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "period_group_id"
   end
 
   create_table "resources", force: true do |t|

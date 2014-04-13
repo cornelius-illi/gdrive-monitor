@@ -9,6 +9,19 @@ class ReportsController < ApplicationController
   end
 
   def generate
+    PeriodGroup.all.each do |period_group|
+      report = Report
+        .where(:monitored_resource_id => @monitored_resource.id)
+        .where(:period_group_id => period_group.id)
+        .first_or_create
+
+      report.generate_report_data
+    end
+
+    redirect_to monitored_resource_reports_path(@monitored_resource), :notice => "Reports are being generated! This might take a while!"
+  end
+
+  def generate_by_period
     MonitoredPeriod.all.each do |period|
       report = Report
         .where(:monitored_resource_id => @monitored_resource.id)
