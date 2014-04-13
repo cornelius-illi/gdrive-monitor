@@ -5,11 +5,8 @@
 <span class="has-tip" title="To update resource-list and revisions for each resource." data-tooltip>
     <%= link_to "Index Structure", index_structure_monitored_resource_path(@monitored_resource), :class => 'button tiny' %>
 </span>
-<span class="has-tip" title="To update resource-revisions for non-indexed resources" data-tooltip>
-    <%= link_to "Fetch Missing Revisions", missing_revisions_monitored_resource_path(@monitored_resource), :class => 'button tiny' %>
-</span>
-<span class="has-tip" title="To update resource-revisions for non-indexed resources" data-tooltip>
-    <%= link_to "Download Revisions", download_revisions_monitored_resource_path(@monitored_resource), :class => 'button tiny' %>
+<span class="has-tip" title="To combine revisions. Has to be done after update." data-tooltip>
+    <%= link_to "Combine Revisions", combine_revisions_monitored_resource_path(@monitored_resource), :class => 'button tiny' %>
 </span>
 
 <h4>File List</h4>
@@ -21,7 +18,7 @@
 <% end %>
 
 <% unless @monitored_resource.resources.blank? %>
-    <div>
+    <div class="row">
       <label for="filter_periods">Filter by Period:</label>
       <% periods_array = [['--- none ---','']].concat MonitoredPeriod.all.order('start_date ASC').map { |period| [period.title, period.id] } %>
       <%= select_tag(:filter_periods, options_for_select(periods_array) ) %>
@@ -41,22 +38,10 @@
         <th><span class="fi-page-multiple" style="padding-right: 20px;"></span></th>
         <th><span class="fi-torsos" style="padding-right: 20px;"></span></th>
         <th><span class="fi-web" style="padding-right: 20px;"></span></th>
+        <th><span class="fi-comment" style="padding-right: 20px;"></span></th>
       </tr>
       </thead>
       <tbody>
       </tbody>
     </table>
 <% end %>
-
-<% unless @mime_count.blank? %>
-    <h4>Files by type:</h4>
-    <ul>
-      <% @mime_count.sort_by {|k, v| v}.reverse.each do |type, count| %>
-          <li><b><%= type %>: </b> <%= count %></li>
-      <% end %>
-    </ul>
-    <p>@TODO: use chart</p>
-<% end %>
-
-<h4>Files per period:</h4>
-<p>@TODO: + good visualization here!</p>

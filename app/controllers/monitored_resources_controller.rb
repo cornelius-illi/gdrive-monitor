@@ -5,7 +5,7 @@ class MonitoredResourcesController < ApplicationController
   before_filter :refresh_token!
   before_action :set_monitored_resource, only: [:show, :permissions, :refresh_permissions,
                                                 :reports, :permission_groups, :index_structure,
-                                                :index_changehistory, :missing_revisions, :download_revisions]
+                                                :index_changehistory, :missing_revisions, :download_revisions, :combine_revisions]
 
   caches_action :show, :format => :json
 
@@ -29,7 +29,7 @@ class MonitoredResourcesController < ApplicationController
   
   def show
     respond_to do |format|
-      format.html { @mime_count = @monitored_resource.mime_count }
+      format.html {  }
       format.json { render json: ResourcesDatatable.new(view_context, @monitored_resource) }
       #format.json { render json: @monitored_resource }
     end
@@ -61,7 +61,31 @@ class MonitoredResourcesController < ApplicationController
   end
 
   def reports
+    @mime_count = Hash.new
+    total_nbr_resources = @monitored_resource.resources.length
+    @monitored_resource.mime_count.each do |type,count|
+      if count*100.0/total_nbr_resources >= 1.0
+        @mime_count[type] = count
+      else
+        if @mime_count.has_key?('other')
+          @mime_count['other'] += count
+        else
+          @mime_count['other'] = count
+        end
+      end
+    end
 
+    @revisions_per_day = Hash.new
+    @monitored_resource.resources.each do |resource|
+      resource.revisions.each do |revision|
+        date = revision.modified_date.strftime('%Y, %m, %d')
+        if @revisions_per_day.has_key?(date)
+          @revisions_per_day[date] += 1
+        else
+          @revisions_per_day[date] = 1
+        end
+      end
+    end
   end
 
   def index_structure
@@ -70,11 +94,17 @@ class MonitoredResourcesController < ApplicationController
     redirect_to @monitored_resource, :notice => "Structure has been indexed: #{@monitored_resource.structure_indexed_at.to_s(:db)}"
   end
 
-  def index_changehistory
-    @monitored_resource.index_changehistory(current_user.token)
-    @monitored_resource.update_attribute(:changehistory_indexed_at, Time.now)
-    redirect_to @monitored_resource, :notice => "Change History has been indexed: #{@monitored_resource.changehistory_indexed_at.to_s(:db)}"
+  def combine_revisions
+    @monitored_resource.combine_revisions
+    redirect_to @monitored_resource, :notice => "Revisions are being combined! This might take a while!"
   end
+
+  # obsolete - works on changes, now using revisions instead
+  # def index_changehistory
+  #  @monitored_resource.index_changehistory(current_user.token)
+  #  @monitored_resource.update_attribute(:changehistory_indexed_at, Time.now)
+  #  redirect_to @monitored_resource, :notice => "Change History has been indexed: #{@monitored_resource.changehistory_indexed_at.to_s(:db)}"
+  # end
 
   private
   # Use callbacks to share common setup or constraints between actions.

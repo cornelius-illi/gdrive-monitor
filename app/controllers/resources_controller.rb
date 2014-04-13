@@ -14,7 +14,7 @@ class ResourcesController < ApplicationController
   end
 
   def download_revisions
-    @resource.download_revisions('txt', current_user.token)
+    @resource.download_revisions(current_user.token)
     redirect_to monitored_resource_resource_url(@monitored_resource, @resource), :notice => "Revisions are being downloaded!"
   end
 
@@ -28,7 +28,7 @@ class ResourcesController < ApplicationController
     Revision.where(:resource_id => @resource.id).update_all('revision_id = NULL')
 
     # then create new merges
-    @resource.merge_weak_revisions
+    @resource.merge_consecutive_revisions
     redirect_to monitored_resource_resource_url(@monitored_resource, @resource), :notice => "Weak Revisions have been merged!"
   end
 

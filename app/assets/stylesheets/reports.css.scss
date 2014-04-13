@@ -1,0 +1,26 @@
+// Place all the styles related to the reports controller here.
+// They will automatically be included in application.css.
+// You can use Sass (SCSS) here: http://sass-lang.com/
+.tabs dd > a {
+  padding: 0.5rem 1rem;
+}
+
+.tabs.vertical dd {
+  border-left: 1px solid black;
+  border-right: 1px solid black;
+}
+
+.tabs.vertical dd.active {
+  border-left: 1px solid black;
+  border-right: 0px;
+  border-bottom: 1px solid black;
+  border-top: 1px solid black;
+}
+
+.tabs.vertical dd:nth-child(1) {
+  border-top: 1px solid black;
+}
+
+.tabs.vertical dd:last-child {
+  border-bottom: 1px solid black;
+}

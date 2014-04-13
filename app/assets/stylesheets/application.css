@@ -69,6 +69,25 @@ table tr td.centered {
     text-align: center;
 }
 
-.red {
+.red, .negative {
     color: #FF0000;
+}
+
+.green, .positive {
+    color: #43AC6A;
+}
+
+td.table-new-chapter {
+    text-align: center;
+    text-transform: uppercase;
+    font-size: 1.125rem;
+    line-height: 0.5rem;
+    color: #FFFFFF;
+    background: #008cba;
+}
+td.table-new-section {
+    text-align: center;
+    text-transform: uppercase;
+    font-size: 1.125rem;
+    line-height: 0.5rem;
 }

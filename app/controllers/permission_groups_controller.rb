@@ -59,7 +59,7 @@ class PermissionGroupsController < ApplicationController
   def update
     respond_to do |format|
       if @permission_group.update(permission_group_params)
-        format.html { redirect_to @permission_group, notice: 'Permission group was successfully updated.' }
+        format.html { redirect_to monitored_resource_permission_groups_path(@monitored_resource), notice: 'Permission group was successfully updated.' }
         format.json { head :no_content }
       else
         format.html { render action: 'edit' }

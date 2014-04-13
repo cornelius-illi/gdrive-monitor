@@ -7,9 +7,11 @@ GdriveFeed::Application.routes.draw do
   resources :monitored_resources do
     member do
       get 'index_structure'
+      get 'combine_revisions'
       get 'index_changehistory'
       get 'missing_revisions'
       get 'download_revisions'
+      #get 'reports'
     end
 
     resources :permissions do
@@ -29,10 +31,16 @@ GdriveFeed::Application.routes.draw do
         get 'merged_revisions/:rev_id', :action => :merged_revisions, :as => 'merged_revisions'
       end
     end
-    resources :reports
+    resources :reports do
+      collection do
+        get 'generate'
+        get 'remove'
+      end
+    end
   end
 
   resources :monitored_periods
+  resources :period_groups
 
   get "welcome/index"
   get "meta/mime_types", to: "welcome#mime_types"

@@ -1,0 +1,84 @@
+<% content_for :title, "Report for #{@monitored_resource.title}" %>
+
+<h2>Report for: <%= @monitored_resource.title %></h2>
+
+<span class="has-tip" title="This will only generate reports that have not been generated1" data-tooltip>
+    <%= link_to "Generate Reports", generate_monitored_resource_reports_path(@monitored_resource), :class => 'button tiny' %>
+</span>
+<span class="has-tip" title="This will delete all reports for a monitored resource" data-tooltip>
+    <%= link_to "Delete reports", remove_monitored_resource_reports_path(@monitored_resource), :class => 'button tiny' %>
+</span>
+
+<h4>Reports by period</h4>
+<% if @monitored_resource.jobs.length > 0 %>
+    <div class="callout panel">
+      <span class="spin1 spinner"></span><i>Indexing in progress! Currently <%= @monitored_resource.jobs.length %> jobs are running.
+      <%= link_to "Refresh status!" %></i>
+    </div>
+<% end %>
+
+<% unless @monitored_resource.reports.blank? %>
+    <dl class="tabs" data-tab>
+      <% @period_groups.each_with_index do |period_group, index| %>
+        <%
+           group_icon = "<span class=\"fi-#{period_group.logo_class}\"></span> ".html_safe
+        %>
+        <dd <%= 'class="active"'.html_safe if index == 0 %>>
+          <a href="#panel2-<%= index %>"><span class="fi-<%= period_group.logo_class %>"></span> <%= period_group.name %> (<%= period_group.monitored_periods.length %>)</a>
+        </dd>
+      <% end %>
+    </dl>
+    <div class="tabs-content">
+      <% @period_groups.each_with_index do |period_group, index| %>
+
+          <div class="content<%= ' active' if index == 0 %>" id="panel2-<%= index %>">
+            <table>
+              <thead class="analytics">
+              <tr>
+                <th>Name</th>
+                <% period_group.monitored_periods.each do |period| %>
+                    <th><%= period.name %></th>
+                <% end %>
+              </tr>
+              </thead>
+              <tbody>
+              <tr>
+                <td class="table-new-chapter" colspan="<%= period_group.monitored_periods.length+1 %>">Overall Statistics</td>
+              </tr>
+              <%
+                 consolidated_results = period_group.consolidate_results_for(@monitored_resource)
+                 nbr_of_periods = consolidated_results.length-1
+              %>
+              <% consolidated_results.first.each_with_index do |key, i| %>
+                <tr>
+                    <td><b><%= key %></b></td>
+                    <% (1..nbr_of_periods).each do |j| %>
+                    <% diff_string = ""
+                       if j > 1
+                          diff =  ((consolidated_results[j][i] - consolidated_results[1][i])/consolidated_results[j][i].to_f)*100
+                          diff_string = (diff < 0) ? ", <span class=\"negative\"><span class=\"fi-arrow-down\"></span> #{number_to_percentage(diff)}</span>" :
+                                  ", <span class=\"positive\"><span class=\"fi-arrow-up\"></span> #{number_to_percentage(diff)}</span>"
+                          if diff.to_i == 0
+                            diff_string = ", 0%"
+                          end
+                        end
+                    %>
+                    <td><%= consolidated_results[j][i] %><%= diff_string.html_safe %></td>
+                    <% end %>
+                </tr>
+              <% end %>
+                  <tr>
+                    <td class="table-new-chapter" colspan="<%= period_group.monitored_periods.length+1 %>">Statistics by permission/ permission group</td>
+                  </tr>
+                  <tr>
+                    <td></td>
+                    <td class="table-new-section" colspan="<%= period_group.monitored_periods.length %>">Revisions</td>
+                  </tr>
+              </tbody>
+            </table>
+
+            <p>&nbsp;</p>
+          </div>
+      <% end %>
+    </div>
+<% end %>

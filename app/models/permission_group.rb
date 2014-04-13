@@ -3,5 +3,4 @@ class PermissionGroup < ActiveRecord::Base
 
   belongs_to :monitored_resource
   has_and_belongs_to_many :permissions
-
 end

@@ -48,7 +48,8 @@ class ResourcesDatatable
           resource['modified_date'].to_datetime.to_s(:db),
           resource['revisions'],
           resource['permissions'],
-          resource['permission_groups']
+          resource['permission_groups'],
+          resource['comments']
       ]
     end
   end
@@ -131,7 +132,7 @@ class ResourcesDatatable
 
   # :title_with_icon, :created_date, :modified_date, :revision_count, :collaborators_count, :globally
   def sort_column
-    columns = %w[resources.title resources.created_date resources.modified_date revisions permissions permission_groups]
+    columns = %w[resources.title resources.created_date resources.modified_date revisions permissions permission_groups comments]
     columns[params[:iSortCol_0].to_i]
   end
 

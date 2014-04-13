@@ -130,7 +130,7 @@ class Revision < ActiveRecord::Base
       .order('modified_date DESC').first
   end
 
-  def merge_if_weak
+  def merge_consecutive
     previous = previous()
     # return, if there is no previous revision or it has already been set (due to recursion)
     return if previous.blank? || !previous.revision_id.blank?
@@ -143,7 +143,7 @@ class Revision < ActiveRecord::Base
       previous.update_attribute(:revision_id, master)
     end
 
-    previous.merge_if_weak
+    previous.merge_consecutive
   end
 
   def find_and_create_collaboration
@@ -180,6 +180,28 @@ class Revision < ActiveRecord::Base
     end
     return length
   end
+
+  # REPORT RELATED QUERIES - START
+  def self.analyse_revisions_for(monitored_resource_id, monitored_period, permission_id=nil)
+    return nil if monitored_resource_id.blank?
+
+    where = ["WHERE resources.monitored_resource_id=%s AND resources.mime_type !='application/vnd.google-apps.folder'", monitored_resource_id]
+    unless monitored_period.blank? || !monitored_period.is_a?(MonitoredPeriod)
+      where.first << " AND (resources.created_date > '#{monitored_period.start_date}' AND resources.created_date < '#{monitored_period.end_date}' )"
+    end
+
+    unless permission_id.blank?
+      where.first << " AND permission_id=%s"
+      where.push permission_id
+    end
+
+    where = ActiveRecord::Base.send(:sanitize_sql_array, where)
+
+    query = "SELECT COUNT(revisions.id) as revisions FROM resources JOIN revisions ON revisions.resource_id=resources.id #{where}"
+    result = ActiveRecord::Base.connection.execute(query)
+    result.first['revisions']
+  end
+  # REPORT RELATED QUERIES - START
 
   # DELAYED - START
   def calculate_diff(again=false)
@@ -218,7 +240,7 @@ class Revision < ActiveRecord::Base
         :percental_add => ((chars.length-chars_prev.length)/chars_prev.length.to_f)
     )
   end
-  handle_asynchronously :calculate_diff, :queue => 'diffs', :owner => Proc.new {|o| o}
+  handle_asynchronously :calculate_diff, :queue => 'diffing', :owner => Proc.new {|o| o}
   # DELAYED - END
 
   private

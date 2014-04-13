@@ -1,7 +1,8 @@
 class Resource < ActiveRecord::Base
-  belongs_to :monitored_resource
-  has_many :jobs, :class_name => "::Delayed::Job", :as => :owner
-  has_many :revisions, -> { order('modified_date DESC') }
+  belongs_to :monitored_resource, :foreign_key => 'monitored_resource_id'
+  has_many  :jobs, :class_name => "::Delayed::Job", :as => :owner
+  has_many  :revisions, -> { order('modified_date DESC') }
+  has_many  :comments
 
   scope :google_resources, -> { where("mime_type IN('application/vnd.google-apps.drawing','application/vnd.google-apps.document','application/vnd.google-apps.spreadsheet','application/vnd.google-apps.presentation')") }
 
@@ -100,28 +101,6 @@ class Resource < ActiveRecord::Base
     (md5_checksum.blank? || revisions.blank?) ? false : (md5_checksum.eql? revisions.latest.md5_checksum)
   end
 
-  def calculate_revision_diffs(again=false)
-    revisions.each do |revision|
-      revision.calculate_diff(again)
-    end
-  end
-
-  def merge_weak_revisions
-    revisions.first.merge_if_weak
-
-    revisions.each do |r|
-      r.set_is_weak()
-    end
-  end
-
-  def find_collaborations
-    revisions.first.find_and_create_collaboration
-
-    revisions.each do |r|
-      r.set_is_weak()
-    end
-  end
-
   def links
     res = { :alternate_link => alternate_link }
     return res unless GOOGLE_FILE_TYPES_DOWNLOAD.has_key?( mime_type )
@@ -198,7 +177,68 @@ class Resource < ActiveRecord::Base
     return "public/resources/r-#{id.to_s}"
   end
 
+  # REPORT RELATED QUERIES - START
+  def self.analyse_new_resources_for(monitored_resource_id, monitored_period)
+    return nil if monitored_resource_id.blank?
+
+    where = ["WHERE resources.monitored_resource_id=%s AND mime_type !='application/vnd.google-apps.folder'", monitored_resource_id]
+    unless monitored_period.blank? || !monitored_period.is_a?(MonitoredPeriod)
+      where.first << " AND (resources.created_date > '#{monitored_period.start_date}' AND resources.created_date < '#{monitored_period.end_date}' )"
+    end
+
+    where_sql = ActiveRecord::Base.send(:sanitize_sql_array, where)
+
+    query = "SELECT COUNT(resources.id) as resources FROM resources #{where_sql}"
+    result = ActiveRecord::Base.connection.execute(query)
+    result.first['resources']
+  end
+
+  def self.analyse_modified_resources_for(monitored_resource_id, monitored_period, google_file_types_only=false)
+    return nil if monitored_resource_id.blank?
+
+    where = ["WHERE resources.monitored_resource_id=%s AND mime_type !='application/vnd.google-apps.folder'", monitored_resource_id]
+    unless monitored_period.blank? || !monitored_period.is_a?(MonitoredPeriod)
+      where.first << " AND (resources.modified_date > '#{monitored_period.start_date}' AND resources.modified_date < '#{monitored_period.end_date}' )"
+    end
+
+    if google_file_types_only
+      where.first << " AND resources.mime_type IN ('#{ GOOGLE_FILE_TYPES.join("','") }')"
+    end
+
+    where_sql = ActiveRecord::Base.send(:sanitize_sql_array, where)
+
+    query = "SELECT COUNT(resources.id) as resources FROM resources #{where_sql}"
+    result = ActiveRecord::Base.connection.execute(query)
+    result.first['resources']
+  end
+
+  # REPORT RELATED QUERIES - STOP
+
+
   # *** DELAYED TASKS - START
+
+  def retrieve_comments(user_token)
+    return unless is_google_filetype? # only for google_file_types
+
+    comments = DriveComments.retrieve_comments_list(gid, user_token)
+    comments.each do |metadata|
+      new_comment = Comment
+        .where(:gid => metadata['commentId'])
+        .where(:resource_id => id)
+        .first_or_create
+      new_comment.update_metadata(metadata)
+
+      # handle replies, a resource_id is not set explicitly
+      metadata['replies'].each do |reply_meta|
+        new_reply = Comment
+          .where(:gid => reply_meta['replyId'])
+          .where(:comment_id => new_comment.id )
+          .first_or_create
+        new_reply.update_reply_metadata(reply_meta)
+      end
+    end
+  end
+  handle_asynchronously :retrieve_comments, :queue => 'comments', :owner => Proc.new {|o| o}
 
   def retrieve_revisions(user_token)
     return if is_folder? # results in: 400 Bad Request
@@ -271,5 +311,35 @@ class Resource < ActiveRecord::Base
     end
   end
   handle_asynchronously :download_revision, :queue => 'downloads', :owner => Proc.new {|o| o}
+
+
+  def calculate_revision_diffs(again=false)
+    revisions.each do |revision|
+      revision.calculate_diff(again)
+    end
+  end
+  handle_asynchronously :calculate_revision_diffs, :queue => 'diffing', :owner => Proc.new {|o| o}
+
+  def merge_consecutive_revisions
+    revisions.first.merge_consecutive
+
+    #revisions.each do |r|
+    #  r.set_is_weak()
+    #end
+  end
+  handle_asynchronously :merge_consecutive_revisions, :queue => 'diffing', :owner => Proc.new {|o| o}
+
+  def find_collaborations
+    # 401 error - some revisions could not be fetched
+    return if revisions.empty?
+
+    revisions.first.find_and_create_collaboration
+
+    revisions.each do |r|
+      r.set_is_weak()
+    end
+  end
+  handle_asynchronously :find_collaborations, :queue => 'diffing', :owner => Proc.new {|o| o}
+
   # *** DELAYED TASKS - END
 end

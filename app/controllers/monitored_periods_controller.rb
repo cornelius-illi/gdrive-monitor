@@ -30,11 +30,9 @@ class MonitoredPeriodsController < ApplicationController
 
     respond_to do |format|
       if @monitored_period.save
-        format.html { redirect_to @monitored_period, notice: 'Monitored Period was successfully created.' }
-        format.json { render action: 'show', status: :created, location: @monitored_period }
+        format.html { redirect_to monitored_periods_path, notice: 'Monitored Period was successfully created.' }
       else
         format.html { render action: 'new' }
-        format.json { render json: @monitored_period.errors, status: :unprocessable_entity }
       end
     end
   end

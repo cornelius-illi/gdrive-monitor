@@ -37,6 +37,7 @@ SimpleNavigation::Configuration.run do |navigation|
     primary.item :recources_label, 'Configuration', :class => 'heading'
     primary.item :monitored_resources, '<span class="fi-plus"></span> Create New Resource', monitored_resources_path, :highlights_on => /monitored_resources/
     primary.item :monitored_periods, '<span class="fi-calendar"></span> Define Periods', monitored_periods_path
+    primary.item :period_groups, '<span class="fi-results"></span> Relate Periods', period_groups_path
     primary.item :divider1, '', :class => 'divider'
     primary.item :recources_label1, 'Monitored Resources', :class => 'heading'
     if user_signed_in? && !current_user.monitored_resources.blank?
@@ -46,8 +47,11 @@ SimpleNavigation::Configuration.run do |navigation|
     end
     primary.item :divider2, '', :class => 'divider'
     primary.item :recources_labe2l, 'Reports', :class => 'heading'
-    primary.item :create_report, '<span class="fi-page-doc"></span> Create New Report'
-    primary.item :list_reports, '<span class="fi-graph-bar"></span> List Reports'
+    if user_signed_in? && !current_user.monitored_resources.blank?
+      current_user.monitored_resources.each do |monitored_resource|
+        primary.item :monitored_resource, '<span class="fi-graph-bar"></span> ' + monitored_resource.try(:title), monitored_resource_reports_path(monitored_resource)
+      end
+    end
 
     # you can also specify a css id or class to attach to this particular level
     # works for all levels of the menu

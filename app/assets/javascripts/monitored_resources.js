@@ -14,13 +14,15 @@
             aaSorting: [[2, 'desc']],
             aoColumns: [
                 {
-                    "sWidth": "40%"
+                    "sWidth": "35%"
                 }, {
                     "sWidth": "20%"
                 }, {
                     "sWidth": "20%"
                 }, {
                     "sWidth": "10%"
+                }, {
+                    "sWidth": "5%"
                 }, {
                     "sWidth": "5%"
                 }, {

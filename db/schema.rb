@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140216092713) do
+ActiveRecord::Schema.define(version: 20140410114528) do
 
   create_table "changes", force: true do |t|
     t.string   "change_id"
@@ -19,6 +19,19 @@ ActiveRecord::Schema.define(version: 20140216092713) do
     t.datetime "modification_date"
     t.string   "last_modifying_username"
     t.string   "etag"
+    t.integer  "resource_id"
+  end
+
+  create_table "comments", force: true do |t|
+    t.string   "gid"
+    t.string   "author"
+    t.string   "content"
+    t.string   "context"
+    t.datetime "created_date"
+    t.boolean  "deleted"
+    t.datetime "modified_date"
+    t.string   "status"
+    t.integer  "comment_id"
     t.integer  "resource_id"
   end
 
@@ -45,6 +58,8 @@ ActiveRecord::Schema.define(version: 20140216092713) do
     t.datetime "start_date"
     t.datetime "end_date"
     t.integer  "user_id"
+    t.integer  "period_group_id"
+    t.integer  "monitored_period_id"
   end
 
   create_table "monitored_periods_monitored_resources", force: true do |t|
@@ -69,6 +84,13 @@ ActiveRecord::Schema.define(version: 20140216092713) do
     t.datetime "updated_at"
   end
 
+  create_table "period_groups", force: true do |t|
+    t.string   "name"
+    t.string   "logo_class"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "permission_groups", force: true do |t|
     t.string  "name"
     t.integer "monitored_resource_id"
@@ -88,6 +110,15 @@ ActiveRecord::Schema.define(version: 20140216092713) do
     t.string  "email_address"
     t.integer "monitored_resource_id"
     t.integer "permission_group_id"
+  end
+
+  create_table "reports", force: true do |t|
+    t.text     "data"
+    t.integer  "monitored_period_id"
+    t.integer  "monitored_resource_id"
+    t.integer  "report_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "resources", force: true do |t|

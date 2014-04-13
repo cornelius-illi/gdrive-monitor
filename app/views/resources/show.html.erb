@@ -29,6 +29,22 @@
       <% end %>
     </ul>
   </li>
+  <% unless @resource.comments.blank? %>
+      <li><b>Comments:</b>
+        <ul>
+          <% @resource.comments.each do |comment| %>
+            <li><%= comment.content %>, <%= comment.status %>, <%= comment.author %> (<%= comment.replies.length %>)</li>
+              <% unless comment.replies.empty? %>
+                <ul>
+                <% comment.replies.each do |reply| %>
+                  <li><%= reply.content.blank? ? '<i>empty</i>'.html_safe : reply.content %>, <b><%= reply.status %></b>, <%= reply.author %></li>
+                <% end %>
+                </ul>
+              <% end %>
+          <% end %>
+        </ul>
+      </li>
+  <% end %>
 </ul>
 
 <h3>Changes List - <small>Showing: <%= @resource.revisions.exclude_collaborated_and_merged.length %> of <%= @resource.revisions.length %> revisions.
@@ -48,7 +64,7 @@
       </thead>
       <tbody>
       <% @resource.revisions.exclude_collaborated_and_merged.each do |revision| %>
-          <tr class="<%= revision.is_weak? ? 'weak' : '' %> <%= revision.merged.blank? ? '' : 'strong' %>">
+          <tr class="<%= revision.is_weak? ? '' : '' %> <%= revision.merged.blank? ? '' : 'strong' %>">
             <td><%= link_to_if (!revision.collaboration.blank? || !revision.merged.blank?), revision.gid,
                 merged_revisions_monitored_resource_resource_path(@monitored_resource, @resource, revision.id),
                 :data => { 'reveal-id' => "modal", 'reveal-ajax' => "true" }, :class => 'reveal-link' %>

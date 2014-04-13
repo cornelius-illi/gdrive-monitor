@@ -2,6 +2,7 @@ class MonitoredResource < ActiveRecord::Base
   has_many  :resources, -> { where.not(mime_type: GOOGLE_FOLDER_TYPE) }, :dependent => :delete_all
   has_many  :permissions, :dependent => :delete_all
   has_many  :permission_groups, :dependent => :delete_all
+  has_many  :reports, :dependent => :delete_all
   has_and_belongs_to_many :monitored_periods
   has_many :jobs, :class_name => "::Delayed::Job", :as => :owner
 
@@ -19,15 +20,23 @@ class MonitoredResource < ActiveRecord::Base
     #Delayed::Job.find_all_by_owner_type(self.base_class.name)
   #end
 
+  def report_for_period(period)
+    reports.each do |report|
+      return report if report.monitored_period_id.eql?(period.id)
+    end
+    return nil
+  end
+
   def resources_analysed(page=0,per_page=10, filters=[], sort_column='resources.modified_date', sort_direction='asc')
       offset = page*per_page
 
       where_sql = create_where_statement filters
 
-      query = "SELECT resources.id, resources.title, resources.created_date, resources.modified_date, resources.mime_type, COUNT(revisions.id) as revisions,
-      COUNT(DISTINCT revisions.permission_id) as permissions, COUNT(DISTINCT permission_groups_permissions.permission_group_id) as permission_groups
+      query = "SELECT resources.id, resources.title, resources.created_date, resources.modified_date, resources.mime_type, COUNT(DISTINCT revisions.id) as revisions,
+      COUNT(DISTINCT revisions.permission_id) as permissions, COUNT(DISTINCT permission_groups_permissions.permission_group_id) as permission_groups,
+      COUNT(DISTINCT comments.gid) as comments
       FROM resources JOIN revisions ON revisions.resource_id=resources.id JOIN permissions ON permissions.id=revisions.permission_id
-      JOIN permission_groups_permissions ON permission_groups_permissions.permission_id=permissions.id #{where_sql}
+      LEFT OUTER JOIN comments ON comments.resource_id=resources.id JOIN permission_groups_permissions ON permission_groups_permissions.permission_id=permissions.id #{where_sql}
       GROUP BY resources.id ORDER BY #{sort_column} #{sort_direction} LIMIT #{offset},#{per_page};"
 
       # connection = ActiveRecord::Base.connection
@@ -162,15 +171,38 @@ class MonitoredResource < ActiveRecord::Base
 
       if new_resource.is_folder? # create new delayed_job, if type is folder
         index_structure(user_id, user_token, new_resource.gid)
-      else # get revisions (does not apply for folders, have none)
+      else # get revisions, comments (does not apply for folders, have none)
         # fetch revisions only, if checksum of file changed
         unless new_resource.has_latest_revision?
           new_resource.retrieve_revisions(user_token)
+        end
+
+        # fetch comments, (no possibility for a shortcut here)
+        new_resource.retrieve_comments(user_token)
+
+        # download revision for google resources
+        if new_resource.is_google_filetype?
+          new_resource.download_revisions(user_token)
+
+          #new_resource.calculate_revision_diffs
         end
       end
     end
   end
   handle_asynchronously :index_structure, :queue => 'index_structure', :owner => Proc.new {|o| o}
+
+  # this has to be done in a second step, as all diffing jobs have to be finished first
+  def combine_revisions
+    resources.google_resources.each do |resource|
+      # next steps require reset
+      query = "UPDATE revisions SET collaboration_id = NULL, revision_id = NULL WHERE resource_id=#{resource.id}"
+      ActiveRecord::Base.connection.execute(query)
+
+      resource.merge_consecutive_revisions
+      resource.find_collaborations
+    end
+  end
+  handle_asynchronously :combine_revisions, :queue => 'combine_revisions', :owner => Proc.new {|o| o}
 
   def index_changehistory(user_token)
     return nil # should not be called currently -> using revisions
