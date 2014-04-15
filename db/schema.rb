@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140413091609) do
+ActiveRecord::Schema.define(version: 20140415073418) do
 
   create_table "changes", force: true do |t|
     t.string   "change_id"
@@ -142,6 +142,7 @@ ActiveRecord::Schema.define(version: 20140413091609) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "md5_checksum"
+    t.integer  "permission_id"
   end
 
   create_table "revisions", force: true do |t|

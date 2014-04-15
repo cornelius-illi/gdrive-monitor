@@ -3,11 +3,11 @@ module DriveComments
   FIELDS_COMMENTS_LIST = 'items(author,commentId,content,context,createdDate,deleted,modifiedDate,replies(author,content,createdDate,deleted,modifiedDate,replyId,verb),selfLink,status)'
 
   def self.retrieve_comments_list(file_id, user_token)
-    return self.gdrive_api_revisions_list(file_id, user_token)
+    return self.gdrive_api_comments_list(file_id, user_token)
   end
 
   private
-  def self.gdrive_api_revisions_list(file_id, user_token)
+  def self.gdrive_api_comments_list(file_id, user_token)
     par = { :params => {
         :key => GOOGLE['client_secret'],
         :access_token => user_token,

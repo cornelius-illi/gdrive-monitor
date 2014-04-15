@@ -1,5 +1,5 @@
-class NumberOfRevisions
-  def name
+class Report::Metrics::NumberOfRevisions < Report::Metrics::AbstractMetric
+  def self.title
     return "# of Revisions"
   end
 

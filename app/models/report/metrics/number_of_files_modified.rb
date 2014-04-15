@@ -1,5 +1,5 @@
-class NumberOfFilesModified < AbstractMetric
-  def name
+class Report::Metrics::NumberOfFilesModified < Report::Metrics::AbstractMetric
+  def self.title
     "# of Files Modified"
   end
 

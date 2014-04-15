@@ -1,4 +1,4 @@
-class AbstractSection
+class Report::Sections::AbstractSection
 
   TYPE = 'SECTION'
 
@@ -16,9 +16,9 @@ class AbstractSection
 
   def calculate_for(monitored_resource, period_group)
     @metrics.each do |metric|
-      @data[metric.name] = Hash.new
+      @data[metric.title] = Hash.new
       period_group.monitored_periods.each do |period|
-        @data[metric.name][period.id] = metric.calculate_for(monitored_resource, period, @data)
+        @data[metric.title][period.id] = metric.calculate_for(monitored_resource, period, @data)
       end
     end
   end
@@ -39,7 +39,6 @@ class AbstractSection
       metric[:name] = metric_name
 
       # @todo: calculate_for on metrics should be class method and return a hash instead of just the value
-      # @todo: organize classes -> reports -> (chapters, sections, metrics)
       unless metric_name[0,1].eql? "("
         metric[:type] = 'METRIC'
       else

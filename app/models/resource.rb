@@ -14,6 +14,7 @@ class Resource < ActiveRecord::Base
     application/vnd.google-apps.presentation
   ).freeze
 
+  # @todo: save all these things directly with each resource, as links could change
   GOOGLE_FILE_TYPES_DOWNLOAD = {
       'application/vnd.google-apps.presentation' => { :url => 'https://docs.google.com/feeds/download/presentations/Export?id=',
                                                       :types => ['pptx','pdf','txt'], :local_download_type => 'txt',
@@ -28,6 +29,18 @@ class Resource < ActiveRecord::Base
                                                  :types => ['pdf','svg', 'jpeg', 'png'], :local_download_type => 'svg',
                                                  :iconLink => 'https://ssl.gstatic.com/docs/doclist/images/icon_11_drawing_list.png' }
   }.freeze
+
+  IMAGE_FILE_TYPE = 'image/jpeg'.freeze
+  IMAGE_FILE_TYPES = %w(
+    image/gif
+    image/jpeg
+    image/png
+    image/svg+xml
+    image/tiff
+    image/x-canon-cr2
+    image/x-icon
+    image/x-photoshop
+  ).freeze
 
   def self.find_create_or_update_batched_for(child_resources, mr_id, user_id)
     child_resources.each do |resource|
@@ -149,6 +162,30 @@ class Resource < ActiveRecord::Base
   end
 
   def update_metadata(metadata)
+    google_permission_id = metadata['owners'].first['permissionId']
+    permission_id = nil
+
+    unless google_permission_id.blank?
+      permission = Permission
+        .where(:gid => metadata['owners'].first['permissionId'] )
+        .where(:monitored_resource_id => monitored_resource_id )
+      .first_or_initialize
+
+      # if permission has just been created, get metadata
+      if permission.id.blank?
+        perm_metadata = DriveFiles.retrieve_permission(gid,permission.gid, user_token)
+        permission.update_attributes(
+            :name => perm_metadata['name'],
+            :email_address => perm_metadata['emailAddress'],
+            :domain => perm_metadata['domain'],
+            :role => perm_metadata['role'],
+            :perm_type => perm_metadata['type'],
+        )
+      end
+
+      permission_id = permission.id
+    end
+
     update_attributes(
         :alternate_link => metadata['alternateLink'],
         :created_date => metadata['createdDate'],
@@ -164,7 +201,8 @@ class Resource < ActiveRecord::Base
         :shared => metadata['shared'],
         :trashed => metadata['labels']['trashed'],
         :viewed => metadata['labels']['viewed'],
-        :title => metadata['title']
+        :title => metadata['title'],
+        :permission_id => permission_id
       )
   end
   
@@ -321,6 +359,9 @@ class Resource < ActiveRecord::Base
   handle_asynchronously :calculate_revision_diffs, :queue => 'diffing', :owner => Proc.new {|o| o}
 
   def merge_consecutive_revisions
+    # pre-condition: sometimes revisions cannot be downloaded (Resource not found 404)
+    return if revisions.blank? || revisions.length.eql?(0)
+
     revisions.first.merge_consecutive
 
     #revisions.each do |r|

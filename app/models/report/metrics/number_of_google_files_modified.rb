@@ -1,5 +1,5 @@
-class NumberOfGoogleFilesModified
-  def name
+class Report::Metrics::NumberOfGoogleFilesModified < Report::Metrics::AbstractMetric
+  def self.title
     "# of Google-Files Modified"
   end
 

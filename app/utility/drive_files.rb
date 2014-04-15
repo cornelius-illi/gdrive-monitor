@@ -1,5 +1,5 @@
 module DriveFiles
-  FIELDS_FILES_GET = 'alternateLink,createdDate,etag,md5Checksum,fileExtension,fileSize,kind,ownerNames,lastModifyingUserName,mimeType,modifiedDate,shared,sharedWithMeDate,title,labels(trashed,viewed)'
+  FIELDS_FILES_GET = 'alternateLink,createdDate,etag,md5Checksum,fileExtension,fileSize,kind,ownerNames,owners/permissionId,lastModifyingUserName,mimeType,modifiedDate,shared,sharedWithMeDate,title,labels(trashed,viewed)'
   FIELDS_FILES_LIST = 'items(id,' + FIELDS_FILES_GET + ')'
   FIELDS_PERMISSIONS_GET = 'domain,emailAddress,etag,id,kind,name,role,type,value'
   FIELDS_PERMISSIONS_LIST = 'items(' + FIELDS_PERMISSIONS_GET + ')'
@@ -72,8 +72,14 @@ module DriveFiles
   end
 
   def self.gdrive_api_download(url,user_token)
-    resource = RestClient::Resource.new(url)
-    # can throw -> RestClient::Unauthorized: 401 Unauthorized
-    return resource.get( :Authorization => 'Bearer ' + user_token)
+    # can throw -> RestClient::Unauthorized: 401 Unauthorized or 404
+    begin
+      resource = RestClient::Resource.new(url)
+      return resource.get( :Authorization => 'Bearer ' + user_token)
+    rescue Exception => e
+      failed_download_logger ||= Logger.new("#{Rails.root}/log/failed_downloads.log")
+      failed_download_logger.error("Could not download ''" + url + "'. Error:" + e.message)
+      return nil
+    end
   end
 end

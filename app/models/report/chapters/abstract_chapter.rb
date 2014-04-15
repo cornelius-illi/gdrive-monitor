@@ -1,4 +1,4 @@
-class AbstractChapter
+class Report::Chapters::AbstractChapter
 
   TYPE = 'CHAPTER'
 

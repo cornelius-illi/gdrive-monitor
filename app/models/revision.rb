@@ -191,7 +191,7 @@ class Revision < ActiveRecord::Base
     end
 
     unless permission_id.blank?
-      where.first << " AND permission_id=%s"
+      where.first << " AND revisions.permission_id=%s"
       where.push permission_id
     end
 

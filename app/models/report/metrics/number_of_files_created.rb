@@ -1,6 +1,6 @@
-class NumberOfFilesCreated < AbstractMetric
+class Report::Metrics::NumberOfFilesCreated < Report::Metrics::AbstractMetric
 
-  def name
+  def self.title
     return "# of Files Created"
   end
 

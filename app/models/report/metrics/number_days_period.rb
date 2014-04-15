@@ -1,5 +1,5 @@
-class NumberDaysPeriod
-    def name
+class Report::Metrics::NumberDaysPeriod < Report::Metrics::AbstractMetric
+    def self.title
       "# of days/ period"
     end
 

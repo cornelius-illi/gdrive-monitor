@@ -1,4 +1,4 @@
-class AbstractPermissionBasedSection < AbstractSection
+class Report::Sections::AbstractPermissionBasedSection < Report::Sections::AbstractSection
   def calculate_for(monitored_resource, period_group)
     @metrics.each do |metric|
       monitored_resource.permission_groups.each do |perm_group|

@@ -10,8 +10,8 @@ class Report < ActiveRecord::Base
 
     # initialize here
     chapters = Array.new
-    chapters << OverallStatisticsChapter.new
-    chapters << PermissionBasedChapter.new
+    chapters << Report::Chapters::OverallStatisticsChapter.new
+    chapters << Report::Chapters::PermissionBasedChapter.new
 
     monitored_resource ||= MonitoredResource.find(monitored_resource_id)
     period_group ||= PeriodGroup.find(period_group_id)

@@ -15,8 +15,14 @@ module DriveRevisions
       }
     }
 
-    response = RestClient.get "https://www.googleapis.com/drive/v2/files/#{file_id}/revisions", par
-    response = JSON::parse(response)
-    return response['items']
+    begin
+      response = RestClient.get "https://www.googleapis.com/drive/v2/files/#{file_id}/revisions", par
+      response = JSON::parse(response)
+      return response['items']
+    rescue Exception => e
+      failed_download_logger ||= Logger.new("#{Rails.root}/log/failed_revisions.log")
+      failed_download_logger.error("Could not get revision list for file ''" + file_id + "'. Error:" + e.message)
+      return nil
+    end
   end
 end

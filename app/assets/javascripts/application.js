@@ -31,14 +31,7 @@ $(function(){
         $('#files-table').dataTable();
     } );
 
-    $( "a.active-report-col" ).click(function() {
-        column = parseInt( $(this).attr('href').split('-')[1]) + 1;
-        $(".reference").removeClass("reference");
-        $("span.difference").remove();
-
-        $("tr th:nth-child(" + column + ")").addClass("reference");
-        $("tr td:nth-child(" + column + ")").addClass("reference");
-
+    function calculate_diffs() {
         $(".tabs-content .active td").each(function() {
             // @todo: first not working ...? ... and why is nothing add to the reference column?
             if( !$(this).is(':first') ) {
@@ -60,5 +53,16 @@ $(function(){
                 }
             }
         });
+    }
+
+    $( "a.active-report-col" ).click(function() {
+        column = parseInt( $(this).attr('href').split('-')[1]) + 1;
+        $(".reference").removeClass("reference");
+        $("span.difference").remove();
+
+        $("tr th:nth-child(" + column + ")").addClass("reference");
+        $("tr td:nth-child(" + column + ")").addClass("reference");
+
+        calculate_diffs();
     });
 });
