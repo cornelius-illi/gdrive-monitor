@@ -1,13 +1,13 @@
 <h2>Merged Revisions for: <%= @resource.title %></h2>
 <% unless @revisions.blank? %>
 <ul>
-  <li><b><%= @master.gid %>: <%= @master.modified_date.to_s(:db) %> (<%= @master.permission.name %></b></li>
+  <li><b><%= @master.gid %>: <%= @master.modified_date.to_s(:db) %> (<%= @master.permission.name %>)</b></li>
   <% @revisions.each do |revision| %>
      <li><%= revision.gid %>: <%= revision.modified_date.to_s(:db) %> (<%= revision.permission.name %>)
-        <% unless revision.merged.blank? %>
+        <% unless true || revision.merged.blank? %>
             <ul>
               <% revision.merged.each do |child_revision| %>
-                <li><%= revision.gid %>: <%= revision.modified_date.to_s(:db) %> (<%= revision.permission.name %>)</li>
+                <li><%= child_revision.gid %>: <%= revision.modified_date.to_s(:db) %> (<%= revision.permission.name %>)</li>
               <% end %>
             </ul>
         <% end %>

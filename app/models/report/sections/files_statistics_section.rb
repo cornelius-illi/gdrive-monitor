@@ -1,7 +1,7 @@
-class Report::Sections::OverallStatisticsSection < Report::Sections::AbstractSection
+class Report::Sections::FilesStatisticsSection < Report::Sections::AbstractSection
 
   def initialize_section
-    @name = ""
+    @name = "File statistics"
 
     @metrics << Report::Metrics::NumberDaysPeriod.new
     @metrics << Report::Metrics::NumberFilesTotal.new
@@ -14,11 +14,5 @@ class Report::Sections::OverallStatisticsSection < Report::Sections::AbstractSec
     @metrics << Report::Metrics::NumberOfRevisions.new
     @metrics << Report::Metrics::NumberAverageRevisions.new
     @metrics << Report::Metrics::RatioRevisionsModifiedFiles.new
-    @metrics << Report::Metrics::NumberFilesComments.new
-    @metrics << Report::Metrics::NumberTotalComments.new
-    @metrics << Report::Metrics::NumberComments.new
-    @metrics << Report::Metrics::NumberResolvedComments.new
-    @metrics << Report::Metrics::RatioResolvedTotalComments.new
-
   end
 end

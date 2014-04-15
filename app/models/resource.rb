@@ -250,6 +250,13 @@ class Resource < ActiveRecord::Base
     result.first['resources']
   end
 
+  def self.google_resources_for_period(monitored_resource, period)
+    Resource
+      .where(:monitored_resource_id => monitored_resource.id)
+      .where('resources.modified_date > ? AND resources.modified_date <= ?', period.start_date, period.end_date)
+      .where("mime_type IN('application/vnd.google-apps.drawing','application/vnd.google-apps.document','application/vnd.google-apps.spreadsheet','application/vnd.google-apps.presentation')")
+  end
+
   # REPORT RELATED QUERIES - STOP
 
 
@@ -376,9 +383,9 @@ class Resource < ActiveRecord::Base
 
     revisions.first.find_and_create_collaboration
 
-    revisions.each do |r|
-      r.set_is_weak()
-    end
+    #revisions.each do |r|
+    #  r.set_is_weak()
+    #end
   end
   handle_asynchronously :find_collaborations, :queue => 'diffing', :owner => Proc.new {|o| o}
 

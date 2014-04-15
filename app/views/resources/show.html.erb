@@ -68,8 +68,9 @@
             <td><%= link_to_if (!revision.collaboration.blank? || !revision.merged.blank?), revision.gid,
                 merged_revisions_monitored_resource_resource_path(@monitored_resource, @resource, revision.id),
                 :data => { 'reveal-id' => "modal", 'reveal-ajax' => "true" }, :class => 'reveal-link' %>
-              <% if !revision.collaboration.blank? %><span class="fi-torsos-all"></span> (<%= revision.collaboration.length+1 %>)
+              <% if !revision.collaboration.blank? %><span class="fi-torsos-all"></span>
                   <% if Revision.collaboration_is_global?(revision.collaboration, @resource.monitored_resource_id) %><span class="fi-web"></span><% end %>
+                  (<%= revision.collaboration.length+1 %>)
               <% elsif !revision.merged.blank? %><span class="fi-page-multiple"></span> (<%= revision.merged.length+1  %>)<% end %>
             </td>
             <td><%= revision.modified_date.to_s(:db) %></td>

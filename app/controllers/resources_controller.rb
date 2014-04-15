@@ -43,7 +43,7 @@ class ResourcesController < ApplicationController
   def merged_revisions
     @master = Revision.find(params[:rev_id])
     @revisions = Revision
-      .where('resource_id=? AND ((collaboration_id=? AND revision_id IS NULL) OR (collaboration_id IS NULL AND revision_id=?))',
+      .where('resource_id=? AND (collaboration_id=? OR revision_id = ?)',
              @resource.id, params[:rev_id], params[:rev_id] )
       .order('modified_date DESC')
 

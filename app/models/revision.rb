@@ -151,12 +151,10 @@ class Revision < ActiveRecord::Base
     # return, if there is no previous revision
     return if previous.blank?
 
-    my_master = revision_id.blank? ? id : revision_id
+    # reference point, self or consecutive master
+    #my_master = revision_id.blank? ? id : revision_id
 
-    if ((permission_id != previous.permission_id) &&
-        ((modified_date - MERGE_TIME_THRESHOLD) <= previous.modified_date)) ||
-        (my_master.eql? previous.revision_id)
-
+    if (modified_date - MERGE_TIME_THRESHOLD) <= previous.modified_date
       master = id
       if collaboration_id.blank? && !revision_id.blank?
         master = revision_id
