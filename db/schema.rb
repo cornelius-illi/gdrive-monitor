@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140415073418) do
+ActiveRecord::Schema.define(version: 20140416080837) do
 
   create_table "changes", force: true do |t|
     t.string   "change_id"
@@ -148,7 +148,7 @@ ActiveRecord::Schema.define(version: 20140415073418) do
   create_table "revisions", force: true do |t|
     t.string   "gid"
     t.string   "etag"
-    t.integer  "file_size",        limit: 8
+    t.integer  "file_size",            limit: 8
     t.string   "md5_checksum"
     t.datetime "modified_date"
     t.integer  "permission_id"
@@ -164,8 +164,9 @@ ActiveRecord::Schema.define(version: 20140415073418) do
     t.integer  "words_count"
     t.integer  "lines_count"
     t.integer  "revision_id"
-    t.boolean  "is_weak",                    default: false
+    t.boolean  "is_weak",                        default: false
     t.integer  "collaboration_id"
+    t.integer  "distance_to_previous"
   end
 
   create_table "users", force: true do |t|

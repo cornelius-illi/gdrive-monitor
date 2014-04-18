@@ -35,10 +35,10 @@ $(function(){
         $(".tabs-content .active td").each(function() {
             // @todo: first not working ...? ... and why is nothing add to the reference column?
             if( !$(this).is(':first') ) {
-                reference_value = parseFloat($(this).siblings("td:nth-child(" + column + ")").text());
+                reference_value = parseFloat($(this).siblings("td.isnumber:nth-child(" + column + ")").text());
                 my_value = parseFloat($(this).text());
                 if (!isNaN(reference_value) && !isNaN(my_value)) {
-                    diff = Math.round( ( (my_value-reference_value)/my_value) * 100 * 100) / 100
+                    diff = Math.round( ( (my_value-reference_value)/reference_value) * 100 * 100) / 100
                     diff = (my_value == 0) ? 0 : diff
 
                     sign_class = (diff > 0) ? "positive" : "negative";
@@ -64,5 +64,10 @@ $(function(){
         $("tr td:nth-child(" + column + ")").addClass("reference");
 
         calculate_diffs();
+    });
+
+    $('a.draw-charts').click( function (event) {
+        event.preventDefault();
+        drawCharts();
     });
 });

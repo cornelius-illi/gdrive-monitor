@@ -42,6 +42,11 @@ class Resource < ActiveRecord::Base
     image/x-photoshop
   ).freeze
 
+  def self.find_with_several_revisions()
+    query = 'SELECT resources.id, COUNT(revisions.id) as revisions FROM resources JOIN revisions ON revisions.resource_id=resources.id GROUP BY resources.id HAVING COUNT(revisions.id) > 1;'
+    return ActiveRecord::Base.connection.execute(query)
+  end
+
   def self.find_create_or_update_batched_for(child_resources, mr_id, user_id)
     child_resources.each do |resource|
       new_resource = Resource

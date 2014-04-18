@@ -38,6 +38,7 @@ SimpleNavigation::Configuration.run do |navigation|
     primary.item :monitored_resources, '<span class="fi-plus"></span> Create New Resource', monitored_resources_path, :highlights_on => /monitored_resources/
     primary.item :monitored_periods, '<span class="fi-calendar"></span> Define Periods', monitored_periods_path
     primary.item :period_groups, '<span class="fi-results"></span> Relate Periods', period_groups_path
+    primary.item :calculate_threshold, '<span class="fi-graph-pie"></span> Calculate Threshold', show_threshold_path
     primary.item :divider1, '', :class => 'divider'
     primary.item :recources_label1, 'Monitored Resources', :class => 'heading'
     if user_signed_in? && !current_user.monitored_resources.blank?

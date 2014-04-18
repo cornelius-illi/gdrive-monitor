@@ -9,6 +9,10 @@
     <%= link_to "Delete reports", remove_monitored_resource_reports_path(@monitored_resource), :class => 'button tiny' %>
 </span>
 
+<span class="has-tip" title="This will redraw all charts" data-tooltip>
+    <a href="#" class="button tiny secondary draw-charts">Draw Charts</a>
+</span>
+
 <h4>Reports by period</h4>
 <% if @monitored_resource.jobs.length > 0 %>
     <div class="callout panel">
@@ -18,20 +22,22 @@
 <% end %>
 
 <% unless @monitored_resource.reports.blank? %>
-    <dl class="tabs" data-tab>
+    <% chart_value_sets = Hash.new %>
+
+    <dl id="report-tabs" class="tabs" data-tab>
       <% @period_groups.each_with_index do |period_group, index| %>
         <%
            group_icon = "<span class=\"fi-#{period_group.logo_class}\"></span> ".html_safe
         %>
         <dd <%= 'class="active"'.html_safe if index == 0 %>>
-          <a href="#panel2-<%= index %>"><span class="fi-<%= period_group.logo_class %>"></span> <%= period_group.name %> (<%= period_group.monitored_periods.length %>)</a>
+          <a class="report-tab-link" href="#panel2-<%= index %>"><span class="fi-<%= period_group.logo_class %>"></span> <%= period_group.name %> (<%= period_group.monitored_periods.length %>)</a>
         </dd>
       <% end %>
     </dl>
     <div class="tabs-content">
       <% @period_groups.each_with_index do |period_group, index| %>
 
-          <div class="content<%= ' active' if index == 0 %>" id="panel2-<%= index %>">
+          <div class="report-tab content<%= ' active' if index == 0 %>" id="panel2-<%= index %>">
             <table>
               <thead class="analytics">
               <tr>
@@ -50,18 +56,28 @@
                     <td class="table-new-chapter" colspan="<%= period_group.monitored_periods.length+1 %>"><%= chapter[:name] %></td>
                   </tr>
                 <% end %>
-                <% chapter[:values].each do |section| %>
+                <% chapter[:values].each_with_index do |section,seci| %>
                       <% unless section[:name].blank? %>
                           <tr>
                             <td></td>
                             <td class="table-new-section" colspan="<%= period_group.monitored_periods.length %>"><%= section[:name] %></td>
                           </tr>
                       <% end %>
-                      <% section[:values].each do |metric| %>
+                      <% section[:values].each_with_index do |metric,mini| %>
                         <tr>
                           <td><% if metric[:type] == 'METRIC' %><b><%= metric[:name] %></b><% else %><%= metric[:name] %><% end %></td>
                           <% metric[:values].each_with_index do |value,l| %>
-                            <td <%= 'class="reference"'.html_safe if l.eql? 0  %>><%= value %></td>
+                            <% classes = (l.eql? 0) ? 'reference ' : '' %>
+                            <% classes += value.is_a?(Array) ? '' : 'isnumber' %>
+                            <td class="<%= classes %>">
+                              <% if value.is_a?(Array) %>
+                                  <% chart_id = "columnchart_#{report.id}_#{seci}_#{mini}_#{l}" %>
+                                  <% chart_value_sets[chart_id] = value %>
+                                  <div id="<%= chart_id %>" class="report-pie-chart" style="width: 200px; height: 200px;"></div>
+                              <% else %>
+                                <%= value %>
+                              <% end %>
+                            </td>
                           <% end %>
                         </tr>
                       <% end %>
@@ -72,4 +88,41 @@
           </div>
       <% end %>
     </div>
+
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <script type="text/javascript">
+        google.load("visualization", "1", {packages:["corechart"]});
+        google.setOnLoadCallback(drawCharts);
+
+        function drawCharts() {
+            var data = new Array();
+            <% chart_value_sets.each do |key,values| %>
+                <% if values.length > 0 %>
+                data['<%= key %>'] = [
+                    ['Mime-Type', 'Occurence', { role: 'style' }],
+                    <% values.each do |set| %>
+                    <%= set.to_s.html_safe %>,
+                    <% end %>
+                ];
+                <% end %>
+            <% end %>
+
+            $(".tabs-content .active div.report-pie-chart").each(function() {
+                var id = $(this).attr('id');
+                if (data.hasOwnProperty(id)) {
+                    drawChart(data[id], id);
+                }
+            });
+        }
+
+        function drawChart(values, id) {
+            //console.log(id);
+            var data = google.visualization.arrayToDataTable(values);
+            var options = {
+                legend: { position: 'none' }
+            };
+            var chart = new google.visualization.PieChart(document.getElementById(id));
+            chart.draw(data, options);
+        }
+    </script>
 <% end %>

@@ -15,7 +15,7 @@
       <tbody>
       <% @period_groups.each do |pg| %>
           <tr>
-            <td><%= pg.name %></td>
+            <td><%= pg.name %> (<%= pg.monitored_periods.length %>)</td>
             <td><%= link_to '', edit_period_group_path(pg), :class => 'fi-pencil' %></td>
             <td><%= button_to 'x', pg, :method=>:delete, :class=> 'button alert tiny delete' %></td>
           </tr>

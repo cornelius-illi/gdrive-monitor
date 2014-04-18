@@ -1,6 +1,6 @@
 class Report::Metrics::NumberOfFilesPreviousPeriods < Report::Metrics::AbstractMetric
   def self.title
-    return "# modified files from previous periods"
+    return "# files from previous periods"
   end
 
   def calculate_for(monitored_resource, period, data=nil)

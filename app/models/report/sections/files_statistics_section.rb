@@ -6,6 +6,7 @@ class Report::Sections::FilesStatisticsSection < Report::Sections::AbstractSecti
     @metrics << Report::Metrics::NumberDaysPeriod.new
     @metrics << Report::Metrics::NumberFilesTotal.new
     @metrics << Report::Metrics::NumberOfFilesCreated.new
+    @metrics << Report::Metrics::NumberOfImages.new
     @metrics << Report::Metrics::NumberOfFilesModified.new
     @metrics << Report::Metrics::NumberOfFilesPreviousPeriods.new
     @metrics << Report::Metrics::NumberAverageFilesCreated.new
@@ -14,5 +15,6 @@ class Report::Sections::FilesStatisticsSection < Report::Sections::AbstractSecti
     @metrics << Report::Metrics::NumberOfRevisions.new
     @metrics << Report::Metrics::NumberAverageRevisions.new
     @metrics << Report::Metrics::RatioRevisionsModifiedFiles.new
+    @metrics << Report::Metrics::ChartMostUsedFileTypes.new
   end
 end

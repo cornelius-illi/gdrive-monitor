@@ -124,8 +124,17 @@ class Revision < ActiveRecord::Base
     update_attribute(:is_weak, is_weak)
   end
 
+  def calculate_time_distance_to_previous
+    pr = previous
+    unless pr.blank?
+      diff = (modified_date - pr.modified_date).to_i
+      self.distance_to_previous = diff
+      save!
+    end
+  end
+
   def previous
-    Revision
+    return Revision
       .where('resource_id=? AND modified_date < ?', resource_id, modified_date )
       .order('modified_date DESC').first
   end
