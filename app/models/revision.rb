@@ -7,7 +7,7 @@ class Revision < ActiveRecord::Base
   scope :latest, -> { order('modified_date DESC').first }
   scope :exclude_merged, -> { where(:revision_id => nil).order('modified_date DESC') }
   scope :exclude_collaborated_and_merged, -> {
-    where('(revision_id IS NULL AND collaboration_id IS NULL)').order('modified_date DESC') }
+    where('(collaboration_id IS NULL)').order('modified_date DESC') }
 
   MERGE_TIME_THRESHOLD = 8.minutes.freeze
   WEAK_THRESHOLD_BASE = 1.freeze # divided with chars_count -> 1/100 = 0.01 = 1%, 1/1000 = 0.001 = 0.1%
@@ -20,12 +20,20 @@ class Revision < ActiveRecord::Base
     return nbr_weak
   end
 
-  def self.collaboration_is_global?(collection_of_revisions, monitored_resource_id=nil)
+  def team_collaboration?
+    query = 'SELECT COUNT(DISTINCT permission_id) as count FROM revisions
+      WHERE collaboration_id=' + id.to_s + ' OR id=' + id.to_s
+    result = ActiveRecord::Base.connection.execute(query)
+    return (result.first['count'] > 1 )
+  end
+
+  def self.collaboration_is_global?(revision, monitored_resource_id=nil)
     return false if monitored_resource_id.nil?
 
     perm_ids = Array.new
-    collection_of_revisions.each do |revision|
-      perm_ids << revision.permission_id
+    perm_ids << revision.permission_id
+    revision.collaboration.each do |r|
+      perm_ids << r.permission_id
     end
     # remove duplicates
     perm_ids.uniq!
@@ -160,20 +168,16 @@ class Revision < ActiveRecord::Base
     # return, if there is no previous revision
     return if previous.blank?
 
-    # reference point, self or consecutive master
-    #my_master = revision_id.blank? ? id : revision_id
-
     if (modified_date - MERGE_TIME_THRESHOLD) <= previous.modified_date
       master = id
-      if collaboration_id.blank? && !revision_id.blank?
+      if !collaboration_id.blank?
+        master = collaboration_id
+      elsif !revision_id.blank?
         master = revision_id
-      elsif !collaboration_id.blank? && revision_id.blank?
-        master = collaboration_id
-      elsif !collaboration_id.blank? && !revision_id.blank?
-        master = collaboration_id
       end
 
-      previous.update_attribute(:collaboration_id, master)
+      previous.collaboration_id =  master
+      previous.save
     end
 
     previous.find_and_create_collaboration

@@ -6,68 +6,20 @@
     <%= link_to "Calculate Distances", calculate_threshold_path, :class => 'button tiny' %>
 </span>
 
-
-<script type="text/javascript" src="https://www.google.com/jsapi"></script>
-<script type="text/javascript">
-    google.load("visualization", "1", {packages:["corechart"]});
-    google.setOnLoadCallback(drawChart);
-    google.setOnLoadCallback(drawChartAgerages);
-    google.setOnLoadCallback(drawChartPercentage);
-    function drawChart() {
-        var data = google.visualization.arrayToDataTable(<%= @distances_json.html_safe %>);
-
-        var options = {
-            title: 'Occurence vs. Distance',
-            hAxis: {title: 'Distance in Seconds', minValue: 0, maxValue: 15},
-            vAxis: {title: 'Occurence', minValue: 0, maxValue: 15},
-            legend: 'none',
-            pointSize: 3,
-            trendlines: { 0: {
-                type: 'exponential',
-                visibleInLegend: true
-            } }
-        };
-
-        var chart = new google.visualization.ScatterChart(document.getElementById('chart_div'));
-        chart.draw(data, options);
-    }
-
-
-    function drawChartAgerages() {
-        var data_averages = google.visualization.arrayToDataTable(<%= @averages_json.html_safe %>);
-
-        var options_averages = {
-            title: 'arithmetic mean vs. Maximum Distance in Seconds',
-            hAxis: {title: 'Maximum Distance in Seconds', minValue: 0, maxValue: 15},
-            vAxis: {title: 'arithmetic mean', minValue: 0, maxValue: 15},
-            legend: 'none',
-            pointSize: 3
-        };
-
-        var chart_averages = new google.visualization.ScatterChart(document.getElementById('chart_div2'));
-        chart_averages.draw(data_averages, options_averages);
-    }
-
-    function drawChartPercentage() {
-        var data_percentages = google.visualization.arrayToDataTable(<%= @percentages_json.html_safe %>);
-
-        var options_percentages = {
-            title: 'accumulated percentage of revisions',
-            hAxis: {title: 'Maximum Distance in Seconds', minValue: 0, maxValue: 3600},
-            vAxis: {title: 'percentage of revisions covered', minValue: 0, maxValue: 1},
-            legend: 'none',
-            pointSize: 3
-        };
-
-        var chart_percentages = new google.visualization.ScatterChart(document.getElementById('chart_div3'));
-        chart_percentages.draw(data_percentages, options_percentages);
-    }
-</script>
-<h4>Plotted distances</h4>
-<div id="chart_div" style="width: 1400px; height: 600px;"></div>
-
-<h4>Calculated Averages</h4>
-<div id="chart_div2" style="width: 1400px; height: 600px;"></div>
-
-<h4>Calculated Percentage</h4>
-<div id="chart_div3" style="width: 1400px; height: 600px;"></div>
+<h4>Scatter Plots</h4>
+<dl class="tabs" data-tab>
+  <dd class="active"><a href="#panel-1">frequency vs. distance</a></dd>
+  <dd><a href="#panel-2">arithmetic mean vs. maximum distance</a></dd>
+  <dd><a href="#panel-3">accumulated percentage of revisions</a></dd>
+</dl>
+<div class="tabs-content">
+  <div class="content active" id="panel-1">
+    <div class="scatter_chart_div" id="scatter_chart_div_0" style="width: 1000px; height: 500px;"></div>
+  </div>
+  <div class="content" id="panel-2">
+    <div class="scatter_chart_div" id="scatter_chart_div_1" style="width: 1000px; height: 500px;"></div>
+  </div>
+  <div class="content" id="panel-3">
+    <div class="scatter_chart_div" id="scatter_chart_div_2" style="width: 1000px; height: 500px;"></div>
+  </div>
+</div>

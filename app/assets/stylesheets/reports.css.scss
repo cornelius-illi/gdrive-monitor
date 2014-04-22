@@ -24,3 +24,8 @@
 .tabs.vertical dd:last-child {
   border-bottom: 1px solid black;
 }
+
+.tabs-content .side-nav li.active a {
+  font-weight: bold;
+  color: #000;
+}

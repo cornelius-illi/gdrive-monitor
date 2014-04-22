@@ -1,7 +1,10 @@
+//= require jquery.dataTables.min
+//= require dataTables.foundation
+
 (function() {
     jQuery(function() {
-        var oTable;
-        oTable = $('#files-table').dataTable({
+        var dtTable;
+        dtTable = $('#files-table').dataTable({
             bProcessing: true,
             bServerSide: true,
             sAjaxSource: $('#files-table').data('source'),

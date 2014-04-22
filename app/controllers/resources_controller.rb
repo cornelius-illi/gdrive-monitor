@@ -5,96 +5,53 @@ class ResourcesController < ApplicationController
   before_action :set_resource, only: [:show, :refresh_revisions, :download_revisions,
                                       :calculate_diffs, :merge_revisions, :find_collaborations, :merged_revisions]
 
+  COLORS = [
+      'rgba(119, 152, 191, .5)',
+      'rgba(223, 83, 83, .5)',
+      'rgba(30, 152, 30, .5)',
+      'rgba(255, 165, 0, .5)',
+      'rgba(83, 83, 83, .5)',
+  ]
+
   # GET /resources/1
   def show
     # do nothing
   end
 
   def show_threshold
-    query = 'SELECT distance_to_previous FROM revisions WHERE distance_to_previous IS NOT NULL AND distance_to_previous < 901'
-    dist = ActiveRecord::Base.connection.execute(query)
+    respond_to do |format|
+      format.html {  }
+      format.json {
+        reportid = params[:resultid].to_i
 
-    @distances = Hash.new
-    dist.each do |d|
-      key = ((d['distance_to_previous'].to_i/10)+1)*10
+        case reportid
+          when 0
+            distances = scatter_distances
+            result_set = {
+              :title => 'frequency vs. distance',
+              :x_title => 'distances in seconds',
+              :y_title => 'frequency', :data => distances
+            }
+          when 1
+            aritmetic_means = scatter_aritmetic_means
+            result_set = {
+              :title => 'arithmetic mean vs. maximum distance',
+              :x_title => 'maximum distance between revisions in seconds',
+              :y_title => 'frequency', :data => aritmetic_means}
+          when 2
+            percentages = scatter_percentage
+            result_set = {
+                :title => 'accumulated percentage of revisions',
+                :x_title => 'maximum distance between revisions in seconds',
+                :y_title => 'percentage', :data => percentages}
 
-      if @distances.has_key? key
-        @distances[ key ][0] += 1
-      else
-        @distances[ key ]  = Array.new
-        @distances[ key ][0] = 1
-        @distances[ key ][1] = 0
-        @distances[ key ][2] = 0
-        @distances[ key ][3] = 0
-      end
-    end
-
-    [1,2,4].each_with_index do |monitored_resource_id, index|
-      query_team = 'SELECT distance_to_previous FROM revisions JOIN resources ON revisions.resource_id = resources.id
-        WHERE resources.monitored_resource_id=' + monitored_resource_id.to_s + ' AND distance_to_previous IS NOT NULL AND distance_to_previous < 901'
-      dist_team = ActiveRecord::Base.connection.execute(query_team)
-
-      dist_team.each do |d|
-        key = ((d['distance_to_previous'].to_i/10)+1)*10
-
-        unless @distances[ key ][index+1].blank?
-          @distances[ key ][index+1] += 1
+          else
+            result_set = {}
         end
-      end
+
+        render json: result_set
+      }
     end
-
-
-    @distances_json = @distances.to_a.map {|elem| elem.flatten }
-    @distances_json.insert(0,['occurence','all teams', 'siemens', 'lapeyre', 'bayer'])
-    @distances_json = @distances_json.to_json
-
-    avg_array = Array.new
-    avg_array << ['arithmetic mean','overall mean', 'siemens', 'lapeyre', 'bayer']
-
-    number_array = Array.new
-    number_array << ['revision count','overall count', 'siemens', 'lapeyre', 'bayer']
-
-    query_sum = 'SELECT COUNT(revisions.id) as count FROM revisions WHERE distance_to_previous IS NOT NULL'
-    res_sum = ActiveRecord::Base.connection.execute(query_sum)
-    sum = res_sum[0]['count']
-
-    query_sum_siemens = 'SELECT COUNT(revisions.id) as count FROM revisions JOIN resources ON revisions.resource_id=resources.id WHERE resources.monitored_resource_id=1 AND distance_to_previous IS NOT NULL'
-    res_sum_siemens = ActiveRecord::Base.connection.execute(query_sum_siemens)
-    sum_siemens = res_sum_siemens[0]['count']
-
-    query_sum_lapeyre = 'SELECT COUNT(revisions.id) as count FROM revisions JOIN resources ON revisions.resource_id=resources.id WHERE resources.monitored_resource_id=2 AND distance_to_previous IS NOT NULL'
-    res_sum_lapeyre = ActiveRecord::Base.connection.execute(query_sum_lapeyre)
-    sum_lapeyre = res_sum_lapeyre[0]['count']
-
-    query_sum_bayer = 'SELECT COUNT(revisions.id) as count FROM revisions JOIN resources ON revisions.resource_id=resources.id WHERE resources.monitored_resource_id=4 AND distance_to_previous IS NOT NULL'
-    res_sum_bayer = ActiveRecord::Base.connection.execute(query_sum_bayer)
-    sum_bayer = res_sum_bayer[0]['count']
-
-    (1..60).each do |avg_base|
-      seconds = (avg_base*60)+1
-      query = 'SELECT COUNT(revisions.id) AS number, AVG(distance_to_previous) AS avg FROM revisions WHERE distance_to_previous IS NOT NULL AND distance_to_previous < ' + seconds.to_s
-      dist = ActiveRecord::Base.connection.execute(query)
-
-      query_siemens = 'SELECT COUNT(revisions.id) AS number, AVG(distance_to_previous) AS avg FROM revisions JOIN resources ON revisions.resource_id = resources.id
-        WHERE resources.monitored_resource_id=1 AND distance_to_previous IS NOT NULL AND distance_to_previous < ' + seconds.to_s
-      dist_siemens = ActiveRecord::Base.connection.execute(query_siemens)
-
-      query_lapeyre = 'SELECT COUNT(revisions.id) AS number, AVG(distance_to_previous) AS avg FROM revisions JOIN resources ON revisions.resource_id = resources.id
-        WHERE resources.monitored_resource_id=2 AND distance_to_previous IS NOT NULL AND distance_to_previous < ' + seconds.to_s
-      dist_lapeyre = ActiveRecord::Base.connection.execute(query_lapeyre)
-
-      query_bayer = 'SELECT COUNT(revisions.id) AS number, AVG(distance_to_previous) AS avg FROM revisions JOIN resources ON revisions.resource_id = resources.id
-        WHERE resources.monitored_resource_id=4 AND distance_to_previous IS NOT NULL AND distance_to_previous < ' + seconds.to_s
-      dist_bayer = ActiveRecord::Base.connection.execute(query_bayer)
-
-      avg_array << [ (avg_base*60), dist[0]['avg'].round(2), dist_siemens[0]['avg'].round(2), dist_lapeyre[0]['avg'].round(2), dist_bayer[0]['avg'].round(2) ]
-
-      number_array << [ (avg_base*60), (dist[0]['number'].to_f/sum).round(2), (dist_siemens[0]['number'].to_f/sum_siemens).round(2), (dist_lapeyre[0]['number'].to_f/sum_lapeyre).round(2), (dist_bayer[0]['number'].to_f/sum_bayer).round(2) ]
-    end
-
-    @averages_json = avg_array.to_json
-
-    @percentages_json = number_array.to_json
   end
 
   def calculate_threshold
@@ -161,5 +118,112 @@ class ResourcesController < ApplicationController
   def set_resource
     @monitored_resource = MonitoredResource.find(params[:monitored_resource_id])
     @resource = Resource.find(params[:id])
+  end
+
+  def scatter_distances
+    query = 'SELECT distance_to_previous FROM revisions WHERE distance_to_previous IS NOT NULL AND distance_to_previous < 901'
+    dist = ActiveRecord::Base.connection.execute(query)
+
+    distances = Array.new
+    distances << scatter_distances_for(dist, 'Distances All', COLORS[0] )
+
+    MonitoredResource.all.each_with_index do |mr, index|
+      query_team = 'SELECT distance_to_previous FROM revisions JOIN resources ON revisions.resource_id = resources.id
+            WHERE resources.monitored_resource_id=' + mr.id.to_s + ' AND distance_to_previous IS NOT NULL AND distance_to_previous < 901'
+      dist_team = ActiveRecord::Base.connection.execute(query_team)
+      distances << scatter_distances_for(dist_team, mr.title, COLORS[index+1] )
+    end
+
+    return distances
+  end
+
+  def scatter_distances_for(dist, name, color)
+    distances_all = {
+        :name => name,
+        :color => color,
+    }
+
+    distances_all_values = Hash.new
+
+    dist.each do |d|
+      key = ((d['distance_to_previous'].to_i/10)+1)*10
+      if distances_all_values.has_key? key
+        distances_all_values[ key ] += 1
+      else
+        distances_all_values[ key ] = 1
+      end
+    end
+
+    distances_all[:data] = distances_all_values.to_a
+    return distances_all
+  end
+
+  def scatter_aritmetic_means
+    results = Array.new
+
+    data_all = Hash.new
+    (1..60).each do |avg_base|
+      seconds = (avg_base*60)+1
+      query = 'SELECT AVG(distance_to_previous) AS avg FROM revisions WHERE distance_to_previous IS NOT NULL AND distance_to_previous < ' + seconds.to_s
+      dist = ActiveRecord::Base.connection.execute(query)
+      data_all[avg_base] = dist[0]['avg'].round(2)
+    end
+    results[0] = {:name => 'All', :color => COLORS[0], :data => data_all.to_a }
+
+    MonitoredResource.all.each_with_index do |mr,index|
+      results[index+1] = {:name => mr.title, :color => COLORS[index+1],  }
+      data = Hash.new
+      (1..60).each do |avg_base|
+        seconds = (avg_base*60)+1
+        query = 'SELECT AVG(distance_to_previous) AS avg FROM revisions JOIN resources ON revisions.resource_id = resources.id
+          WHERE resources.monitored_resource_id=' + mr.id.to_s + ' AND distance_to_previous IS NOT NULL AND distance_to_previous < ' + seconds.to_s
+        dist = ActiveRecord::Base.connection.execute(query)
+        data[avg_base] = dist[0]['avg'].round(2)
+      end
+
+      results[index+1][:data] = data.to_a
+    end
+
+    return results
+  end
+
+  def scatter_percentage
+    results = Array.new
+
+    query_sum = 'SELECT COUNT(revisions.id) as count FROM revisions WHERE distance_to_previous IS NOT NULL'
+    res_sum = ActiveRecord::Base.connection.execute(query_sum)
+    sum = res_sum[0]['count']
+
+    data_all = Hash.new
+    (1..60).each do |avg_base|
+      seconds = (avg_base*60)+1
+      query = 'SELECT COUNT(revisions.id) AS number FROM revisions WHERE distance_to_previous IS NOT NULL AND distance_to_previous < ' + seconds.to_s
+      dist = ActiveRecord::Base.connection.execute(query)
+      data_all[avg_base] = (dist[0]['number'].to_f/sum).round(2)
+    end
+    results[0] = {:name => 'All', :color => COLORS[0], :data => data_all.to_a }
+
+    MonitoredResource.all.each_with_index do |mr,index|
+      results[index+1] = {:name => mr.title, :color => COLORS[index+1],  }
+
+      query_team = 'SELECT COUNT(revisions.id) as count FROM revisions
+        JOIN resources ON revisions.resource_id=resources.id
+        WHERE resources.monitored_resource_id='+ mr.id.to_s + ' AND distance_to_previous IS NOT NULL'
+      res_sum_team = ActiveRecord::Base.connection.execute(query_team)
+      sum_team = res_sum_team[0]['count']
+
+      data = Hash.new
+      (1..60).each do |avg_base|
+        seconds = (avg_base*60)+1
+        query = 'SELECT COUNT(revisions.id) AS number FROM revisions JOIN resources ON revisions.resource_id = resources.id
+          WHERE resources.monitored_resource_id=' + mr.id.to_s + ' AND distance_to_previous IS NOT NULL AND distance_to_previous < ' + seconds.to_s
+        dist = ActiveRecord::Base.connection.execute(query)
+        data[avg_base] = (dist[0]['number'].to_f/sum_team).round(2)
+      end
+
+      results[index+1][:data] = data.to_a
+    end
+
+    return results
   end
 end

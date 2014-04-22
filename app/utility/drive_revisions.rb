@@ -22,7 +22,7 @@ module DriveRevisions
     rescue Exception => e
       failed_download_logger ||= Logger.new("#{Rails.root}/log/failed_revisions.log")
       failed_download_logger.error("Could not get revision list for file ''" + file_id + "'. Error:" + e.message)
-      return nil
+      return []
     end
   end
 end

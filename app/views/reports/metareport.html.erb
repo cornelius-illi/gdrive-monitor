@@ -1,0 +1,24 @@
+<% content_for :title, "MetaReport" %>
+
+<h2>MetaReport</h2>
+<dl class="tabs" data-tab>
+<% @period_groups.each_with_index do |period_group, index| %>
+      <dd <%= 'class="active"'.html_safe if index == 0 %>><a href="#panel-<%= index %>" data-period-id="<%= period_group.id %>"><%= period_group.name %></a></dd>
+<% end %>
+</dl>
+<div class="tabs-content">
+<% @period_groups.each_with_index do |period_group, index| %>
+      <div class="content <%= 'active'.html_safe if index == 0 %>" id="panel-<%= index %>" style="width: 100%;">
+          <div class="large-3 columns">
+            <ul class="side-nav">
+            <% @metrics.each_with_index do |metric_name,metric_index| %>
+                <li <%= 'class="active"'.html_safe if metric_index == 0 %>><a data-metric-name="<%= metric_name %>" href="#" class="metric-link "><%= metric_name %></a></li>
+            <% end %>
+            </ul>
+          </div>
+          <div class="large-9 columns">
+            <div id="metareport-chart-<%= period_group.id %>" class="metareport-charts" style="width:100%; height:400px;"></div>
+          </div>
+      </div>
+<% end %>
+</div>

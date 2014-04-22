@@ -97,10 +97,14 @@ td.table-new-section {
 th.reference, td.reference {
     border-left: 2px solid #000;
     border-right: 2px solid #000;
-    text-align: center;
     font-weight: bold;
 }
 
 th.reference {
     border-top: 2px solid #000;
+}
+
+td ul {
+    margin: 0px;
+    list-style-type: none;
 }

@@ -53,6 +53,7 @@ SimpleNavigation::Configuration.run do |navigation|
         primary.item :monitored_resource, '<span class="fi-graph-bar"></span> ' + monitored_resource.try(:title), monitored_resource_reports_path(monitored_resource)
       end
     end
+    primary.item :metareport, '<span class="fi-graph-trend"></span> Meta-Reports', reports_metareport_path
 
     # you can also specify a css id or class to attach to this particular level
     # works for all levels of the menu

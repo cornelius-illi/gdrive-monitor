@@ -31,6 +31,7 @@ gem 'jbuilder', '~> 1.2'
 gem 'json'
 gem 'foundation-rails'
 gem 'simple-navigation'
+gem 'highcharts-rails'
 
 # ajax
 gem 'active_model_serializers'

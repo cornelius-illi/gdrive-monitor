@@ -13,10 +13,6 @@
 //= require jquery
 //= require jquery_ujs
 //= require foundation
-//= require jquery.dataTables.min
-//= require dataTables.foundation
-//= require turbolinks
-//= require_tree .
 
 $(function(){
     $(document).foundation({
@@ -24,50 +20,5 @@ $(function(){
             animation_speed: 500,
             animation: 'fadeOut'
         }
-    });
-
-
-    $(document).ready(function() {
-        $('#files-table').dataTable();
-    } );
-
-    function calculate_diffs() {
-        $(".tabs-content .active td").each(function() {
-            // @todo: first not working ...? ... and why is nothing add to the reference column?
-            if( !$(this).is(':first') ) {
-                reference_value = parseFloat($(this).siblings("td.isnumber:nth-child(" + column + ")").text());
-                my_value = parseFloat($(this).text());
-                if (!isNaN(reference_value) && !isNaN(my_value)) {
-                    diff = Math.round( ( (my_value-reference_value)/reference_value) * 100 * 100) / 100
-                    diff = (my_value == 0) ? 0 : diff
-
-                    sign_class = (diff > 0) ? "positive" : "negative";
-                    arrow_class = (diff > 0) ? "up" : "down";
-
-                    if(diff == 0) {
-                        sign_class = ""
-                        arrow_class = "right"
-                    }
-
-                    $(this).append('<span class="difference">, <span class="' + sign_class + '"><span class="fi-arrow-' + arrow_class + '"></span> ' + diff + '%</span></span></span>');
-                }
-            }
-        });
-    }
-
-    $( "a.active-report-col" ).click(function() {
-        column = parseInt( $(this).attr('href').split('-')[1]) + 1;
-        $(".reference").removeClass("reference");
-        $("span.difference").remove();
-
-        $("tr th:nth-child(" + column + ")").addClass("reference");
-        $("tr td:nth-child(" + column + ")").addClass("reference");
-
-        calculate_diffs();
-    });
-
-    $('a.draw-charts').click( function (event) {
-        event.preventDefault();
-        drawCharts();
     });
 });

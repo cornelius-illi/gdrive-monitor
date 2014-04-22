@@ -9,10 +9,6 @@
     <%= link_to "Delete reports", remove_monitored_resource_reports_path(@monitored_resource), :class => 'button tiny' %>
 </span>
 
-<span class="has-tip" title="This will redraw all charts" data-tooltip>
-    <a href="#" class="button tiny secondary draw-charts">Draw Charts</a>
-</span>
-
 <h4>Reports by period</h4>
 <% if @monitored_resource.jobs.length > 0 %>
     <div class="callout panel">
@@ -71,9 +67,11 @@
                             <% classes += value.is_a?(Array) ? '' : 'isnumber' %>
                             <td class="<%= classes %>">
                               <% if value.is_a?(Array) %>
-                                  <% chart_id = "columnchart_#{report.id}_#{seci}_#{mini}_#{l}" %>
-                                  <% chart_value_sets[chart_id] = value %>
-                                  <div id="<%= chart_id %>" class="report-pie-chart" style="width: 200px; height: 200px;"></div>
+                                  <ul style="font-size: 80%;">
+                                  <% value.each do |value_array| %>
+                                    <li><%= value_array[0].split('/').last.split('.').last %>: <%= value_array[1] %></li>
+                                  <% end %>
+                                  </ul>
                               <% else %>
                                 <%= value %>
                               <% end %>
@@ -88,41 +86,4 @@
           </div>
       <% end %>
     </div>
-
-    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
-    <script type="text/javascript">
-        google.load("visualization", "1", {packages:["corechart"]});
-        google.setOnLoadCallback(drawCharts);
-
-        function drawCharts() {
-            var data = new Array();
-            <% chart_value_sets.each do |key,values| %>
-                <% if values.length > 0 %>
-                data['<%= key %>'] = [
-                    ['Mime-Type', 'Occurence', { role: 'style' }],
-                    <% values.each do |set| %>
-                    <%= set.to_s.html_safe %>,
-                    <% end %>
-                ];
-                <% end %>
-            <% end %>
-
-            $(".tabs-content .active div.report-pie-chart").each(function() {
-                var id = $(this).attr('id');
-                if (data.hasOwnProperty(id)) {
-                    drawChart(data[id], id);
-                }
-            });
-        }
-
-        function drawChart(values, id) {
-            //console.log(id);
-            var data = google.visualization.arrayToDataTable(values);
-            var options = {
-                legend: { position: 'none' }
-            };
-            var chart = new google.visualization.PieChart(document.getElementById(id));
-            chart.draw(data, options);
-        }
-    </script>
 <% end %>

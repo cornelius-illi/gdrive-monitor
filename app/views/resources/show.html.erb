@@ -49,7 +49,7 @@
 
 <h3>Changes List - <small>Showing: <%= @resource.revisions.exclude_collaborated_and_merged.length %> of <%= @resource.revisions.length %> revisions.
     <% nbr_weak = Revision.count_weak(@resource.revisions.exclude_collaborated_and_merged) %>
-    <% if nbr_weak > 0 %>(<%= nbr_weak %> weak)<% end %></small></h3>
+    <% if false %>(<%= nbr_weak %> weak)<% end %></small></h3>
 <% unless @resource.is_folder? || @resource.revisions.length.eql?(0) %>
     <table>
       <thead>
@@ -58,18 +58,16 @@
         <th>Modification Date</th>
         <th>Last Modifying UserName</th>
         <th>Download</th>
-        <th>Changed (in %)</th>
-        <th>Additive (in %)</th>
       </tr>
       </thead>
       <tbody>
       <% @resource.revisions.exclude_collaborated_and_merged.each do |revision| %>
-          <tr class="<%= revision.is_weak? ? '' : '' %> <%= revision.merged.blank? ? '' : 'strong' %>">
-            <td><%= link_to_if (!revision.collaboration.blank? || !revision.merged.blank?), revision.gid,
+          <tr <%= revision.collaboration.blank? ? '' : 'class="strong"'.html_safe %>">
+            <td><%= link_to_if (!revision.collaboration.blank?), revision.gid,
                 merged_revisions_monitored_resource_resource_path(@monitored_resource, @resource, revision.id),
                 :data => { 'reveal-id' => "modal", 'reveal-ajax' => "true" }, :class => 'reveal-link' %>
-              <% if !revision.collaboration.blank? %><span class="fi-torsos-all"></span>
-                  <% if Revision.collaboration_is_global?(revision.collaboration, @resource.monitored_resource_id) %><span class="fi-web"></span><% end %>
+              <% if revision.team_collaboration? %><span class="fi-torsos-all"></span>
+                  <% if Revision.collaboration_is_global?(revision, @resource.monitored_resource_id) %><span class="fi-web"></span><% end %>
                   (<%= revision.collaboration.length+1 %>)
               <% elsif !revision.merged.blank? %><span class="fi-page-multiple"></span> (<%= revision.merged.length+1  %>)<% end %>
             </td>
@@ -80,8 +78,6 @@
                   <%= link_to revision.local_resource_path_web, :title => 'Download local version' do %><span class="fi-archive"></span><% end %>
               <% end %>
             </td>
-            <td><%= number_to_percentage (revision.total_percental_change*100) unless revision.total_percental_change.blank? %></td>
-            <td><%= number_to_percentage (revision.total_percental_add*100) unless revision.total_percental_add.blank? %></td>
           </tr>
       <% end %>
       </tbody>
