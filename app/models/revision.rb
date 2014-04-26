@@ -1,15 +1,19 @@
 class Revision < ActiveRecord::Base
   belongs_to :resource
   belongs_to :permission
-  has_many :merged, class_name: 'Revision'
-  has_many :collaboration, class_name: 'Revision', :foreign_key => 'collaboration_id'
+  #has_many :merged, class_name: 'Revision'
+  #has_many :collaborations, class_name: 'Revision', :foreign_key => 'collaboration_id'
+
+  has_many :collaborations , class_name: '::Collaboration', :foreign_key => 'collaboration_id'
+
+  JOIN_QUERY = 'SELECT * FROM collaborations WHERE collaborations.threshold=' + Collaboration::STANDARD_COLLABORATION_THRESHOLD.to_s
 
   scope :latest, -> { order('modified_date DESC').first }
-  scope :exclude_merged, -> { where(:revision_id => nil).order('modified_date DESC') }
-  scope :exclude_collaborated_and_merged, -> {
-    where('(collaboration_id IS NULL)').order('modified_date DESC') }
+  scope :with_collaboration, -> {
+    joins('LEFT JOIN ('+JOIN_QUERY+') AS c ON c.revision_id=revisions.id')
+    .where('c.id IS NULL')
+  }
 
-  MERGE_TIME_THRESHOLD = 8.minutes.freeze
   WEAK_THRESHOLD_BASE = 1.freeze # divided with chars_count -> 1/100 = 0.01 = 1%, 1/1000 = 0.001 = 0.1%
 
   def self.count_weak(collection_of_revisions)
@@ -21,18 +25,21 @@ class Revision < ActiveRecord::Base
   end
 
   def team_collaboration?
-    query = 'SELECT COUNT(DISTINCT permission_id) as count FROM revisions
-      WHERE collaboration_id=' + id.to_s + ' OR id=' + id.to_s
-    result = ActiveRecord::Base.connection.execute(query)
-    return (result.first['count'] > 1 )
+    permission_ids = [ permission_id ]
+    collaborations.each do |collaboration|
+      permission_ids << collaboration.permission_id
+    end
+
+    permission_ids.uniq!
+    return (permission_ids.length > 1)
   end
 
-  def self.collaboration_is_global?(revision, monitored_resource_id=nil)
+  def collaboration_is_global?(monitored_resource_id=nil)
     return false if monitored_resource_id.nil?
 
     perm_ids = Array.new
-    perm_ids << revision.permission_id
-    revision.collaboration.each do |r|
+    perm_ids << self.permission_id
+    self.collaborations.each do |r|
       perm_ids << r.permission_id
     end
     # remove duplicates
@@ -147,20 +154,8 @@ class Revision < ActiveRecord::Base
       .order('modified_date DESC').first
   end
 
-  def merge_consecutive
-    previous = previous()
-    # return, if there is no previous revision or it has already been set (due to recursion)
-    return if previous.blank? || !previous.revision_id.blank?
-
-    # same modifier + max. X minutes in between revision
-    if (permission_id.eql? previous.permission_id) &&
-        ((modified_date - MERGE_TIME_THRESHOLD) <= previous.modified_date)
-      # previous will be merged with me. latest revision stays
-      master = revision_id.blank? ? id : revision_id
-      previous.update_attribute(:revision_id, master)
-    end
-
-    previous.merge_consecutive
+  def collaboration_for(threshold)
+    Collaboration.where(:revision_id => id).where(:threshold => threshold).first
   end
 
   def find_and_create_collaboration
@@ -168,16 +163,20 @@ class Revision < ActiveRecord::Base
     # return, if there is no previous revision
     return if previous.blank?
 
-    if (modified_date - MERGE_TIME_THRESHOLD) <= previous.modified_date
-      master = id
-      if !collaboration_id.blank?
-        master = collaboration_id
-      elsif !revision_id.blank?
-        master = revision_id
-      end
+    (3..40).each do |var|
+      threshold_in_seconds = (var*60).seconds
+      if (modified_date - threshold_in_seconds) <= previous.modified_date
+        collaboration = collaboration_for(threshold_in_seconds)
+        master =  collaboration.blank? ? id : collaboration.collaboration_id
 
-      previous.collaboration_id =  master
-      previous.save
+        Collaboration
+          .where(:revision_id => previous.id)
+          .where(:permission_id => previous.permission_id)
+          .where(:threshold => threshold_in_seconds)
+          .where(:collaboration_id => master)
+          .where(:modified_date => previous.modified_date)
+          .first_or_create
+      end
     end
 
     previous.find_and_create_collaboration

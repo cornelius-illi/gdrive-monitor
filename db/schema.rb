@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140416080837) do
+ActiveRecord::Schema.define(version: 20140423123620) do
 
   create_table "changes", force: true do |t|
     t.string   "change_id"
@@ -20,6 +20,14 @@ ActiveRecord::Schema.define(version: 20140416080837) do
     t.string   "last_modifying_username"
     t.string   "etag"
     t.integer  "resource_id"
+  end
+
+  create_table "collaborations", force: true do |t|
+    t.integer  "threshold"
+    t.integer  "revision_id"
+    t.integer  "collaboration_id"
+    t.integer  "permission_id"
+    t.datetime "modified_date"
   end
 
   create_table "comments", force: true do |t|
@@ -94,6 +102,7 @@ ActiveRecord::Schema.define(version: 20140416080837) do
   create_table "permission_groups", force: true do |t|
     t.string  "name"
     t.integer "monitored_resource_id"
+    t.integer "working_days"
   end
 
   create_table "permission_groups_permissions", force: true do |t|
@@ -163,9 +172,7 @@ ActiveRecord::Schema.define(version: 20140416080837) do
     t.integer  "chars_count"
     t.integer  "words_count"
     t.integer  "lines_count"
-    t.integer  "revision_id"
     t.boolean  "is_weak",                        default: false
-    t.integer  "collaboration_id"
     t.integer  "distance_to_previous"
   end
 

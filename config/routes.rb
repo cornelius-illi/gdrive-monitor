@@ -5,6 +5,7 @@ GdriveFeed::Application.routes.draw do
   get 'monitored_resources/create_with/:gid', :to => 'monitored_resources#create_with', :as => 'create_with'
 
   get 'calculate_threshold', :to => 'resources#calculate_threshold', :as => 'calculate_threshold'
+  get 'calculate_optimal_threshold', :to => 'resources#calculate_optimal_threshold', :as => 'calculate_optimal_threshold'
   get 'show_threshold', :to => 'resources#show_threshold', :as => 'show_threshold'
 
   resources :monitored_resources do

@@ -87,6 +87,6 @@ class PermissionGroupsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white index through.
     def permission_group_params
-      params.require(:permission_group).permit(:name, :monitored_resource_id, :permission_ids => [])
+      params.require(:permission_group).permit(:name,:working_days, :monitored_resource_id, :permission_ids => [])
     end
 end

@@ -54,12 +54,15 @@ class ResourcesController < ApplicationController
     end
   end
 
+  # @todo: should be names calculate_time_distance_to_previous
   def calculate_threshold
     resources = Resource.find_with_several_revisions
     resources.each do |resource|
       id = resource.has_key?('id') ? resource['id'].to_i : nil
       if id
-        revisions = Revision.where(:resource_id => id)
+        revisions = Revision
+          .where(:resource_id => id)
+          .where(:distance_to_previous => nil)
         revisions.each do |revision|
           revision.calculate_time_distance_to_previous
         end
@@ -67,6 +70,116 @@ class ResourcesController < ApplicationController
     end
 
     redirect_to show_threshold_path
+  end
+
+  def calculate_optimal_threshold
+    respond_to do |format|
+      format.html {  }
+      format.json {
+        distances_to_previous_revisions = Hash.new
+        (3..40).each do |var|
+          seconds = (var*60)
+          minutes = (seconds/60).to_s
+          distances_to_previous_revisions[minutes] = Array.new
+          query = 'SELECT collaborations.revision_id as id, MIN(collaborations.modified_date) FROM revisions
+        JOIN collaborations ON collaborations.collaboration_id=revisions.id
+        WHERE collaborations.threshold=? GROUP BY revisions.id ORDER BY revisions.resource_id;'
+
+          query_with_params = ActiveRecord::Base.send(:sanitize_sql_array, [query, seconds])
+          results = ActiveRecord::Base.connection.execute(query_with_params)
+
+          results.each do |collaboration|
+            query_distance = 'SELECT distance_to_previous FROM revisions WHERE id=?'
+            query_distance_with_params = ActiveRecord::Base.send(:sanitize_sql_array, [query_distance, collaboration['id']])
+
+            result_distance = ActiveRecord::Base.connection.execute(query_distance_with_params)
+
+            # + 20 %
+            #upper_limit = ((seconds*1.2)+1).to_i
+
+            # + 30 sec. (next step)
+            # @todo: +30 sec. is the better graph ... how to justify
+            upper_limit = seconds+60
+
+            unless result_distance[0]['distance_to_previous'].blank? || result_distance[0]['distance_to_previous'] > upper_limit
+              distances_to_previous_revisions[minutes] << result_distance[0]['distance_to_previous']-seconds
+            end
+          end
+        end
+        result_set = Hash.new
+        result_set['categories'] = distances_to_previous_revisions.keys
+        result_set['data'] = Array.new
+        result_set['occurences'] = Array.new
+
+        distances_to_previous_revisions.values.each do |values|
+
+          values.sort!
+          result_set['occurences'] << values.length
+
+          set = Array.new
+
+          # lower adjacent
+          set << values.min
+
+          # lower hinge (25th percentile)
+          up_hinge_rank = 0.25 * (values.length)
+          ir_rank = up_hinge_rank.to_i
+
+          up_hinge_fraction = up_hinge_rank - up_hinge_rank.to_i
+
+          if up_hinge_fraction.eql? 0.0
+            set << values[ir_rank]
+          else
+            if (ir_rank+1) >= values.length
+              set << values[ir_rank]
+            else
+              interpolation = (up_hinge_fraction * (values[ir_rank+1] - values[ir_rank])) + values[ir_rank]
+              set << interpolation
+            end
+          end
+
+          # Median (50th percentile)
+          up_hinge_rank = 0.50 * (values.length)
+          ir_rank = up_hinge_rank.to_i
+          up_hinge_fraction = up_hinge_rank - up_hinge_rank.to_i
+          if up_hinge_fraction.eql? 0.0
+            set << values[ir_rank]
+          else
+            if (ir_rank+1) >= values.length
+              set << values[ir_rank]
+            else
+              interpolation = (up_hinge_fraction * (values[ir_rank+1] - values[ir_rank])) + values[ir_rank]
+              set << interpolation
+            end
+          end
+
+          # upper hinge (75th percentile)
+          up_hinge_rank = 0.75 * (values.length)
+          ir_rank = up_hinge_rank.to_i
+          up_hinge_fraction = up_hinge_rank - up_hinge_rank.to_i
+          if up_hinge_fraction.eql? 0.0
+            set << values[ir_rank]
+          else
+            if (ir_rank+1) >= values.length
+              set << values[ir_rank]
+            else
+              interpolation_75 = (up_hinge_fraction * (values[ir_rank+1] - values[ir_rank])) + values[ir_rank]
+              set << interpolation_75
+            end
+          end
+
+          # upper adjacent
+          set << values.max
+
+          result_set['data'] << set
+        end
+
+        render json: result_set
+      }
+    end
+
+
+
   end
 
   def refresh_revisions
@@ -84,18 +197,20 @@ class ResourcesController < ApplicationController
     redirect_to monitored_resource_resource_url(@monitored_resource, @resource), :notice => "Revision Diffs have been calculated"
   end
 
+  # @todo: deprecated ... now done on monitored_resource-level for all google_resources
   def merge_revisions
     # delete old merges
-    Revision.where(:resource_id => @resource.id).update_all('revision_id = NULL')
+    #Revision.where(:resource_id => @resource.id).update_all('revision_id = NULL')
 
     # then create new merges
     @resource.merge_consecutive_revisions
     redirect_to monitored_resource_resource_url(@monitored_resource, @resource), :notice => "Weak Revisions have been merged!"
   end
 
+  # @todo: deprecated ... now done on monitored_resource-level for all google_resources
   def find_collaborations
     # delete old merges
-    Revision.where(:resource_id => @resource.id).update_all('collaboration_id = NULL')
+    #Revision.where(:resource_id => @resource.id).update_all('collaboration_id = NULL')
 
     @resource.find_collaborations
     redirect_to monitored_resource_resource_url(@monitored_resource, @resource), :notice => "Collaborations have been created!"
@@ -104,8 +219,10 @@ class ResourcesController < ApplicationController
   def merged_revisions
     @master = Revision.find(params[:rev_id])
     @revisions = Revision
-      .where('resource_id=? AND (collaboration_id=? OR revision_id = ?)',
-             @resource.id, params[:rev_id], params[:rev_id] )
+      .joins('JOIN collaborations ON revisions.id=collaborations.revision_id')
+      .where('revisions.resource_id=?', @master.resource_id)
+      .where('collaborations.collaboration_id=?', @master.id)
+      .where('collaborations.threshold=?', Collaboration::STANDARD_COLLABORATION_THRESHOLD)
       .order('modified_date DESC')
 
     respond_to do |format|

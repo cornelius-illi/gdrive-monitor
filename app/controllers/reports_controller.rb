@@ -14,6 +14,10 @@ class ReportsController < ApplicationController
     Report::Metrics::NumberOfRevisions.title,
     Report::Metrics::NumberAverageRevisions.title,
     Report::Metrics::RatioRevisionsModifiedFiles.title,
+    Report::Metrics::NumberCollaboratedFiles.title,
+    Report::Metrics::NumberGloballyCollaboratedFiles.title,
+    Report::Metrics::NumberParallelActivities.title,
+    Report::Metrics::NumberParallelGlobalActivities.title
   ].freeze
 
   def index

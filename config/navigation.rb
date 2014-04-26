@@ -42,15 +42,15 @@ SimpleNavigation::Configuration.run do |navigation|
     primary.item :divider1, '', :class => 'divider'
     primary.item :recources_label1, 'Monitored Resources', :class => 'heading'
     if user_signed_in? && !current_user.monitored_resources.blank?
-      current_user.monitored_resources.each do |monitored_resource|
-        primary.item :monitored_resource, '<span class="fi-folder"></span> ' + monitored_resource.try(:title), monitored_resource_path(monitored_resource)
+      current_user.monitored_resources.each_with_index do |monitored_resource,j|
+        primary.item "mr-#{j}", '<span class="fi-folder"></span> ' + monitored_resource.try(:title), monitored_resource_path(monitored_resource)
       end
     end
     primary.item :divider2, '', :class => 'divider'
     primary.item :recources_labe2l, 'Reports', :class => 'heading'
     if user_signed_in? && !current_user.monitored_resources.blank?
-      current_user.monitored_resources.each do |monitored_resource|
-        primary.item :monitored_resource, '<span class="fi-graph-bar"></span> ' + monitored_resource.try(:title), monitored_resource_reports_path(monitored_resource)
+      current_user.monitored_resources.each_with_index do |monitored_resource,k|
+        primary.item "mr-r-#{k}", '<span class="fi-graph-bar"></span> ' + monitored_resource.try(:title), monitored_resource_reports_path(monitored_resource)
       end
     end
     primary.item :metareport, '<span class="fi-graph-trend"></span> Meta-Reports', reports_metareport_path

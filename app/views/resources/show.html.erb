@@ -1,5 +1,5 @@
 <% content_for :title, 'List of Changes for resource' %>
-<h2><%= @resource.title %> <small>(<%= @resource.mime_type %>)</small></h2>
+<h3><%= @resource.title %> <small>(<%= @resource.mime_type %>)</small></h3>
 
 <% if @resource.jobs.length > 0 %>
     <div class="callout panel">
@@ -8,48 +8,140 @@
     </div>
 <% end %>
 
-<ul>
-  <li><b>FileID:</b> <%= @resource.gid %></li>
-  <li><b>created_date:</b> <%= @resource.created_date %></li>
-  <li><b>modified_date:</b> <%= @resource.modified_date %></li>
-  <li><b>last_modifying_username:</b> <%= @resource.last_modifying_username %></li>
-  <li><b>Number of Revisions:</b> <%= @resource.revisions.length %>
-    <% unless @resource.monitored_resource.permission_groups.nil? %>
-    <ul>
-      <% @resource.revisions_by_permission_group.each do |id, count| %>
-          <li><%= id.blank? ? '<i>file-based</i>'.html_safe : PermissionGroup.find(id).name %>: <%= count %></li>
-      <% end %>
-    </ul>
-    <% end %>
-  </li>
-  <li><b>Number of collaborators:</b> <%= @resource.collaborators.length %>
-    <ul>
-      <% @resource.collaborators.each do |id,count| %>
-        <li><%= Permission.find(id).title %>: <%= count %></li>
-      <% end %>
-    </ul>
-  </li>
-  <% unless @resource.comments.blank? %>
-      <li><b>Comments:</b>
-        <ul>
-          <% @resource.comments.each do |comment| %>
-            <li><%= comment.content %>, <%= comment.status %>, <%= comment.author %> (<%= comment.replies.length %>)</li>
-              <% unless comment.replies.empty? %>
-                <ul>
-                <% comment.replies.each do |reply| %>
-                  <li><%= reply.content.blank? ? '<i>empty</i>'.html_safe : reply.content %>, <b><%= reply.status %></b>, <%= reply.author %></li>
-                <% end %>
-                </ul>
+<div class="row">
+  <div class="large-4 columns">
+    <table>
+      <thead>
+        <tr><th colspan="2">Metadata</th></tr>
+      </thead>
+      <tbody>
+          <tr>
+            <td>FileID:</td>
+            <td><input id="copy-box" type="text" value="<%= @resource.gid %>" disabled style="margin: 0px;" /></td>
+          </tr>
+        <tr>
+          <td>created:</td>
+          <td><%= @resource.created_date.to_s(:db) %></td>
+        </tr>
+        <tr>
+          <td>modified:</td>
+          <td><%= @resource.modified_date.to_s(:db) %></td>
+        </tr>
+        <tr>
+          <td>duration:</td>
+          <td><%= time_difference(@resource.created_date, @resource.modified_date).to_s %></td>
+        </tr>
+        <tr>
+          <td>last by:</td>
+          <td><%= @resource.last_modifying_username %></td>
+        </tr>
+      </tbody>
+    </table>
+    <table>
+      <thead>
+      <tr><th colspan="2"><b>Revisions:</b> <%= @resource.revisions.length %></th></tr>
+      </thead>
+      <tbody>
+      <% unless @resource.monitored_resource.permission_groups.nil? %>
+          <% @resource.revisions_by_permission_group.each do |id, count| %>
+              <% if  id.blank? %>
+                  <tr><td colspan="2"><i>file-based</i></td></tr>
+              <% else %>
+                  <tr>
+                    <td><%= PermissionGroup.find(id).name %></td>
+                    <td><%= count %></td>
+                  </tr>
               <% end %>
           <% end %>
-        </ul>
-      </li>
-  <% end %>
-</ul>
+      <% end %>
+      </tbody>
+    </table>
+  </div>
+  <div class="large-4 columns">
+    <table>
+      <thead>
+      <tr><th colspan="2"><b>Number of collaborators:</b> <%= @resource.collaborators.length %></th></tr>
+      </thead>
+      <tbody>
+      <% @resource.collaborators.each do |id,count| %>
+          <tr><td><%= Permission.find(id).title %></td> <td><%= count %></td></tr>
+      <% end %>
+      </tbody>
+    </table>
+  </div>
+  <div class="large-4 columns"></div>
+</div>
 
-<h3>Changes List - <small>Showing: <%= @resource.revisions.exclude_collaborated_and_merged.length %> of <%= @resource.revisions.length %> revisions.
-    <% nbr_weak = Revision.count_weak(@resource.revisions.exclude_collaborated_and_merged) %>
-    <% if false %>(<%= nbr_weak %> weak)<% end %></small></h3>
+<% unless @resource.comments.blank? %>
+<dl class="accordion" data-accordion>
+  <dd>
+    <a href="#panel1">Comments (<%= @resource.comments.length %>) <span class="right fi-plus"></span></a>
+    <div id="panel1" class="content clear">
+      <ul>
+        <% @resource.comments.each do |comment| %>
+            <li><%= comment.content %>, <%= comment.status %>, <%= comment.author %> (<%= comment.replies.length %>)</li>
+            <% unless comment.replies.empty? %>
+                <ul>
+                  <% comment.replies.each do |reply| %>
+                      <li><%= reply.content.blank? ? '<i>empty</i>'.html_safe : reply.content %>, <b><%= reply.status %></b>, <%= reply.author %></li>
+                  <% end %>
+                </ul>
+            <% end %>
+        <% end %>
+      </ul>
+    </div>
+  </dd>
+</dl>
+<% end %>
+
+<h3>Revisions List -
+  <small>Showing: <%= @resource.revisions.with_collaboration.length %> of
+    <%= @resource.revisions.length %></small></h3>
+
+<% all_revisions = @resource.revisions %>
+<% reference_date = all_revisions.last.modified_date %>
+<% collab_revisions = @resource.revisions.with_collaboration %>
+<% span_in_minutes = (all_revisions.first.modified_date - all_revisions.last.modified_date).to_i/60 %>
+<% pix_per_minute = (950.to_f/span_in_minutes) %>
+
+<svg width="1040" height="120">
+  <line x1="15" x2="965" y1="60" y2="60" stroke-width="1" stroke="rgb(0,0,0)" />
+  <% collab_revisions.reverse.each_with_index do |revision, index| %>
+  <% x = ((revision.modified_date - reference_date).to_i/60 * pix_per_minute).to_i + 15 %>
+  <% stroke = revision.collaborations.blank? ? 0 : 2 %>
+  <% stroke_color = revision.team_collaboration? ? 'rgb(0,80,0)' : 'rgb(0,0,0)' %>
+  <% stroke_color = revision.collaboration_is_global?(@resource.monitored_resource_id) ? 'rgb(255,0,0)' : stroke_color %>
+  <% y = (index%2 == 0) ? 20 : 75 %>
+  <% y2 = (index%2 == 0) ? '25' : '95' %>
+  <% y3 = (index%2 == 0) ? 15 : 75 %>
+
+  <% if revision.collaborations.blank? %>
+          <line x1="<%= x %>" x2="<%= x %>" y1="60" y2="<%= y2 %>" stroke-width="1" stroke="rgb(180,180,180)" />
+          <text x="<%= x+5 %>" y="<%= y %>" font-family="Verdana" font-size="8" xml:space='default'>
+            <tspan x="<%= x+5 %>" dy="1.2em"><%= revision.modified_date.to_date.to_s %></tspan>
+            <tspan x="<%= x+5 %>" dy="1.2em"><%= revision.modified_date.strftime("%H:%M") %></tspan>
+          </text>
+    <rect width="10" height="10" x="<%= x-5 %>" y="55" style="fill:rgba(119, 152, 191, .9)"  transform="rotate(45 <%= x %> 60)" />
+  <% else %>
+    <%  first_date = Revision
+        .joins('JOIN collaborations ON collaborations.revision_id=revisions.id')
+        .where('collaborations.collaboration_id=?', revision.id)
+        .where('collaborations.threshold=?', Collaboration::STANDARD_COLLABORATION_THRESHOLD)
+        .order('modified_date ASC').first.modified_date %>
+    <% x1 = ((first_date - reference_date).to_i/60 * pix_per_minute).to_i + 15 %>
+    <% w = (x-x1 + 10) %>
+  <line x1="<%= x1 %>" x2="<%= x1 %>" y1="60" y2="<%= y2 %>" stroke-width="1" stroke="rgb(180,180,180)" />
+  <text x="<%= x+5 %>" y="<%= y3 %>" font-family="Verdana" font-size="8" xml:space='default'>
+    <tspan x="<%= x1+5 %>" dy="1.2em"><%= first_date.to_date.to_s %></tspan>
+    <tspan x="<%= x1+5 %>" dy="1.2em"><%= first_date.strftime("%H:%M") %></tspan>
+    <tspan x="<%= x1+5 %>" dy="1.2em"><%= time_difference(first_date,revision.modified_date) %></tspan>
+  </text>
+  <rect width="<%= w %>" height="10" x="<%= x1-5 %>" y="55"
+          style="fill:rgba(119, 152, 191, .9);stroke-width:<%= stroke %>;stroke:<%= stroke_color %>" />
+  <% end %>
+<% end %>
+</svg>
+
 <% unless @resource.is_folder? || @resource.revisions.length.eql?(0) %>
     <table>
       <thead>
@@ -61,15 +153,15 @@
       </tr>
       </thead>
       <tbody>
-      <% @resource.revisions.exclude_collaborated_and_merged.each do |revision| %>
-          <tr <%= revision.collaboration.blank? ? '' : 'class="strong"'.html_safe %>">
-            <td><%= link_to_if (!revision.collaboration.blank?), revision.gid,
+      <% @resource.revisions.with_collaboration.each do |revision| %>
+          <tr<%= revision.collaborations.blank? ? '' : ' class="strong"'.html_safe %>>
+            <td><%= link_to_if (!revision.collaborations.blank?), revision.gid,
                 merged_revisions_monitored_resource_resource_path(@monitored_resource, @resource, revision.id),
                 :data => { 'reveal-id' => "modal", 'reveal-ajax' => "true" }, :class => 'reveal-link' %>
               <% if revision.team_collaboration? %><span class="fi-torsos-all"></span>
-                  <% if Revision.collaboration_is_global?(revision, @resource.monitored_resource_id) %><span class="fi-web"></span><% end %>
-                  (<%= revision.collaboration.length+1 %>)
-              <% elsif !revision.merged.blank? %><span class="fi-page-multiple"></span> (<%= revision.merged.length+1  %>)<% end %>
+                  <% if revision.collaboration_is_global?(@resource.monitored_resource_id) %><span class="fi-web"></span><% end %>
+                  (<%= revision.collaborations.length+1 %>)
+              <% elsif !revision.team_collaboration? && revision.collaborations.length > 0 %><span class="fi-page-multiple"></span> (<%= revision.collaborations.length+1  %>)<% end %>
             </td>
             <td><%= revision.modified_date.to_s(:db) %></td>
             <td><%= revision.permission.email_address.blank? ? revision.permission.name : revision.permission.email_address %></td>

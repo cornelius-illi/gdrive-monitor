@@ -21,4 +21,6 @@ $(function(){
             animation: 'fadeOut'
         }
     });
+
+    $('#sidebar-nav').height( $(document).height() );
 });

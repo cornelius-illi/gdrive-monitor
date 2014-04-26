@@ -195,10 +195,10 @@ class MonitoredResource < ActiveRecord::Base
   def combine_revisions
     resources.google_resources.each do |resource|
       # next steps require reset
-      query = "UPDATE revisions SET collaboration_id = NULL, revision_id = NULL WHERE resource_id=#{resource.id}"
-      ActiveRecord::Base.connection.execute(query)
+      #query = "UPDATE revisions SET collaboration_id = NULL, revision_id = NULL WHERE resource_id=#{resource.id}"
+      #ActiveRecord::Base.connection.execute(query)
 
-      resource.merge_consecutive_revisions
+      #resource.merge_consecutive_revisions
       resource.find_collaborations
     end
   end

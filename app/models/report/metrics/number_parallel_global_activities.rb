@@ -17,10 +17,18 @@ class Report::Metrics::NumberParallelGlobalActivities < Report::Metrics::Abstrac
 
     resources = Resource.google_resources_for_period(monitored_resource,period)
     resources.each do |resource|
-      sql = 'SELECT a.id,a.permission_id, GROUP_CONCAT(DISTINCT b.permission_id) as permissions
-        FROM revisions a JOIN revisions b ON b.collaboration_id=a.id
-        WHERE b.resource_id=? AND b.modified_date > ? AND b.modified_date <= ? GROUP BY a.id;'
-      query = ActiveRecord::Base.send(:sanitize_sql_array, [sql, resource.id, period.start_date, period.end_date])
+      sql = 'SELECT collaborations.collaboration_id, revisions.permission_id as permission_id,
+          GROUP_CONCAT(DISTINCT collaborations.permission_id) as permissions
+        FROM collaborations
+        JOIN revisions ON collaborations.collaboration_id=revisions.id
+        WHERE revisions.resource_id=? AND collaborations.threshold=?
+          AND revisions.permission_id != collaborations.permission_id
+          AND revisions.modified_date > ? AND revisions.modified_date <= ?
+        GROUP BY collaborations.collaboration_id ORDER BY revisions.resource_id;'
+      query = ActiveRecord::Base.send(:sanitize_sql_array, [
+          sql, resource.id, Collaboration::STANDARD_COLLABORATION_THRESHOLD.to_i,
+          period.start_date, period.end_date]
+      )
       revisions_with_parallel_activity = ActiveRecord::Base.connection.execute(query)
 
       revisions_with_parallel_activity.each do |revision|

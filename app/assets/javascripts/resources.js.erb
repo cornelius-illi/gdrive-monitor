@@ -1,0 +1,137 @@
+//= require highcharts
+//= require highcharts/highcharts-more
+//= require highcharts/modules/exporting
+//= require raphael
+
+$(document).ready(function() {
+    // if on page /reports/metareport/
+    if ($('.scatter_chart_div').length) {
+
+        $('.scatter_chart_div').each(function() {
+            var id = '#' + $(this).attr('id');
+            var idAr = id.split('_');
+            var index = idAr[idAr.length -1];
+            $.ajax({
+                type: 'GET',
+                url: '/show_threshold/',
+                data: { resultid: index },
+                async: true,
+                dataType: "json",
+                success: function (result) {
+                    drawScatterChart(id, result);
+                }
+            });
+        });
+    }
+});
+
+function drawScatterChart(id, result) {
+    $(id).highcharts({
+        chart: { type: 'scatter', zoomType: 'xy' },
+        title: { text: result['title'] },
+        xAxis: {
+            title: { enabled: true, text: result['x_title'] },
+            startOnTick: true,
+            endOnTick: true,
+            showLastLabel: true
+        },
+        yAxis: {
+            title: { text: result['y_title'] }
+        },
+        plotOptions: {
+            scatter: {
+                marker: {
+                    radius: 5,
+                    states: {
+                        hover: {
+                            enabled: true,
+                            lineColor: 'rgb(100,100,100)'
+                        }
+                    }
+                },
+                states: {
+                    hover: {
+                        marker: {
+                            enabled: false
+                        }
+                    }
+                },
+                tooltip: {
+                    headerFormat: '<b>{series.name}</b><br>',
+                    pointFormat: '{point.x}, {point.y}'
+                }
+            }
+        },
+        series: result['data']
+    });
+}
+
+// resources.calculate_optimal_threshold
+$(document).ready(function() {
+    // if on page /reports/metareport/
+    var id = '#optimal-threshold-boxplot';
+    if ($(id).length) {
+        $.ajax({
+            type: 'GET',
+            url: '/calculate_optimal_threshold/',
+            async: true,
+            dataType: "json",
+            success: function (result) {
+                var title = 'Calculation of optimal threshold in seconds'
+                drawBoxPlot(id, title, result['categories'], result['data']);
+
+                var id_2 = '#optimal-threshold-columnchart';
+                var title_2 = 'Number of revisions +60 sec above threshold';
+                drawColumnChart(id_2,title_2, result['categories'], result['occurences'])
+            }
+        });
+    }
+});
+
+function drawBoxPlot(id, title, categories, data) {
+    $(id).highcharts({
+        chart: { type: 'boxplot' },
+        title: { text: title },
+        legend: { enabled: false },
+
+        xAxis: {
+            categories: categories,
+            title: { text: 'Threshold in Seconds' }
+        },
+
+        yAxis: {
+            title: {
+                text: 'Observations'
+            }
+        },
+
+        series: [{
+            name: 'Distance to previous revisions in seconds',
+            data: data,
+            tooltip: {
+                headerFormat: '<em>Experiment No {point.key}</em><br/>'
+            }
+        }]
+    });
+}
+
+function drawColumnChart(id, title, categories, data) {
+    $(function () {
+        $(id).highcharts({
+            chart: { type: 'column' },
+            title: { text: title },
+            xAxis: { categories: categories },
+            yAxis: {
+                min: 0,
+                title: {
+                    text: 'Occurences'
+                }
+            },
+            series: [{
+                name: '',
+                data: data
+
+            }]
+        });
+    });
+}

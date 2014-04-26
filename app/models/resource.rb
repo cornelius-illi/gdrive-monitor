@@ -370,6 +370,7 @@ class Resource < ActiveRecord::Base
   end
   handle_asynchronously :calculate_revision_diffs, :queue => 'diffing', :owner => Proc.new {|o| o}
 
+  # @todo: deprecated no need for revision_id
   def merge_consecutive_revisions
     # pre-condition: sometimes revisions cannot be downloaded (Resource not found 404)
     return if revisions.blank? || revisions.length.eql?(0)

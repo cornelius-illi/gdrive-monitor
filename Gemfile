@@ -32,6 +32,8 @@ gem 'json'
 gem 'foundation-rails'
 gem 'simple-navigation'
 gem 'highcharts-rails'
+gem 'raphaeljs-rails'
+gem 'time_diff'
 
 # ajax
 gem 'active_model_serializers'
