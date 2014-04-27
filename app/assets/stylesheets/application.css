@@ -108,3 +108,8 @@ td ul {
     margin: 0px;
     list-style-type: none;
 }
+
+.svg-timeline {
+    overflow: scroll;
+    height:130px;
+}

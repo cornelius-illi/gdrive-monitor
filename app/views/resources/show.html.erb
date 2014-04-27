@@ -95,52 +95,10 @@
 <% end %>
 
 <h3>Revisions List -
-  <small>Showing: <%= @resource.revisions.with_collaboration.length %> of
-    <%= @resource.revisions.length %></small></h3>
+  <small>Showing: <%= @resource.revisions.with_collaboration.length %> of <%= @resource.revisions.length %></small>
+</h3>
 
-<% all_revisions = @resource.revisions %>
-<% reference_date = all_revisions.last.modified_date %>
-<% collab_revisions = @resource.revisions.with_collaboration %>
-<% span_in_minutes = (all_revisions.first.modified_date - all_revisions.last.modified_date).to_i/60 %>
-<% pix_per_minute = (950.to_f/span_in_minutes) %>
-
-<svg width="1040" height="120">
-  <line x1="15" x2="965" y1="60" y2="60" stroke-width="1" stroke="rgb(0,0,0)" />
-  <% collab_revisions.reverse.each_with_index do |revision, index| %>
-  <% x = ((revision.modified_date - reference_date).to_i/60 * pix_per_minute).to_i + 15 %>
-  <% stroke = revision.collaborations.blank? ? 0 : 2 %>
-  <% stroke_color = revision.team_collaboration? ? 'rgb(0,80,0)' : 'rgb(0,0,0)' %>
-  <% stroke_color = revision.collaboration_is_global?(@resource.monitored_resource_id) ? 'rgb(255,0,0)' : stroke_color %>
-  <% y = (index%2 == 0) ? 20 : 75 %>
-  <% y2 = (index%2 == 0) ? '25' : '95' %>
-  <% y3 = (index%2 == 0) ? 15 : 75 %>
-
-  <% if revision.collaborations.blank? %>
-          <line x1="<%= x %>" x2="<%= x %>" y1="60" y2="<%= y2 %>" stroke-width="1" stroke="rgb(180,180,180)" />
-          <text x="<%= x+5 %>" y="<%= y %>" font-family="Verdana" font-size="8" xml:space='default'>
-            <tspan x="<%= x+5 %>" dy="1.2em"><%= revision.modified_date.to_date.to_s %></tspan>
-            <tspan x="<%= x+5 %>" dy="1.2em"><%= revision.modified_date.strftime("%H:%M") %></tspan>
-          </text>
-    <rect width="10" height="10" x="<%= x-5 %>" y="55" style="fill:rgba(119, 152, 191, .9)"  transform="rotate(45 <%= x %> 60)" />
-  <% else %>
-    <%  first_date = Revision
-        .joins('JOIN collaborations ON collaborations.revision_id=revisions.id')
-        .where('collaborations.collaboration_id=?', revision.id)
-        .where('collaborations.threshold=?', Collaboration::STANDARD_COLLABORATION_THRESHOLD)
-        .order('modified_date ASC').first.modified_date %>
-    <% x1 = ((first_date - reference_date).to_i/60 * pix_per_minute).to_i + 15 %>
-    <% w = (x-x1 + 10) %>
-  <line x1="<%= x1 %>" x2="<%= x1 %>" y1="60" y2="<%= y2 %>" stroke-width="1" stroke="rgb(180,180,180)" />
-  <text x="<%= x+5 %>" y="<%= y3 %>" font-family="Verdana" font-size="8" xml:space='default'>
-    <tspan x="<%= x1+5 %>" dy="1.2em"><%= first_date.to_date.to_s %></tspan>
-    <tspan x="<%= x1+5 %>" dy="1.2em"><%= first_date.strftime("%H:%M") %></tspan>
-    <tspan x="<%= x1+5 %>" dy="1.2em"><%= time_difference(first_date,revision.modified_date) %></tspan>
-  </text>
-  <rect width="<%= w %>" height="10" x="<%= x1-5 %>" y="55"
-          style="fill:rgba(119, 152, 191, .9);stroke-width:<%= stroke %>;stroke:<%= stroke_color %>" />
-  <% end %>
-<% end %>
-</svg>
+<%= svg_timeline(@resource) %>
 
 <% unless @resource.is_folder? || @resource.revisions.length.eql?(0) %>
     <table>

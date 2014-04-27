@@ -24,6 +24,14 @@ class Revision < ActiveRecord::Base
     return nbr_weak
   end
 
+  def first_revision_in_session
+    Revision
+      .joins('JOIN collaborations ON collaborations.revision_id=revisions.id')
+      .where('collaborations.collaboration_id=?', self.id)
+      .where('collaborations.threshold=?', Collaboration::STANDARD_COLLABORATION_THRESHOLD)
+      .order('modified_date ASC').first
+  end
+
   def team_collaboration?
     permission_ids = [ permission_id ]
     collaborations.each do |collaboration|

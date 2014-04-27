@@ -43,10 +43,10 @@ gem 'actionpack-action_caching'
 # auth + oauth2
 gem 'devise'
 gem 'omniauth-google-oauth2' # registration, authorization
-#gem 'devise_openid_authenticatable' # choose between login/ registration
 gem 'rest-client'
-#gem 'cancan'
+gem 'cancan'
 #gem 'switch_user'
+#gem 'devise_openid_authenticatable' # choose between login/ registration
 
 # install default db records (admin user)
 gem 'seedbank', github: 'james2m/seedbank'
