@@ -45,6 +45,7 @@ gem 'devise'
 gem 'omniauth-google-oauth2' # registration, authorization
 gem 'rest-client'
 gem 'cancan'
+gem 'role_model'
 #gem 'switch_user'
 #gem 'devise_openid_authenticatable' # choose between login/ registration
 

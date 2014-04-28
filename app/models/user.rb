@@ -1,12 +1,24 @@
+require 'role_model'
+
 class User < ActiveRecord::Base
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable and :omniauthable
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :trackable, :validatable,
          :omniauthable, :omniauth_providers => [:google_oauth2]
-  
+
+  include RoleModel
+
   has_many :monitored_resources, dependent: :destroy
   has_many :monitored_periods, dependent: :destroy
+
+  # optionally set the integer attribute to store the roles in,
+  # :roles_mask is the default
+  roles_attribute :roles_mask
+
+  # declare the valid roles -- do not change the order if you add more
+  # roles later, always append them at the end!
+  roles :admin, :google_user, :researcher
          
   def self.find_for_google_oauth2(access_token, signed_in_resource=nil)
      data = access_token.info
@@ -22,7 +34,8 @@ class User < ActiveRecord::Base
               token: credentials['token'],
               refresh_token: credentials['refresh_token'],
               expires_at: credentials['expires_at'],
-              password: Devise.friendly_token[0,20]
+              password: Devise.friendly_token[0,20],
+              roles: [:google_user]
              )
      else
        user.token = credentials['token']

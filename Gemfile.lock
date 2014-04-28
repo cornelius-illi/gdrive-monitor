@@ -141,6 +141,7 @@ GEM
       json (~> 1.4)
     rest-client (1.6.7)
       mime-types (>= 1.16)
+    role_model (0.8.1)
     sass (3.2.12)
     sass-rails (4.0.1)
       railties (>= 4.0.0, < 5.0)
@@ -210,6 +211,7 @@ DEPENDENCIES
   rails (= 4.0.1)
   raphaeljs-rails
   rest-client
+  role_model
   sass-rails (~> 4.0.0)
   sdoc
   seedbank!
