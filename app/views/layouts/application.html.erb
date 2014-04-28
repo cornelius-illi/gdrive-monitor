@@ -16,7 +16,7 @@
 <nav class="top-bar" data-topbar>
   <ul class="title-area">
     <li class="name">
-      <h1><a href="#"><%= image_tag("gdrive-logo.svg", :alt => "Google Drive", :width => '35') %> Goolge Drive Changes</a></h1>
+      <h1><a href="#"><%= image_tag("gdrive-logo.svg", :alt => "Google Drive", :width => '35') %> Goolge Drive Monitor</a></h1>
     </li>
     <li class="toggle-topbar menu-icon"><a href="#">Menu</a></li>
   </ul>
@@ -29,7 +29,6 @@
 
 <div id="sidebar-nav" class="sidebar small-2 columns">
   <% if user_signed_in? %>
-  <h5>Monitored Resources</h5>
   <nav>
     <%= render_navigation %>
   </nav>

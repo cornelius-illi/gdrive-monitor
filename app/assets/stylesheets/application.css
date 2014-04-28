@@ -113,3 +113,7 @@ td ul {
     overflow: scroll;
     height:130px;
 }
+
+.strong {
+    font-weight: bold;
+}

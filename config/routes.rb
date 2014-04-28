@@ -49,7 +49,7 @@ GdriveFeed::Application.routes.draw do
   resources :monitored_periods
   resources :period_groups
 
-  root :to => "users#sign_in"
+  root :to => "application#welcome"
 
   match "/delayed_job" => DelayedJobWeb, :anchor => false, via: [:get, :post]
 

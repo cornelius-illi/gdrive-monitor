@@ -1,5 +1,5 @@
 <div class="row">
-  <div class="large-6 columns">
+  <div class="large-6 columns panel">
     <h3>Sign in</h3>
     <%= form_for(resource, :as => resource_name, :url => session_path(resource_name)) do |f| %>
       <div><%= f.label :email %>
@@ -16,5 +16,12 @@
     <% end %>
     <p><%= render "devise/shared/links" %></p>
   </div>
-  <div class="large-6 columns"></div>
+  <div class="large-6 columns">
+    <% else %>
+    <div class="panel">
+      <h3>Welcome</h3>
+      <p>Please log-in to proceed!</p>
+      <p>You can either log-in/ sign-up with your <em>Google Account</em> in order to get started with monitoring your shared resource, or log-in with a researcher account.</p>
+    </div>
+  </div>
 </div>
