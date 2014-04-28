@@ -49,10 +49,7 @@ GdriveFeed::Application.routes.draw do
   resources :monitored_periods
   resources :period_groups
 
-  get "welcome/index"
-  get "meta/mime_types", to: "welcome#mime_types"
-
-  root :to => "welcome#index"
+  root :to => "users#sign_in"
 
   match "/delayed_job" => DelayedJobWeb, :anchor => false, via: [:get, :post]
 

@@ -84,6 +84,26 @@ class ReportsController < ApplicationController
     redirect_to monitored_resource_reports_path(@monitored_resource), :notice => "All previous reports have successfully been deleted!"
   end
 
+  # @todo: to implement/ refactor
+  def mime_types
+    @mime_count = Hash.new
+
+    mime_types = Resource.select(:mime_type).uniq
+    mime_types.each do |r|
+      @mime_count[r.mime_type] = Resource.where(:mime_type => r.mime_type).count
+    end
+
+    @mime_count.sort_by {|_key, value| value}
+  end
+
+  def resources_without_checksum
+    # list all resources without checksum, group by type
+  end
+
+  def comments_by_mime_type
+
+  end
+
   private
   # Use callbacks to share common setup or constraints between actions.
   def set_monitored_resource
