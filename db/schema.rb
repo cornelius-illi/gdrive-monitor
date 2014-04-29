@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140429060144) do
+ActiveRecord::Schema.define(version: 20140429091354) do
 
   create_table "changes", force: true do |t|
     t.string   "change_id"
@@ -33,8 +33,8 @@ ActiveRecord::Schema.define(version: 20140429060144) do
   create_table "comments", force: true do |t|
     t.string   "gid"
     t.string   "author"
-    t.string   "content"
-    t.string   "context"
+    t.text     "content"
+    t.text     "context"
     t.datetime "created_date"
     t.boolean  "deleted"
     t.datetime "modified_date"
@@ -59,7 +59,7 @@ ActiveRecord::Schema.define(version: 20140429060144) do
     t.integer  "owner_id"
   end
 
-  add_index "delayed_jobs", ["priority", "run_at"], name: "delayed_jobs_priority"
+  add_index "delayed_jobs", ["priority", "run_at"], name: "delayed_jobs_priority", using: :btree
 
   create_table "monitored_periods", force: true do |t|
     t.string   "name"
@@ -203,7 +203,7 @@ ActiveRecord::Schema.define(version: 20140429060144) do
     t.integer  "roles_mask"
   end
 
-  add_index "users", ["email"], name: "index_users_on_email", unique: true
-  add_index "users", ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
+  add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree
+  add_index "users", ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree
 
 end

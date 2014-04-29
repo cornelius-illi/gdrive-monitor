@@ -216,7 +216,7 @@ class Revision < ActiveRecord::Base
     where = ActiveRecord::Base.send(:sanitize_sql_array, where)
 
     query = "SELECT COUNT(revisions.id) as revisions FROM resources JOIN revisions ON revisions.resource_id=resources.id #{where}"
-    result = ActiveRecord::Base.connection.execute(query)
+    result = ActiveRecord::Base.connection.exec_query(query)
     result.first['revisions']
   end
   # REPORT RELATED QUERIES - START

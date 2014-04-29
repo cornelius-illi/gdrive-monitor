@@ -6,7 +6,7 @@ class Report::Metrics::NumberGloballyCollaboratedFiles < Report::Metrics::Abstra
   def calculate_for(monitored_resource, period, data=nil)
     nbr_globally_collaborated_resources = 0
     query = query = ActiveRecord::Base.send(:sanitize_sql_array, ["SELECT revisions.resource_id, GROUP_CONCAT(DISTINCT revisions.permission_id) as permissions FROM revisions JOIN resources ON revisions.resource_id=resources.id WHERE resources.monitored_resource_id=? AND (resources.modified_date > ? AND resources.modified_date <= ?) GROUP BY revisions.resource_id HAVING COUNT(DISTINCT revisions.permission_id) > 1", monitored_resource.id, period.start_date, period.end_date])
-    resources_with_collaboration = ActiveRecord::Base.connection.execute(query)
+    resources_with_collaboration = ActiveRecord::Base.connection.exec_query(query)
 
     # only works for groups n=2
     group = PermissionGroup.where(:monitored_resource_id => monitored_resource.id).first

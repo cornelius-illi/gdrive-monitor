@@ -25,3 +25,5 @@ routes.txt
 
 # google drive app config
 /config/google_drive.yml
+/config/config.database.yml.sqlite3
+/config/database.yml

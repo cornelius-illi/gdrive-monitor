@@ -44,7 +44,7 @@ class Resource < ActiveRecord::Base
 
   def self.find_with_several_revisions()
     query = 'SELECT resources.id, COUNT(revisions.id) as revisions FROM resources JOIN revisions ON revisions.resource_id=resources.id GROUP BY resources.id HAVING COUNT(revisions.id) > 1;'
-    return ActiveRecord::Base.connection.execute(query)
+    return ActiveRecord::Base.connection.exec_query(query)
   end
 
   def self.find_create_or_update_batched_for(child_resources, mr_id, user_id)
@@ -62,7 +62,7 @@ class Resource < ActiveRecord::Base
 
   def self.mimetypes_for_monitored_resource(mr_id)
     query = ActiveRecord::Base.send(:sanitize_sql_array, ["SELECT DISTINCT resources.mime_type FROM resources WHERE monitored_resource_id=%s ORDER BY mime_type",mr_id])
-    results = ActiveRecord::Base.connection.execute(query)
+    results = ActiveRecord::Base.connection.exec_query(query)
     [ ['--- none ---',''], ['GOOGLE_FILE_TYPES','GOOGLE_FILE_TYPES'] ].concat results.map {|result| [result[0], result[0]]}
   end
 
@@ -232,7 +232,7 @@ class Resource < ActiveRecord::Base
     where_sql = ActiveRecord::Base.send(:sanitize_sql_array, where)
 
     query = "SELECT COUNT(resources.id) as resources FROM resources #{where_sql}"
-    result = ActiveRecord::Base.connection.execute(query)
+    result = ActiveRecord::Base.connection.exec_query(query)
     result.first['resources']
   end
 
@@ -251,7 +251,7 @@ class Resource < ActiveRecord::Base
     where_sql = ActiveRecord::Base.send(:sanitize_sql_array, where)
 
     query = "SELECT COUNT(resources.id) as resources FROM resources #{where_sql}"
-    result = ActiveRecord::Base.connection.execute(query)
+    result = ActiveRecord::Base.connection.exec_query(query)
     result.first['resources']
   end
 

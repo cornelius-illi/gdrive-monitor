@@ -29,7 +29,7 @@ class Report::Metrics::NumberParallelGlobalActivities < Report::Metrics::Abstrac
           sql, resource.id, Collaboration::STANDARD_COLLABORATION_THRESHOLD.to_i,
           period.start_date, period.end_date]
       )
-      revisions_with_parallel_activity = ActiveRecord::Base.connection.execute(query)
+      revisions_with_parallel_activity = ActiveRecord::Base.connection.exec_query(query)
 
       revisions_with_parallel_activity.each do |revision|
         permission_array = [ revision['permission_id'], revision['permissions'].split(',').map(&:to_i) ]

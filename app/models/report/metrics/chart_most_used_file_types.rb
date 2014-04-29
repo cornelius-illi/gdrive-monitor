@@ -30,7 +30,7 @@ class Report::Metrics::ChartMostUsedFileTypes < Report::Metrics::AbstractMetric
       GROUP BY mime_type ORDER BY COUNT(resources.id) DESC LIMIT 4;'
 
     query  = ActiveRecord::Base.send(:sanitize_sql_array, [sql, monitored_resource.id, period.start_date, period.end_date])
-    most_used_mimetypes = ActiveRecord::Base.connection.execute(query)
+    most_used_mimetypes = ActiveRecord::Base.connection.exec_query(query)
 
     result_set = Array.new
     sum_four_most_used = 0
@@ -42,7 +42,7 @@ class Report::Metrics::ChartMostUsedFileTypes < Report::Metrics::AbstractMetric
     sql_count_all = 'SELECT COUNT(resources.id) as count FROM revisions JOIN resources ON revisions.resource_id=resources.id
       WHERE resources.monitored_resource_id=? AND revisions.modified_date > ? AND revisions.modified_date <= ?;'
     query_count_all  = ActiveRecord::Base.send(:sanitize_sql_array, [sql_count_all, monitored_resource.id, period.start_date, period.end_date])
-    remaining_revisions = ActiveRecord::Base.connection.execute(query_count_all)
+    remaining_revisions = ActiveRecord::Base.connection.exec_query(query_count_all)
 
     remaining_count = (remaining_revisions[0]['count']-sum_four_most_used)
 

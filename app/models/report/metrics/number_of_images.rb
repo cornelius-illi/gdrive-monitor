@@ -8,7 +8,7 @@ class Report::Metrics::NumberOfImages < Report::Metrics::AbstractMetric
       WHERE resources.mime_type="image/jpeg" AND resources.monitored_resource_id=?
       AND revisions.modified_date > ? AND revisions.modified_date <= ?;'
     query  = ActiveRecord::Base.send(:sanitize_sql_array, [sql, monitored_resource.id, period.start_date, period.end_date])
-    images_in_period = ActiveRecord::Base.connection.execute(query)
+    images_in_period = ActiveRecord::Base.connection.exec_query(query)
     return images_in_period[0]['images']
   end
 end

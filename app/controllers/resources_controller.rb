@@ -86,26 +86,24 @@ class ResourcesController < ApplicationController
         WHERE collaborations.threshold=? GROUP BY revisions.id ORDER BY revisions.resource_id;'
 
           query_with_params = ActiveRecord::Base.send(:sanitize_sql_array, [query, seconds])
-          results = ActiveRecord::Base.connection.execute(query_with_params)
+          results = ActiveRecord::Base.connection.exec_query(query_with_params)
 
           results.each do |collaboration|
-            query_distance = 'SELECT distance_to_previous FROM revisions WHERE id=?'
-            query_distance_with_params = ActiveRecord::Base.send(:sanitize_sql_array, [query_distance, collaboration['id']])
-
-            result_distance = ActiveRecord::Base.connection.execute(query_distance_with_params)
-
-            # + 20 %
-            #upper_limit = ((seconds*1.2)+1).to_i
-
             # + 30 sec. (next step)
             # @todo: +30 sec. is the better graph ... how to justify
             upper_limit = seconds+60
 
-            unless result_distance[0]['distance_to_previous'].blank? || result_distance[0]['distance_to_previous'] > upper_limit
-              distances_to_previous_revisions[minutes] << result_distance[0]['distance_to_previous']-seconds
+            query_distance = 'SELECT distance_to_previous FROM revisions WHERE id=? AND distance_to_previous > ? AND distance_to_previous < ?'
+            query_distance_with_params = ActiveRecord::Base.send(:sanitize_sql_array, [query_distance, collaboration['id'].to_i, seconds, upper_limit])
+
+            result_distance = ActiveRecord::Base.connection.exec_query(query_distance_with_params)
+
+            unless result_distance.blank?
+              distances_to_previous_revisions[minutes] << result_distance.first['distance_to_previous']-seconds
             end
           end
         end
+
         result_set = Hash.new
         result_set['categories'] = distances_to_previous_revisions.keys
         result_set['data'] = Array.new
@@ -239,7 +237,7 @@ class ResourcesController < ApplicationController
 
   def scatter_distances
     query = 'SELECT distance_to_previous FROM revisions WHERE distance_to_previous IS NOT NULL AND distance_to_previous < 901'
-    dist = ActiveRecord::Base.connection.execute(query)
+    dist = ActiveRecord::Base.connection.exec_query(query)
 
     distances = Array.new
     distances << scatter_distances_for(dist, 'Distances All', COLORS[0] )
@@ -247,7 +245,7 @@ class ResourcesController < ApplicationController
     MonitoredResource.all.each_with_index do |mr, index|
       query_team = 'SELECT distance_to_previous FROM revisions JOIN resources ON revisions.resource_id = resources.id
             WHERE resources.monitored_resource_id=' + mr.id.to_s + ' AND distance_to_previous IS NOT NULL AND distance_to_previous < 901'
-      dist_team = ActiveRecord::Base.connection.execute(query_team)
+      dist_team = ActiveRecord::Base.connection.exec_query(query_team)
       distances << scatter_distances_for(dist_team, mr.title, COLORS[index+1] )
     end
 
@@ -282,7 +280,7 @@ class ResourcesController < ApplicationController
     (1..60).each do |avg_base|
       seconds = (avg_base*60)+1
       query = 'SELECT AVG(distance_to_previous) AS avg FROM revisions WHERE distance_to_previous IS NOT NULL AND distance_to_previous < ' + seconds.to_s
-      dist = ActiveRecord::Base.connection.execute(query)
+      dist = ActiveRecord::Base.connection.exec_query(query)
       data_all[avg_base] = dist[0]['avg'].round(2)
     end
     results[0] = {:name => 'All', :color => COLORS[0], :data => data_all.to_a }
@@ -294,7 +292,7 @@ class ResourcesController < ApplicationController
         seconds = (avg_base*60)+1
         query = 'SELECT AVG(distance_to_previous) AS avg FROM revisions JOIN resources ON revisions.resource_id = resources.id
           WHERE resources.monitored_resource_id=' + mr.id.to_s + ' AND distance_to_previous IS NOT NULL AND distance_to_previous < ' + seconds.to_s
-        dist = ActiveRecord::Base.connection.execute(query)
+        dist = ActiveRecord::Base.connection.exec_query(query)
         data[avg_base] = dist[0]['avg'].round(2)
       end
 
@@ -308,14 +306,14 @@ class ResourcesController < ApplicationController
     results = Array.new
 
     query_sum = 'SELECT COUNT(revisions.id) as count FROM revisions WHERE distance_to_previous IS NOT NULL'
-    res_sum = ActiveRecord::Base.connection.execute(query_sum)
+    res_sum = ActiveRecord::Base.connection.exec_query(query_sum)
     sum = res_sum[0]['count']
 
     data_all = Hash.new
     (1..60).each do |avg_base|
       seconds = (avg_base*60)+1
       query = 'SELECT COUNT(revisions.id) AS number FROM revisions WHERE distance_to_previous IS NOT NULL AND distance_to_previous < ' + seconds.to_s
-      dist = ActiveRecord::Base.connection.execute(query)
+      dist = ActiveRecord::Base.connection.exec_query(query)
       data_all[avg_base] = (dist[0]['number'].to_f/sum).round(2)
     end
     results[0] = {:name => 'All', :color => COLORS[0], :data => data_all.to_a }
@@ -326,7 +324,7 @@ class ResourcesController < ApplicationController
       query_team = 'SELECT COUNT(revisions.id) as count FROM revisions
         JOIN resources ON revisions.resource_id=resources.id
         WHERE resources.monitored_resource_id='+ mr.id.to_s + ' AND distance_to_previous IS NOT NULL'
-      res_sum_team = ActiveRecord::Base.connection.execute(query_team)
+      res_sum_team = ActiveRecord::Base.connection.exec_query(query_team)
       sum_team = res_sum_team[0]['count']
 
       data = Hash.new
@@ -334,7 +332,7 @@ class ResourcesController < ApplicationController
         seconds = (avg_base*60)+1
         query = 'SELECT COUNT(revisions.id) AS number FROM revisions JOIN resources ON revisions.resource_id = resources.id
           WHERE resources.monitored_resource_id=' + mr.id.to_s + ' AND distance_to_previous IS NOT NULL AND distance_to_previous < ' + seconds.to_s
-        dist = ActiveRecord::Base.connection.execute(query)
+        dist = ActiveRecord::Base.connection.exec_query(query)
         data[avg_base] = (dist[0]['number'].to_f/sum_team).round(2)
       end
 

@@ -23,7 +23,7 @@ class Report::Metrics::NumberParallelActivities < Report::Metrics::AbstractMetri
           sql, resource.id, Collaboration::STANDARD_COLLABORATION_THRESHOLD.to_i,
           period.start_date, period.end_date]
       )
-      revisions_with_parallel_activity = ActiveRecord::Base.connection.execute(query)
+      revisions_with_parallel_activity = ActiveRecord::Base.connection.exec_query(query)
 
       nbr_parallel_activities += revisions_with_parallel_activity.length
     end

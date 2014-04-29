@@ -40,7 +40,7 @@ class MonitoredResource < ActiveRecord::Base
       GROUP BY resources.id ORDER BY #{sort_column} #{sort_direction} LIMIT #{offset},#{per_page};"
 
       # connection = ActiveRecord::Base.connection
-      ActiveRecord::Base.connection.execute(query)
+      ActiveRecord::Base.connection.exec_query(query, :symbolize_keys => true)
   end
 
   def resources_analysed_total_entries(filters, doSearch=true)
@@ -50,10 +50,10 @@ class MonitoredResource < ActiveRecord::Base
       where_sql = ActiveRecord::Base.send(:sanitize_sql_array, ["WHERE resources.monitored_resource_id=%s AND mime_type !='application/vnd.google-apps.folder'", id])
     end
 
-    query = "SELECT COUNT(resources.id) count FROM resources #{where_sql}"
+    query = "SELECT COUNT(resources.id) AS count FROM resources #{where_sql}"
 
     # connection = ActiveRecord::Base.connection
-    result_set = ActiveRecord::Base.connection.execute(query)
+    result_set = ActiveRecord::Base.connection.exec_query(query, :symbolize_keys => true)
     result_set.first['count']
   end
 
@@ -196,7 +196,7 @@ class MonitoredResource < ActiveRecord::Base
     resources.google_resources.each do |resource|
       # next steps require reset
       #query = "UPDATE revisions SET collaboration_id = NULL, revision_id = NULL WHERE resource_id=#{resource.id}"
-      #ActiveRecord::Base.connection.execute(query)
+      #ActiveRecord::Base.connection.exec_query(query)
 
       #resource.merge_consecutive_revisions
       resource.find_collaborations
