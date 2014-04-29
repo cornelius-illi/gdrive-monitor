@@ -80,27 +80,21 @@ class ResourcesController < ApplicationController
         (3..40).each do |var|
           seconds = (var*60)
           minutes = (seconds/60).to_s
+          upper_limit = seconds+60
           distances_to_previous_revisions[minutes] = Array.new
-          query = 'SELECT collaborations.revision_id as id, MIN(collaborations.modified_date) FROM revisions
-        JOIN collaborations ON collaborations.collaboration_id=revisions.id
-        WHERE collaborations.threshold=? GROUP BY revisions.id ORDER BY revisions.resource_id;'
+          query = 'SELECT rr.id, rr.distance_to_previous AS dist FROM collaborations cc
+            INNER JOIN  (
+              SELECT c.collaboration_id AS sid, MIN(c.modified_date) AS modd
+              FROM collaborations c WHERE c.threshold=? GROUP BY c.collaboration_id
+            ) xx  ON cc.collaboration_id = xx.sid AND cc.modified_date = xx.modd
+            JOIN revisions rr ON cc.revision_id=rr.id
+            WHERE cc.threshold=? AND rr.distance_to_previous < ? AND rr.distance_to_previous != 0;'
 
-          query_with_params = ActiveRecord::Base.send(:sanitize_sql_array, [query, seconds])
+          query_with_params = ActiveRecord::Base.send(:sanitize_sql_array, [query, seconds, seconds, upper_limit])
           results = ActiveRecord::Base.connection.exec_query(query_with_params)
 
           results.each do |collaboration|
-            # + 30 sec. (next step)
-            # @todo: +30 sec. is the better graph ... how to justify
-            upper_limit = seconds+60
-
-            query_distance = 'SELECT distance_to_previous FROM revisions WHERE id=? AND distance_to_previous > ? AND distance_to_previous < ?'
-            query_distance_with_params = ActiveRecord::Base.send(:sanitize_sql_array, [query_distance, collaboration['id'].to_i, seconds, upper_limit])
-
-            result_distance = ActiveRecord::Base.connection.exec_query(query_distance_with_params)
-
-            unless result_distance.blank?
-              distances_to_previous_revisions[minutes] << result_distance.first['distance_to_previous']-seconds
-            end
+              distances_to_previous_revisions[minutes] << collaboration['dist']-seconds
           end
         end
 
