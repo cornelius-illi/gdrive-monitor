@@ -22,6 +22,8 @@ class ReportsController < ApplicationController
 
   def index
     @period_groups = PeriodGroup.all
+
+    authorize! :read, :reports
   end
 
   def show
@@ -33,6 +35,8 @@ class ReportsController < ApplicationController
       format.html {
         @period_groups = PeriodGroup.all
         @metrics = META_METRICS
+
+        authorize! :read, :reports
       }
 
       format.json {
@@ -107,7 +111,15 @@ class ReportsController < ApplicationController
   private
   # Use callbacks to share common setup or constraints between actions.
   def set_monitored_resource
-    @monitored_resource = MonitoredResource.where(:id => params[:monitored_resource_id], :user_id => current_user.id).first
+    @monitored_resource = MonitoredResource
+      .where(:id => params[:monitored_resource_id]).first
+
+    # Authorize object permission - @todo: better way to solve this via cancan?
+    shared = current_user.shared_resources.map {|r| r.id }
+    @monitored_resource = nil unless ((@monitored_resource.user_id == current_user.id) || shared.include?(@monitored_resource.id))
+
+    # CANCAN - authorize read access
+    authorize! :read, @monitored_resource
   end
 
   def use_in_metareport?(metric_name)

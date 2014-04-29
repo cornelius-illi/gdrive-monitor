@@ -36,7 +36,7 @@
 </div>
 <div class="small-10 columns content">
   <!-- sub-navigation //-->
-  <% if !@monitored_resource.blank? and @resource.blank? %>
+  <% if !@monitored_resource.blank? and @resource.blank? and (can? :manage, @monitored_resource) %>
       <div data-magellan-expedition="fixed">
         <dl class="sub-nav">
           <dt>Monitored Resource:</dt>
@@ -48,9 +48,6 @@
           </dd>
           <dd class="<%= 'active' if current_page?( monitored_resource_permission_groups_url(@monitored_resource) ) %>">
             <%= link_to 'Permission Groups', monitored_resource_permission_groups_path(@monitored_resource) %>
-          </dd>
-          <dd class="<%= 'active' if current_page?( monitored_resource_reports_url(@monitored_resource) ) %>">
-            <%= link_to 'Reports', monitored_resource_reports_path(@monitored_resource) %>
           </dd>
         </dl>
       </div>
@@ -65,6 +62,12 @@
   <% if flash[:warning] %>
       <div data-alert class="alert-box warning radius">
         <%= flash[:warning] %>
+        <a href="#" class="close">&times;</a>
+      </div>
+  <% end %>
+  <% if flash[:alert] %>
+      <div data-alert class="alert-box alert radius">
+        <%= flash[:alert] %>
         <a href="#" class="close">&times;</a>
       </div>
   <% end %>

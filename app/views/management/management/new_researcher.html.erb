@@ -1,0 +1,47 @@
+<% content_for :title, 'Create new researcher account' %>
+<h3>Create new researcher account</h3>
+
+<% if @resource.errors.any? %>
+    <div data-alert class="alert-box warning" id="error_explanation">
+      <b><%= pluralize(@resource.errors.count, "error") %> prohibited this user from being saved:</b>
+      <ul>
+        <% @resource.errors.full_messages.each do |msg| %>
+            <li><%= msg %></li>
+        <% end %>
+      </ul>
+      <a href="#" class="close">&times;</a>
+    </div>
+<% end %>
+
+<%= form_for(@resource, :url => management_create_researcher_path) do |f| %>
+    <div class="row">
+      <div class="large-6 columns end">
+        <%= f.label :name %>
+        <%= f.text_field :name %>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="large-6 columns end">
+         <%= f.label :email %>
+         <%= f.email_field :email, :autofocus => true %>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="large-6 columns end">
+        <%= f.label :password %>
+      <%= f.password_field :password %>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="large-6 columns end">
+        <%= f.label :monitored_resources %>
+        <%= f.collection_select :shared_resources, current_user.monitored_resources, :id, :title, {}, { :size=> current_user.monitored_resources.length, :multiple => true} %>
+      </div>
+    </div>
+
+    <%= f.hidden_field :roles, {:value => :researcher} %>
+    <div><%= f.submit "Create User", :class => 'button tiny' %></div>
+<% end %>

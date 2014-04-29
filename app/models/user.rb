@@ -10,6 +10,7 @@ class User < ActiveRecord::Base
   include RoleModel
 
   has_many :monitored_resources, dependent: :destroy
+  has_and_belongs_to_many :shared_resources, class_name: 'MonitoredResource' , join_table: 'monitored_resources_users'
   has_many :monitored_periods, dependent: :destroy
 
   # optionally set the integer attribute to store the roles in,
@@ -65,6 +66,10 @@ class User < ActiveRecord::Base
  
  def token_has_expired?
    Time.now.to_i >= self.expires_at
+ end
+
+ def my_resources
+   [monitored_resources, shared_resources].flatten!
  end
  
  def monitored_resources_ids

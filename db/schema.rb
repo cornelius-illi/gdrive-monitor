@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140428083119) do
+ActiveRecord::Schema.define(version: 20140429060144) do
 
   create_table "changes", force: true do |t|
     t.string   "change_id"
@@ -90,6 +90,11 @@ ActiveRecord::Schema.define(version: 20140428083119) do
     t.integer  "user_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+  end
+
+  create_table "monitored_resources_users", id: false, force: true do |t|
+    t.integer "user_id",               null: false
+    t.integer "monitored_resource_id", null: false
   end
 
   create_table "period_groups", force: true do |t|

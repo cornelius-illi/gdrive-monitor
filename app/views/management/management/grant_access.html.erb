@@ -1,0 +1,27 @@
+<% content_for :title, 'Grant Access to Monitored Resources' %>
+<h3>Grant Access to Monitored Resources</h3>
+
+<% if @researcher.blank? %>
+    <p><i>There are no researcher accounts available, yet. Go create one!</i></p>
+<% else %>
+    <table>
+      <thead>
+      <tr>
+        <th>Name</th>
+        <th>E-Mail</th>
+        <th>Resources</th>
+      </tr>
+      </thead>
+      <tbody>
+      <% @researcher.each do |user| %>
+          <tr>
+            <td><%= user.name %></td>
+            <td><%= user.email %></td>
+            <td><%= user.shared_resources.map {|r| r.title}.join(', ') %></td>
+          </tr>
+      <% end %>
+      </tbody>
+    </table>
+<% end %>
+
+<%= link_to 'Create new Research Account', management_new_researcher_path, :class => 'button tiny' %>

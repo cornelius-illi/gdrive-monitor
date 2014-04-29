@@ -1,13 +1,15 @@
 <% content_for :title, 'List of Monitored Resources' %>
 
-<h2>Monitored Resource: <%= @monitored_resource.title %></h2>
+<h3>Monitored Resource: <%= @monitored_resource.title %></h3>
 
-<span class="has-tip" title="To update resource-list and revisions for each resource." data-tooltip>
-    <%= link_to "Index Structure", index_structure_monitored_resource_path(@monitored_resource), :class => 'button tiny' %>
-</span>
-<span class="has-tip" title="To combine revisions. Has to be done after update." data-tooltip>
-    <%= link_to "Combine Revisions", combine_revisions_monitored_resource_path(@monitored_resource), :class => 'button tiny' %>
-</span>
+<% if (can? :manage, @monitored_resource) %>
+    <span class="has-tip" title="To update resource-list and revisions for each resource." data-tooltip>
+        <%= link_to "Index Structure", index_structure_monitored_resource_path(@monitored_resource), :class => 'button tiny' %>
+    </span>
+    <span class="has-tip" title="To combine revisions. Has to be done after update." data-tooltip>
+        <%= link_to "Combine Revisions", combine_revisions_monitored_resource_path(@monitored_resource), :class => 'button tiny' %>
+    </span>
+<% end %>
 
 <h4>File List</h4>
 <% if @monitored_resource.jobs.length > 0 %>

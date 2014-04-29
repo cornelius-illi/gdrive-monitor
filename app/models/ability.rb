@@ -11,10 +11,10 @@ class Ability
       can :manage, :all
     elsif user.has_role? :google_user
       # a google_user can do anything with his monitored resources and reports
-      can :manage, [MonitoredResource, Report]
+      can :manage, [MonitoredResource, Report, :reports]
     elsif user.has_role? :researcher
       # a researcher can only read certain things
-      can :read, [MonitoredResource, Report]
+      can :read, [MonitoredResource, Report, :reports]
     elsif user.has_role? :guest
       can :read, []
     end

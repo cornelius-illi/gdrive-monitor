@@ -1,7 +1,7 @@
 require 'rest_client'
 
 class MonitoredResourcesController < ApplicationController
-  before_filter :refresh_token!, only: [:new, :index_structure]
+  #before_filter :refresh_token!, only: [:new, :index_structure]
   before_action :set_monitored_resource, only: [:show, :permission_groups, :index_structure, :combine_revisions]
 
   def index
@@ -9,6 +9,9 @@ class MonitoredResourcesController < ApplicationController
   end
 
   def new
+    authorize! :manage, @monitored_resource
+    refresh_token!
+
     @folders = DriveFiles.retrieve_all_root_folders(current_user.token)
     @monitored_resources_ids = current_user.monitored_resources_ids
     @monitored_resources = current_user.monitored_resources # for navigation only
@@ -32,14 +35,23 @@ class MonitoredResourcesController < ApplicationController
   end
 
   def index_structure
+    authorize! :manage, @monitored_resource
+    refresh_token!
+
     @monitored_resource.index_structure(current_user.id, current_user.token, @monitored_resource.gid)
     @monitored_resource.update_attribute(:structure_indexed_at, Time.now) # last indexed at, can be done more than once
     redirect_to @monitored_resource, :notice => "Structure has been indexed: #{@monitored_resource.structure_indexed_at.to_s(:db)}"
   end
 
   def combine_revisions
+    authorize! :manage, @monitored_resource
+
     @monitored_resource.combine_revisions
     redirect_to @monitored_resource, :notice => "Revisions are being combined! This might take a while!"
+  end
+
+  def grant_access
+
   end
 
   # @TODO DEPRECATED - SHOULD BE REMOVED IF NO LONGER NEEDED
@@ -68,9 +80,14 @@ class MonitoredResourcesController < ApplicationController
   private
   # Use callbacks to share common setup or constraints between actions.
   def set_monitored_resource
-    @monitored_resource = MonitoredResource.where(:id => params[:id], :user_id => current_user.id).first
+    @monitored_resource = MonitoredResource
+      .where(:id => params[:id]).first
 
-    # CANCAN
+    # Authorize object permission - @todo: better way to solve this via cancan?
+    shared = current_user.shared_resources.map {|r| r.id }
+    @monitored_resource = nil unless ((@monitored_resource.user_id == current_user.id) || shared.include?(@monitored_resource.id))
+
+    # CANCAN - authorize read access
     authorize! :read, @monitored_resource
   end
 

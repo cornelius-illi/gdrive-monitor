@@ -34,22 +34,25 @@ SimpleNavigation::Configuration.run do |navigation|
   navigation.items do |primary|
     primary.dom_class = 'side-nav'
 
-    primary.item :recources_label, 'Configuration', :class => 'heading strong'
-    primary.item :monitored_resources, '<span class="fi-plus"></span> Create New Resource', monitored_resources_path, :highlights_on => /monitored_resources/
-    primary.item :monitored_periods, '<span class="fi-calendar"></span> Define Periods', monitored_periods_path
-    primary.item :period_groups, '<span class="fi-results"></span> Relate Periods', period_groups_path
-    primary.item :calculate_threshold, '<span class="fi-graph-pie"></span> Calculate Threshold', show_threshold_path
+    primary.item :recources_label, 'Management', :class => 'heading strong'
+    if current_user.has_role? :google_user
+      primary.item :monitored_resources, '<span class="fi-plus"></span> Create New Resource', monitored_resources_path, :highlights_on => /monitored_resources/
+      primary.item :monitored_periods, '<span class="fi-calendar"></span> Define Periods', monitored_periods_path
+      primary.item :period_groups, '<span class="fi-results"></span> Relate Periods', period_groups_path
+      primary.item :manage_access, '<span class="fi-lock"></span> Manage Access', management_grant_access_path
+    end
+    primary.item :calculate_threshold, '<span class="fi-graph-pie"></span> Revision Aggregation', show_threshold_path
     primary.item :divider1, '', :class => 'divider'
     primary.item :recources_label1, 'Monitored Resources', :class => 'heading strong'
-    if user_signed_in? && !current_user.monitored_resources.blank?
-      current_user.monitored_resources.each_with_index do |monitored_resource,j|
+    if user_signed_in? && !current_user.my_resources.blank?
+      current_user.my_resources.each_with_index do |monitored_resource,j|
         primary.item "mr-#{j}", '<span class="fi-folder"></span> ' + monitored_resource.try(:title), monitored_resource_path(monitored_resource)
       end
     end
     primary.item :divider2, '', :class => 'divider'
     primary.item :recources_labe2l, 'Reports', :class => 'heading strong'
-    if user_signed_in? && !current_user.monitored_resources.blank?
-      current_user.monitored_resources.each_with_index do |monitored_resource,k|
+    if user_signed_in? && !current_user.my_resources.blank?
+      current_user.my_resources.each_with_index do |monitored_resource,k|
         primary.item "mr-r-#{k}", '<span class="fi-graph-bar"></span> ' + monitored_resource.try(:title), monitored_resource_reports_path(monitored_resource)
       end
     end

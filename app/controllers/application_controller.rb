@@ -4,10 +4,6 @@ class ApplicationController < ActionController::Base
   protect_from_forgery with: :exception
   before_filter :authenticate_user!
 
-  def welcome
-
-  end
-
   rescue_from CanCan::AccessDenied do |exception|
     redirect_to root_url, :alert => exception.message
   end
@@ -15,6 +11,7 @@ class ApplicationController < ActionController::Base
   protected
   def refresh_token!
     authenticate_user!
+
     if current_user.token_has_expired?
       User.refresh_token!(current_user)
       flash[:notice] = "Access Token has been refreshed!"

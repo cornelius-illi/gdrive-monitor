@@ -1,0 +1,144 @@
+<% content_for :title, 'List of Changes for resource' %>
+<h3><%= @resource.title %> <small>(<%= @resource.mime_type %>)</small></h3>
+
+<% if @resource.jobs.length > 0 %>
+    <div class="callout panel">
+      <span class="spin1 spinner"></span><i>Indexing in progress! Currently <%= @resource.jobs.length %> jobs are running.
+      <%= link_to "Refresh status!" %></i>
+    </div>
+<% end %>
+
+<div class="row">
+  <div class="large-4 columns">
+    <table>
+      <thead>
+      <tr><th colspan="2">Metadata</th></tr>
+      </thead>
+      <tbody>
+      <tr>
+        <td>FileID:</td>
+        <td><input id="copy-box" type="text" value="<%= @resource.gid %>" disabled style="margin: 0px;" /></td>
+      </tr>
+      <tr>
+        <td>created:</td>
+        <td><%= @resource.created_date.to_s(:db) %></td>
+      </tr>
+      <tr>
+        <td>modified:</td>
+        <td><%= @resource.modified_date.to_s(:db) %></td>
+      </tr>
+      <tr>
+        <td>duration:</td>
+        <td><%= time_difference(@resource.created_date, @resource.modified_date).to_s %></td>
+      </tr>
+      <tr>
+        <td>last by:</td>
+        <td><%= @resource.last_modifying_username %></td>
+      </tr>
+      </tbody>
+    </table>
+    <table>
+      <thead>
+      <tr><th colspan="2"><b>Revisions:</b> <%= @resource.revisions.length %></th></tr>
+      </thead>
+      <tbody>
+      <% unless @resource.monitored_resource.permission_groups.nil? %>
+          <% @resource.revisions_by_permission_group.each do |id, count| %>
+              <% if  id.blank? %>
+                  <tr><td colspan="2"><i>file-based</i></td></tr>
+              <% else %>
+                  <tr>
+                    <td><%= PermissionGroup.find(id).name %></td>
+                    <td><%= count %></td>
+                  </tr>
+              <% end %>
+          <% end %>
+      <% end %>
+      </tbody>
+    </table>
+  </div>
+  <div class="large-4 columns">
+    <table>
+      <thead>
+      <tr><th colspan="2"><b>Number of collaborators:</b> <%= @resource.collaborators.length %></th></tr>
+      </thead>
+      <tbody>
+      <% @resource.collaborators.each do |id,count| %>
+          <tr><td><%= Permission.find(id).title %></td> <td><%= count %></td></tr>
+      <% end %>
+      </tbody>
+    </table>
+  </div>
+  <div class="large-4 columns"></div>
+</div>
+
+<% unless @resource.comments.blank? %>
+    <dl class="accordion" data-accordion>
+      <dd>
+        <a href="#panel1">Comments (<%= @resource.comments.length %>) <span class="right fi-plus"></span></a>
+        <div id="panel1" class="content clear">
+          <ul>
+            <% @resource.comments.each do |comment| %>
+                <li><%= comment.content %>, <%= comment.status %>, <%= comment.author %> (<%= comment.replies.length %>)</li>
+                <% unless comment.replies.empty? %>
+                    <ul>
+                      <% comment.replies.each do |reply| %>
+                          <li><%= reply.content.blank? ? '<i>empty</i>'.html_safe : reply.content %>, <b><%= reply.status %></b>, <%= reply.author %></li>
+                      <% end %>
+                    </ul>
+                <% end %>
+            <% end %>
+          </ul>
+        </div>
+      </dd>
+    </dl>
+<% end %>
+
+<h3>Revisions List -
+  <small>Showing: <%= @resource.revisions.with_collaboration.length %> of <%= @resource.revisions.length %></small>
+</h3>
+
+<%= svg_timeline(@resource) %>
+
+<% unless @resource.is_folder? || @resource.revisions.length.eql?(0) %>
+    <table>
+      <thead>
+      <tr>
+        <th>Revision</th>
+        <th>Modification Date</th>
+        <th>Last Modifying UserName</th>
+        <th>Download</th>
+      </tr>
+      </thead>
+      <tbody>
+      <% @resource.revisions.with_collaboration.each do |revision| %>
+          <tr<%= revision.collaborations.blank? ? '' : ' class="strong"'.html_safe %>>
+            <td><%= link_to_if (!revision.collaborations.blank?), revision.gid,
+                               merged_revisions_monitored_resource_resource_path(@monitored_resource, @resource, revision.id),
+                               :data => { 'reveal-id' => "modal", 'reveal-ajax' => "true" }, :class => 'reveal-link' %>
+              <% if revision.team_collaboration? %><span class="fi-torsos-all"></span>
+                  <% if revision.collaboration_is_global?(@resource.monitored_resource_id) %><span class="fi-web"></span><% end %>
+                  (<%= revision.collaborations.length+1 %>)
+              <% elsif !revision.team_collaboration? && revision.collaborations.length > 0 %><span class="fi-page-multiple"></span> (<%= revision.collaborations.length+1  %>)<% end %>
+            </td>
+            <td><%= revision.modified_date.to_s(:db) %></td>
+            <td><%= revision.permission.email_address.blank? ? revision.permission.name : revision.permission.email_address %></td>
+            <td class="centered"><%= link_to @resource.links[:alternate_link], :title => 'View on Google' do %><span class="fi-download"></span> <% end %> |
+              <% if revision.has_local_resource? %>
+                  <%= link_to revision.local_resource_path_web, :title => 'Download local version' do %><span class="fi-archive"></span><% end %>
+              <% end %>
+            </td>
+          </tr>
+      <% end %>
+      </tbody>
+    </table>
+<% else %>
+    <p><i>No revisions could be found!</i></p>
+<% end %>
+
+<div id="modal" class="reveal-modal" data-reveal>
+  <div id="modalContent"></div>
+  <a class="close-reveal-modal">&#215;</a>
+</div>
+
+<%= link_to 'back', monitored_resource_path(@resource.monitored_resource_id), :class => 'button secondary tiny' %>

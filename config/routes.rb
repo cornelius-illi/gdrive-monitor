@@ -8,14 +8,22 @@ GdriveFeed::Application.routes.draw do
   get 'calculate_optimal_threshold', :to => 'resources#calculate_optimal_threshold', :as => 'calculate_optimal_threshold'
   get 'show_threshold', :to => 'resources#show_threshold', :as => 'show_threshold'
 
+  get 'welcome', :to => 'management#welcome', :as => 'welcome'
+  namespace :management do
+    get 'new_researcher', :to => 'management#new_researcher'
+    post 'create_researcher', :to => 'management#create_researcher'
+    get 'grant_access', :to => 'management#grant_access'
+  end
+
   resources :monitored_resources do
+    collection do
+      get 'grant_access'
+    end
+
     member do
       get 'index_structure'
       get 'combine_revisions'
-      get 'index_changehistory'
-      get 'missing_revisions'
-      get 'download_revisions'
-      #get 'reports'
+
     end
 
     resources :permissions do
@@ -49,7 +57,7 @@ GdriveFeed::Application.routes.draw do
   resources :monitored_periods
   resources :period_groups
 
-  root :to => "application#welcome"
+  root :to => 'management#welcome'
 
   match "/delayed_job" => DelayedJobWeb, :anchor => false, via: [:get, :post]
 

@@ -182,53 +182,53 @@ class ResourcesController < ApplicationController
 
   end
 
-  def refresh_revisions
-    @resource.retrieve_revisions(current_user.token)
-    redirect_to monitored_resource_resource_url(@monitored_resource, @resource), :notice => "Revisions are being refreshed!"
-  end
-
-  def download_revisions
-    @resource.download_revisions(current_user.token)
-    redirect_to monitored_resource_resource_url(@monitored_resource, @resource), :notice => "Revisions are being downloaded!"
-  end
-
-  def calculate_diffs
-    @resource.calculate_revision_diffs
-    redirect_to monitored_resource_resource_url(@monitored_resource, @resource), :notice => "Revision Diffs have been calculated"
-  end
-
-  # @todo: deprecated ... now done on monitored_resource-level for all google_resources
-  def merge_revisions
-    # delete old merges
-    #Revision.where(:resource_id => @resource.id).update_all('revision_id = NULL')
-
-    # then create new merges
-    @resource.merge_consecutive_revisions
-    redirect_to monitored_resource_resource_url(@monitored_resource, @resource), :notice => "Weak Revisions have been merged!"
-  end
-
-  # @todo: deprecated ... now done on monitored_resource-level for all google_resources
-  def find_collaborations
-    # delete old merges
-    #Revision.where(:resource_id => @resource.id).update_all('collaboration_id = NULL')
-
-    @resource.find_collaborations
-    redirect_to monitored_resource_resource_url(@monitored_resource, @resource), :notice => "Collaborations have been created!"
-  end
-
   def merged_revisions
     @master = Revision.find(params[:rev_id])
     @revisions = Revision
-      .joins('JOIN collaborations ON revisions.id=collaborations.revision_id')
-      .where('revisions.resource_id=?', @master.resource_id)
-      .where('collaborations.collaboration_id=?', @master.id)
-      .where('collaborations.threshold=?', Collaboration::STANDARD_COLLABORATION_THRESHOLD)
-      .order('modified_date DESC')
+    .joins('JOIN collaborations ON revisions.id=collaborations.revision_id')
+    .where('revisions.resource_id=?', @master.resource_id)
+    .where('collaborations.collaboration_id=?', @master.id)
+    .where('collaborations.threshold=?', Collaboration::STANDARD_COLLABORATION_THRESHOLD)
+    .order('modified_date DESC')
 
     respond_to do |format|
       format.html { render :layout => !request.xhr? }
     end
   end
+
+  # def refresh_revisions
+  #   @resource.retrieve_revisions(current_user.token)
+  #   redirect_to monitored_resource_resource_url(@monitored_resource, @resource), :notice => "Revisions are being refreshed!"
+  # end
+
+  # def download_revisions
+  #   @resource.download_revisions(current_user.token)
+  #   redirect_to monitored_resource_resource_url(@monitored_resource, @resource), :notice => "Revisions are being downloaded!"
+  # end
+  #
+  # def calculate_diffs
+  #   @resource.calculate_revision_diffs
+  #   redirect_to monitored_resource_resource_url(@monitored_resource, @resource), :notice => "Revision Diffs have been calculated"
+  # end
+
+  # @todo: deprecated ... now done on monitored_resource-level for all google_resources
+  # def merge_revisions
+  #   # delete old merges
+  #   #Revision.where(:resource_id => @resource.id).update_all('revision_id = NULL')
+  #
+  #   # then create new merges
+  #   @resource.merge_consecutive_revisions
+  #   redirect_to monitored_resource_resource_url(@monitored_resource, @resource), :notice => "Weak Revisions have been merged!"
+  # end
+
+  # @todo: deprecated ... now done on monitored_resource-level for all google_resources
+  # def find_collaborations
+  #   # delete old merges
+  #   #Revision.where(:resource_id => @resource.id).update_all('collaboration_id = NULL')
+  #
+  #   @resource.find_collaborations
+  #   redirect_to monitored_resource_resource_url(@monitored_resource, @resource), :notice => "Collaborations have been created!"
+  # end
 
   private
   # Use callbacks to share common setup or constraints between actions.
