@@ -69,7 +69,19 @@
       </tbody>
     </table>
   </div>
-  <div class="large-4 columns"></div>
+  <div class="large-4 columns">
+    <table>
+      <thead>
+      <tr><th><b>Links:</b></th></tr>
+      </thead>
+      <tbody>
+        <tr><td><%= link_to 'Link to Resource', @resource.alternate_link, {:target => '_blank'} %></td></tr>
+      <% @resource.export_links.each do |type,link| %>
+          <tr><td><%= link_to type, link, {:target => '_blank'} %></td></tr>
+      <% end %>
+      </tbody>
+    </table>
+  </div>
 </div>
 
 <% unless @resource.comments.blank? %>
@@ -105,9 +117,10 @@
       <thead>
       <tr>
         <th>Revision</th>
-        <th>Modification Date</th>
+        <th>Session Start</th>
+        <th>Session End</th>
+        <th>Duration</th>
         <th>Last Modifying UserName</th>
-        <th>Download</th>
       </tr>
       </thead>
       <tbody>
@@ -122,12 +135,9 @@
               <% elsif !revision.team_collaboration? && revision.collaborations.length > 0 %><span class="fi-page-multiple"></span> (<%= revision.collaborations.length+1  %>)<% end %>
             </td>
             <td><%= revision.modified_date.to_s(:db) %></td>
+            <td><%= revision.collaborations.blank? ? '' : revision.collaborations.last.modified_date.to_s(:db) %></td>
+            <td><%= revision.collaborations.blank? ? '' : time_difference(revision.modified_date,  revision.collaborations.last.modified_date) %></td>
             <td><%= revision.permission.email_address.blank? ? revision.permission.name : revision.permission.email_address %></td>
-            <td class="centered"><%= link_to @resource.links[:alternate_link], :title => 'View on Google' do %><span class="fi-download"></span> <% end %> |
-              <% if revision.has_local_resource? %>
-                  <%= link_to revision.local_resource_path_web, :title => 'Download local version' do %><span class="fi-archive"></span><% end %>
-              <% end %>
-            </td>
           </tr>
       <% end %>
       </tbody>

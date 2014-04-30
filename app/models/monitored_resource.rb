@@ -32,7 +32,7 @@ class MonitoredResource < ActiveRecord::Base
 
       where_sql = create_where_statement filters
 
-      query = "SELECT resources.id, resources.title, resources.created_date, resources.modified_date, resources.mime_type, COUNT(DISTINCT revisions.id) as revisions,
+      query = "SELECT resources.id, resources.title, resources.created_date, resources.modified_date, resources.mime_type, resources.icon_link, COUNT(DISTINCT revisions.id) as revisions,
       COUNT(DISTINCT revisions.permission_id) as permissions, COUNT(DISTINCT permission_groups_permissions.permission_group_id) as permission_groups,
       COUNT(DISTINCT comments.gid) as comments
       FROM resources JOIN revisions ON revisions.resource_id=resources.id JOIN permissions ON permissions.id=revisions.permission_id
@@ -84,12 +84,7 @@ class MonitoredResource < ActiveRecord::Base
   end
 
   def structure_indexed?
-    # structure_indexed?.nil? || structure_indexed?.empty?
     return !structure_indexed_at.blank?
-  end
-
-  def changehistory_indexed?
-    return !changehistory_indexed_at.blank?
   end
 
   def mime_count
@@ -105,18 +100,11 @@ class MonitoredResource < ActiveRecord::Base
 
   def update_metadata(user_token)
     metadata = DriveFiles.retrieve_file_metadata(self.gid, user_token)
-    # important, as changes.index needs a criteria when to stop
-    lowest_index_date = GOOGLE['lowest_index_date'].to_datetime
-
-    sharedwithme_date = DateTime.parse( metadata['sharedWithMeDate'] )
-    lowest_index_date = sharedwithme_date if (lowest_index_date < sharedwithme_date )
 
     update_attributes(
       :created_date => metadata['createdDate'],
       :modified_date => metadata['modifiedDate'],
       :shared_with_me_date => metadata['sharedWithMeDate'],
-      :lowest_index_date => lowest_index_date,
-      :etag => metadata['etag'],
       :owner_names => metadata['ownerNames'].join(", "),
       :title => metadata['title']
     )
@@ -157,6 +145,8 @@ class MonitoredResource < ActiveRecord::Base
 
   # *** DELAYED TASKS - START
   def index_structure(user_id, user_token, file_id)
+    # @todo: update_metadate for monitored_resource itself is never called
+
     resources = DriveFiles.retrieve_all_files_for(file_id, user_token)
 
     resources.each do |metadata|
@@ -203,40 +193,4 @@ class MonitoredResource < ActiveRecord::Base
     end
   end
   handle_asynchronously :combine_revisions, :queue => 'combine_revisions', :owner => Proc.new {|o| o}
-
-  def index_changehistory(user_token)
-    return nil # should not be called currently -> using revisions
-    # Changes.index returns results in ascending order (oldest first), results on next page are newer
-    start_change_id = largest_change_id.blank? ? "" : largest_change_id
-    changes = DriveChanges.retrieve_changes_list(start_change_id, user_token)
-
-    # just for speed-up, no need to check all, if no change of interest
-    unless DateTime.parse( changes.last['modificationDate']) < shared_with_me_date
-      changes.each do |metadata|
-        # speed-up
-        next if (DateTime.parse( metadata['modificationDate'] ) < shared_with_me_date)
-
-        # check if resource exists, or change is relevant
-        # @todo: CHANGES SHOULD NEVER BE UPDATED INDEPENDENTLY, ALWAYS INDEX STRUCTURE BEFORE
-        # @todo: --> BEST: only query changes API, use changes to build and update structure
-        resource = Resource.find_by_gid(metadata['fileId'])
-        unless resource.nil?
-          new_change = Change
-          .where(:change_id => metadata['id'])
-          .where(:resource_id => resource.id)
-          .first_or_create
-
-          new_change.update_metadata(metadata)
-        end
-      end
-    end
-
-    # set new largest_change_id to last retrieved change (assume, that order is correct)
-    update_attribute(:largest_change_id, changes.last['id'])
-    unless changes.length.eql?(0)
-      index_changehistory(user_token)
-    end
-  end
-  handle_asynchronously :index_changehistory, :queue => 'index_changehistory', :owner => Proc.new {|o| o}
-  # *** DELAYED TASKS - END
 end

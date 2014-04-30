@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140429091354) do
+ActiveRecord::Schema.define(version: 20140430054857) do
 
   create_table "changes", force: true do |t|
     t.string   "change_id"
@@ -77,15 +77,11 @@ ActiveRecord::Schema.define(version: 20140429091354) do
 
   create_table "monitored_resources", force: true do |t|
     t.string   "gid"
-    t.integer  "largest_change_id"
     t.datetime "shared_with_me_date"
-    t.datetime "lowest_index_date"
     t.datetime "structure_indexed_at"
-    t.datetime "changehistory_indexed_at"
     t.datetime "created_date"
     t.datetime "modified_date"
     t.string   "title"
-    t.string   "etag"
     t.string   "owner_names"
     t.integer  "user_id"
     t.datetime "created_at"
@@ -138,7 +134,6 @@ ActiveRecord::Schema.define(version: 20140429091354) do
   create_table "resources", force: true do |t|
     t.string   "gid"
     t.string   "kind"
-    t.string   "etag"
     t.string   "alternate_link"
     t.string   "title"
     t.string   "mime_type"
@@ -157,6 +152,8 @@ ActiveRecord::Schema.define(version: 20140429091354) do
     t.datetime "updated_at"
     t.string   "md5_checksum"
     t.integer  "permission_id"
+    t.string   "icon_link"
+    t.text     "export_links"
   end
 
   create_table "revisions", force: true do |t|

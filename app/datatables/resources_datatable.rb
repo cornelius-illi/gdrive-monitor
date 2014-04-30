@@ -8,21 +8,6 @@ class ResourcesDatatable
     application/vnd.google-apps.presentation
   ).freeze
 
-  GOOGLE_FILE_TYPES_DOWNLOAD = {
-      'application/vnd.google-apps.presentation' => { :url => 'https://docs.google.com/feeds/download/presentations/Export?id=',
-                                                      :types => ['pptx','pdf','txt'], :local_download_type => 'txt',
-                                                      :iconLink => 'https://ssl.gstatic.com/docs/doclist/images/icon_11_presentation_list.png' },
-      'application/vnd.google-apps.document' => { :url => 'https://docs.google.com/feeds/download/documents/export/Export?id=',
-                                                  :types => ['docx','odt','rtf','html','pdf','txt'], :local_download_type => 'txt',
-                                                  :iconLink => 'https://ssl.gstatic.com/docs/doclist/images/icon_11_document_list.png' },
-      'application/vnd.google-apps.spreadsheet' => { :url => 'https://docs.google.com/feeds/download/spreadsheets/Export?key=',
-                                                     :types => ['pdf','ods','xlsx'], :local_download_type => 'xlsx',
-                                                     :iconLink => 'https://ssl.gstatic.com/docs/doclist/images/icon_11_spreadsheet_list.png' },
-      'application/vnd.google-apps.drawing' => { :url => 'https://docs.google.com/feeds/download/drawings/Export?id=',
-                                                 :types => ['pdf','svg', 'jpeg', 'png'], :local_download_type => 'svg',
-                                                 :iconLink => 'https://ssl.gstatic.com/docs/doclist/images/icon_11_drawing_list.png' }
-  }.freeze
-
   def initialize(view, monitored_resource)
     @view = view
     @monitored_resource = monitored_resource
@@ -66,11 +51,6 @@ class ResourcesDatatable
     return GOOGLE_FILE_TYPES.include?(mime_type)
   end
 
-  def iconLink(mime_type)
-    return nil unless GOOGLE_FILE_TYPES_DOWNLOAD.has_key?(mime_type)
-    GOOGLE_FILE_TYPES_DOWNLOAD[mime_type][:iconLink]
-  end
-
   def shortened_title(title, length = 40)
     title.size > length+5 ? [title[0,length],title[-5,5]].join("...") : title
   end
@@ -78,7 +58,7 @@ class ResourcesDatatable
   def title_with_icon(resource)
     title = shortened_title(resource['title'])
     link = link_to title, monitored_resource_resource_path(@monitored_resource.id, resource['id'])
-    is_google_filetype?(resource['mime_type']) ? "<img src=\"#{iconLink(resource['mime_type'])}\" width=\"16\" height=\"16\" alt=\"\" title=\"\" />&nbsp;#{link}" : link
+    resource['mime_type'].blank? ? link : "<img src=\"#{(resource['icon_link'])}\" width=\"16\" height=\"16\" alt=\"\" title=\"\" />&nbsp;#{link}"
   end
 
   def resources

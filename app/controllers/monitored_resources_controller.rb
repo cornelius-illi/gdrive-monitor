@@ -1,4 +1,5 @@
 require 'rest_client'
+require 'time_diff'
 
 class MonitoredResourcesController < ApplicationController
   #before_filter :refresh_token!, only: [:new, :index_structure]
@@ -38,9 +39,14 @@ class MonitoredResourcesController < ApplicationController
     authorize! :manage, @monitored_resource
     refresh_token!
 
+    @monitored_resource.update_metadata(current_user.token)
     @monitored_resource.index_structure(current_user.id, current_user.token, @monitored_resource.gid)
-    @monitored_resource.update_attribute(:structure_indexed_at, Time.now) # last indexed at, can be done more than once
-    redirect_to @monitored_resource, :notice => "Structure has been indexed: #{@monitored_resource.structure_indexed_at.to_s(:db)}"
+
+    now = Time.now
+    diff = Time.diff(@monitored_resource.structure_indexed_at, now)
+    @monitored_resource.update_attribute(:structure_indexed_at, now)
+
+    redirect_to @monitored_resource, :notice => "Structure has last been indexed #{diff[:diff]} hours ago!"
   end
 
   def combine_revisions

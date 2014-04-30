@@ -6,6 +6,8 @@ class Resource < ActiveRecord::Base
 
   scope :google_resources, -> { where("mime_type IN('application/vnd.google-apps.drawing','application/vnd.google-apps.document','application/vnd.google-apps.spreadsheet','application/vnd.google-apps.presentation')") }
 
+  serialize :export_links, Hash
+
   GOOGLE_FOLDER_TYPE = 'application/vnd.google-apps.folder'.freeze
   GOOGLE_FILE_TYPES = %w(
     application/vnd.google-apps.drawing
@@ -13,22 +15,6 @@ class Resource < ActiveRecord::Base
     application/vnd.google-apps.spreadsheet
     application/vnd.google-apps.presentation
   ).freeze
-
-  # @todo: save all these things directly with each resource, as links could change
-  GOOGLE_FILE_TYPES_DOWNLOAD = {
-      'application/vnd.google-apps.presentation' => { :url => 'https://docs.google.com/feeds/download/presentations/Export?id=',
-                                                      :types => ['pptx','pdf','txt'], :local_download_type => 'txt',
-                                                      :iconLink => 'https://ssl.gstatic.com/docs/doclist/images/icon_11_presentation_list.png' },
-      'application/vnd.google-apps.document' => { :url => 'https://docs.google.com/feeds/download/documents/export/Export?id=',
-                                                  :types => ['docx','odt','rtf','html','pdf','txt'], :local_download_type => 'txt',
-                                                  :iconLink => 'https://ssl.gstatic.com/docs/doclist/images/icon_11_document_list.png' },
-      'application/vnd.google-apps.spreadsheet' => { :url => 'https://docs.google.com/feeds/download/spreadsheets/Export?key=',
-                                                     :types => ['pdf','ods','xlsx'], :local_download_type => 'xlsx',
-                                                     :iconLink => 'https://ssl.gstatic.com/docs/doclist/images/icon_11_spreadsheet_list.png' },
-      'application/vnd.google-apps.drawing' => { :url => 'https://docs.google.com/feeds/download/drawings/Export?id=',
-                                                 :types => ['pdf','svg', 'jpeg', 'png'], :local_download_type => 'svg',
-                                                 :iconLink => 'https://ssl.gstatic.com/docs/doclist/images/icon_11_drawing_list.png' }
-  }.freeze
 
   IMAGE_FILE_TYPE = 'image/jpeg'.freeze
   IMAGE_FILE_TYPES = %w(
@@ -74,11 +60,6 @@ class Resource < ActiveRecord::Base
     return GOOGLE_FILE_TYPES.include?(mime_type)
   end
 
-  def iconLink
-    return nil unless GOOGLE_FILE_TYPES_DOWNLOAD.has_key?(mime_type)
-    GOOGLE_FILE_TYPES_DOWNLOAD[mime_type][:iconLink]
-  end
-
   def shortened_title(length = 35)
     st = title.size > length+5 ? [title[0,length],title[-5,5]].join("...") : title
     return is_folder? ? '<span class="fi-folder"></span> ' + st :  st
@@ -117,30 +98,6 @@ class Resource < ActiveRecord::Base
     # @todo: use file_etag in the future as checksum does only apply to non google-file-types
     # select distinct resources.mime_type from resources JOIN revisions ON revisions.resource_id=resources.id WHERE revisions.md5_checksum IS NOT NULL ORDER BY resources.mime_type;
     (md5_checksum.blank? || revisions.blank?) ? false : (md5_checksum.eql? revisions.latest.md5_checksum)
-  end
-
-  def links
-    res = { :alternate_link => alternate_link }
-    return res unless GOOGLE_FILE_TYPES_DOWNLOAD.has_key?( mime_type )
-
-    GOOGLE_FILE_TYPES_DOWNLOAD[mime_type][:types].each do |type|
-      res[type] = "#{GOOGLE_FILE_TYPES_DOWNLOAD[mime_type][:url]}#{gid}&exportFormat=#{type}"
-    end
-    return res
-  end
-
-  # generates the download link for a revision; without revision id -> downloads current
-  def download_revision_link(revision=nil)
-    return nil unless GOOGLE_FILE_TYPES_DOWNLOAD.has_key?( mime_type )
-
-    revision = revision.blank? ? "" : "&revision=#{revision}"
-    return "#{GOOGLE_FILE_TYPES_DOWNLOAD[mime_type][:url]}#{gid}&exportFormat=#{revisions_download_format}#{revision}"
-  end
-
-  def revisions_download_format
-    return nil unless GOOGLE_FILE_TYPES_DOWNLOAD.has_key?( mime_type )
-
-    GOOGLE_FILE_TYPES_DOWNLOAD[mime_type][:local_download_type]
   end
 
   def revisions_by_permission_group
@@ -194,7 +151,8 @@ class Resource < ActiveRecord::Base
     update_attributes(
         :alternate_link => metadata['alternateLink'],
         :created_date => metadata['createdDate'],
-        :etag => metadata['etag'],
+        :icon_link => metadata['iconLink'],
+        :export_links => metadata['exportLinks'],
         :md5_checksum => metadata['md5Checksum'],
         :file_extension => metadata['fileExtension'],
         :file_size => metadata['fileSize'],
