@@ -12,6 +12,7 @@ class Report < ActiveRecord::Base
     chapters = Array.new
     chapters << Report::Chapters::OverallStatisticsChapter.new
     chapters << Report::Chapters::PermissionBasedChapter.new
+    chapters << Report::Chapters::PermissionGroupBasedChapter.new
 
     monitored_resource ||= MonitoredResource.find(monitored_resource_id)
     period_group ||= PeriodGroup.find(period_group_id)

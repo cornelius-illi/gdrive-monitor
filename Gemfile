@@ -59,7 +59,7 @@ gem 'seedbank', github: 'james2m/seedbank'
 gem 'delayed_job_web'
 gem 'delayed_job_active_record'
 gem 'daemons'
-gem 'whenever'
+gem 'whenever', :require => false
 
 # diffing: http://diff-lcs.rubyforge.org/
 gem 'diff-lcs'

@@ -25,7 +25,7 @@ class Report::Metrics::NumberParallelActivities < Report::Metrics::AbstractMetri
       )
       revisions_with_parallel_activity = ActiveRecord::Base.connection.exec_query(query)
 
-      nbr_parallel_activities += revisions_with_parallel_activity.length
+      nbr_parallel_activities += revisions_with_parallel_activity.rows.length
     end
 
     return nbr_parallel_activities

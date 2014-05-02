@@ -94,9 +94,46 @@ class Resource < ActiveRecord::Base
     return !((intersection).length.eql?(perm_ids.length) || intersection.length.eql?(0))
   end
 
+  def self.count_sessions_per_distance_for(set=Array.new)
+    result_set = Array.new
+    set.each do |resource_id|
+      result_set << Resource.find(resource_id).count_sessions_per_distance
+    end
+
+    (3..40).each do |minute|
+      value_string = ''
+      result_set.each_with_index do |member, index|
+        value_string += ((index+1) < result_set.length) ? member[minute].to_s + ',' : member[minute].to_s
+      end
+
+      p minute.to_s + ',' + value_string
+    end
+  end
+
+  def count_sessions_per_distance
+    set = Hash.new
+    (3..40).each do |minutes|
+      seconds = minutes*60
+      sql = 'SELECT COUNT(*) AS count FROM revisions
+        LEFT JOIN (SELECT * FROM collaborations WHERE collaborations.threshold=?) AS c ON c.revision_id=revisions.id
+        WHERE c.id IS NULL AND revisions.resource_id=?'
+      query = ActiveRecord::Base.send(:sanitize_sql_array, [sql, seconds, self.id])
+      results = ActiveRecord::Base.connection.exec_query(query)
+
+      set[minutes] = results.first['count']
+    end
+
+    return set
+  end
+
+  # this method is meant to decrease requests send to google,
+  # by checking if the latest revision has already been downloaded
+  #
+  # Problems/ @TODO:
+  # md5_checksum does not exist for google-file-types
+  # the latest version on google != the latest revision.
+  # actually: the latest revision is the penultimate "version"
   def has_latest_revision?
-    # @todo: use file_etag in the future as checksum does only apply to non google-file-types
-    # select distinct resources.mime_type from resources JOIN revisions ON revisions.resource_id=resources.id WHERE revisions.md5_checksum IS NOT NULL ORDER BY resources.mime_type;
     (md5_checksum.blank? || revisions.blank?) ? false : (md5_checksum.eql? revisions.latest.md5_checksum)
   end
 
@@ -259,29 +296,47 @@ class Resource < ActiveRecord::Base
       new_revision = Revision
         .where(:gid => metadata['id'])
         .where(:resource_id => id)
-        .first_or_create
+        .first_or_initialize
 
+      # if the revision is new
+      if new_revision.id.blank?
         permission = Permission
           .where(:gid => metadata['lastModifyingUser']['permissionId'] )
           .where(:monitored_resource_id => monitored_resource.id )
           .first_or_initialize
 
-        # if permission has just been created, get metadata
-        if permission.id.blank?
-          perm_metadata = DriveFiles.retrieve_permission(gid,permission.gid, user_token)
-          permission.update_attributes(
-              :name => perm_metadata['name'],
-              :email_address => perm_metadata['emailAddress'],
-              :domain => perm_metadata['domain'],
-              :role => perm_metadata['role'],
-              :perm_type => perm_metadata['type'],
-          )
-        end
+          # if permission has just been created, get metadata
+          # @todo: refactoring -> should be done inside permission model
+          if permission.id.blank?
+            perm_metadata = DriveFiles.retrieve_permission(gid,permission.gid, user_token)
+            permission.update_attributes(
+                :name => perm_metadata['name'],
+                :email_address => perm_metadata['emailAddress'],
+                :domain => perm_metadata['domain'],
+                :role => perm_metadata['role'],
+                :perm_type => perm_metadata['type'],
+            )
+          end
 
-      new_revision.update_metadata(metadata, permission.id)
+        new_revision.update_metadata(metadata, permission.id)
+      end
+
+      # @todo: can be put inside upper block, once all old once have been updated
+      new_revision.calculate_time_distance_to_previous
     end
   end
   handle_asynchronously :retrieve_revisions, :queue => 'revisions', :owner => Proc.new {|o| o}
+
+  def find_collaborations
+    # 401 error - some revisions could not be fetched
+    return if revisions.empty?
+
+    revisions.first.find_and_create_collaboration
+  end
+  handle_asynchronously :find_collaborations, :queue => 'diffing', :owner => Proc.new {|o| o}
+
+
+  ### DEPRECATED ###
 
   def download_revisions(token)
     # pre-condition: revisions should only be downloaded for diffing and diffing only makes sense for text-based resource formats
@@ -327,31 +382,5 @@ class Resource < ActiveRecord::Base
     end
   end
   handle_asynchronously :calculate_revision_diffs, :queue => 'diffing', :owner => Proc.new {|o| o}
-
-  # @todo: deprecated no need for revision_id
-  def merge_consecutive_revisions
-    # pre-condition: sometimes revisions cannot be downloaded (Resource not found 404)
-    return if revisions.blank? || revisions.length.eql?(0)
-
-    revisions.first.merge_consecutive
-
-    #revisions.each do |r|
-    #  r.set_is_weak()
-    #end
-  end
-  handle_asynchronously :merge_consecutive_revisions, :queue => 'diffing', :owner => Proc.new {|o| o}
-
-  def find_collaborations
-    # 401 error - some revisions could not be fetched
-    return if revisions.empty?
-
-    revisions.first.find_and_create_collaboration
-
-    #revisions.each do |r|
-    #  r.set_is_weak()
-    #end
-  end
-  handle_asynchronously :find_collaborations, :queue => 'diffing', :owner => Proc.new {|o| o}
-
   # *** DELAYED TASKS - END
 end

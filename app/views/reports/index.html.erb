@@ -73,6 +73,13 @@
                                     <li><%= value_array[0].split('/').last.split('.').last %>: <%= value_array[1] %></li>
                                   <% end %>
                                   </ul>
+                              <% elsif value.is_a?(Hash) %>
+                                  <ul style="font-size: 80%;">
+                                    <% the_hash = value.sort_by {|k,v| v}.reverse %>
+                                    <% the_hash.each do |day,count| %>
+                                        <li><%= day %>: <%= count %></li>
+                                    <% end %>
+                                  </ul>
                               <% else %>
                                 <%= value %>
                               <% end %>

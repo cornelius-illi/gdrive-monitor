@@ -1,9 +1,8 @@
+require 'date'
+
 class Revision < ActiveRecord::Base
   belongs_to :resource
   belongs_to :permission
-  #has_many :merged, class_name: 'Revision'
-  #has_many :collaborations, class_name: 'Revision', :foreign_key => 'collaboration_id'
-
   has_many :collaborations , class_name: '::Collaboration', :foreign_key => 'collaboration_id'
 
   JOIN_QUERY = 'SELECT * FROM collaborations WHERE collaborations.threshold=' + Collaboration::STANDARD_COLLABORATION_THRESHOLD.to_s
@@ -119,7 +118,7 @@ class Revision < ActiveRecord::Base
   end
 
   def update_metadata(metadata, permission)
-    # FIELDS: deleted,file(etag,lastModifyingUserName),fileId,id,modificationDate
+    # FIELDS: deleted,file(lastModifyingUserName),fileId,id,modificationDate
     update_attributes(
         :etag => metadata['etag'],
         :file_size => metadata['fileSize'],
@@ -148,6 +147,8 @@ class Revision < ActiveRecord::Base
   end
 
   def calculate_time_distance_to_previous
+    return unless self.distance_to_previous.blank?
+
     pr = previous
     unless pr.blank?
       diff = (modified_date - pr.modified_date).to_i
@@ -166,12 +167,13 @@ class Revision < ActiveRecord::Base
     Collaboration.where(:revision_id => id).where(:threshold => threshold).first
   end
 
-  def find_and_create_collaboration
+  def find_and_create_collaboration(skip_calculation_mode=false)
     previous = previous()
     # return, if there is no previous revision
     return if previous.blank?
 
-    (3..40).each do |var|
+    distance_in_seconds_list = skip_calculation_mode ? [ Collaboration::STANDARD_COLLABORATION_THRESHOLD ] : (3..40)
+    distance_in_seconds_list.each do |var|
       threshold_in_seconds = (var*60).seconds
       if (modified_date - threshold_in_seconds) <= previous.modified_date
         collaboration = collaboration_for(threshold_in_seconds)
@@ -218,6 +220,37 @@ class Revision < ActiveRecord::Base
     query = "SELECT COUNT(revisions.id) as revisions FROM resources JOIN revisions ON revisions.resource_id=resources.id #{where}"
     result = ActiveRecord::Base.connection.exec_query(query)
     result.first['revisions']
+  end
+
+  def self.count_revisions_by_weekday(monitored_resource_id, monitored_period, permission_group=nil)
+    return nil if monitored_resource_id.blank?
+
+    where = ["WHERE resources.monitored_resource_id=? AND resources.mime_type !='application/vnd.google-apps.folder'", monitored_resource_id]
+    unless monitored_period.blank? || !monitored_period.is_a?(MonitoredPeriod)
+      where.first << " AND (resources.created_date > ? AND resources.created_date < ? )"
+      where.push monitored_period.start_date
+      where.push monitored_period.end_date
+    end
+
+    unless permission_group.blank?
+      permission_ids = permission_group.permissions.map {|p| p.id }
+      where.first << " AND revisions.permission_id IN (#{permission_ids.join(',')})"
+    end
+
+    where = ActiveRecord::Base.send(:sanitize_sql_array, where)
+    query = "SELECT revisions.modified_date AS modified_date FROM resources JOIN revisions ON revisions.resource_id=resources.id #{where}"
+    result = ActiveRecord::Base.connection.exec_query(query)
+
+    result_hash= Hash.new
+    (0..6).each do |wday|
+      result_hash[ Date::DAYNAMES[wday] ] = 0
+    end
+
+    result.each do |revision|
+      result_hash[ Date::DAYNAMES[ revision['modified_date'].wday] ] += 1
+    end
+
+    return result_hash
   end
   # REPORT RELATED QUERIES - START
 

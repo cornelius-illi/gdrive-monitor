@@ -12,6 +12,9 @@ module ResourcesHelper
     # fist date in timeline, last in order
     reference_date = all_revisions.last.modified_date
     span_in_minutes = (all_revisions.first.modified_date - reference_date).to_i/60
+
+    # when only one revision
+    span_in_minutes = 1 if span_in_minutes == 0
     pix_per_minute = ((920.to_f/span_in_minutes) < 0.5) ? 0.5 : (920.to_f/span_in_minutes)
 
     # svg properties

@@ -145,8 +145,6 @@ class MonitoredResource < ActiveRecord::Base
 
   # *** DELAYED TASKS - START
   def index_structure(user_id, user_token, file_id)
-    # @todo: update_metadate for monitored_resource itself is never called
-
     resources = DriveFiles.retrieve_all_files_for(file_id, user_token)
 
     resources.each do |metadata|
@@ -162,20 +160,18 @@ class MonitoredResource < ActiveRecord::Base
       if new_resource.is_folder? # create new delayed_job, if type is folder
         index_structure(user_id, user_token, new_resource.gid)
       else # get revisions, comments (does not apply for folders, have none)
-        # fetch revisions only, if checksum of file changed
-        unless new_resource.has_latest_revision?
+        unless (new_resource.is_folder? || new_resource.has_latest_revision?)
           new_resource.retrieve_revisions(user_token)
         end
 
         # fetch comments, (no possibility for a shortcut here)
         new_resource.retrieve_comments(user_token)
 
-        # download revision for google resources
-        if new_resource.is_google_filetype?
-          new_resource.download_revisions(user_token)
-
-          #new_resource.calculate_revision_diffs
-        end
+        # download revision for google resources, only needed for diffing revision
+        #if new_resource.is_google_filetype?
+        #  new_resource.download_revisions(user_token)
+        #  #new_resource.calculate_revision_diffs
+        #end
       end
     end
   end
@@ -184,11 +180,6 @@ class MonitoredResource < ActiveRecord::Base
   # this has to be done in a second step, as all diffing jobs have to be finished first
   def combine_revisions
     resources.google_resources.each do |resource|
-      # next steps require reset
-      #query = "UPDATE revisions SET collaboration_id = NULL, revision_id = NULL WHERE resource_id=#{resource.id}"
-      #ActiveRecord::Base.connection.exec_query(query)
-
-      #resource.merge_consecutive_revisions
       resource.find_collaborations
     end
   end
