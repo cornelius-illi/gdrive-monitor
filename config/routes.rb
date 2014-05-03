@@ -52,6 +52,7 @@ GdriveFeed::Application.routes.draw do
   end
 
   get 'reports/metareport', to: 'reports#metareport', :as => 'reports_metareport'
+  get 'reports/statistics', to: 'reports#statistics', :as => 'reports_statistics'
   get 'reports/generate_metareport', to: 'reports#generate_metareport', :as => 'reports_generate_metareport'
 
   resources :monitored_periods

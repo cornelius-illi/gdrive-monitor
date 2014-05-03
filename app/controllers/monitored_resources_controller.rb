@@ -29,7 +29,10 @@ class MonitoredResourcesController < ApplicationController
   
   def show
     respond_to do |format|
-      format.html {  }
+      format.html {
+        # wrong parameter passed -> return
+        redirect_to root_path, :alert => "The resource does not exist!" if @monitored_resource.blank?
+      }
       format.json { render json: ResourcesDatatable.new(view_context, @monitored_resource) }
       #format.json { render json: @monitored_resource }
     end
@@ -88,6 +91,9 @@ class MonitoredResourcesController < ApplicationController
   def set_monitored_resource
     @monitored_resource = MonitoredResource
       .where(:id => params[:id]).first
+
+    # wrong parameter passed -> return
+    return nil if @monitored_resource.blank?
 
     # Authorize object permission - @todo: better way to solve this via cancan?
     shared = current_user.shared_resources.map {|r| r.id }

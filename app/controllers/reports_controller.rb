@@ -72,16 +72,22 @@ class ReportsController < ApplicationController
     redirect_to monitored_resource_reports_path(@monitored_resource), :notice => "All previous reports have successfully been deleted!"
   end
 
-  # @todo: to implement/ refactor
-  def mime_types
-    @mime_count = Hash.new
+  def statistics
+    respond_to do |format|
+      format.html {
+        @resource_count = Resource.count
+        @resource_single = Resource.with_single_revision
+        @resource_single_images = Resource.with_single_images
+        @resource_single_same_latest = Resource.with_single_revision_same_latest
+        @resource_single_different_latest = Resource.with_single_revision_different_latest
+        @resource_single_latest_eql_one = Resource.with_single_revision_latest_eql_one
 
-    mime_types = Resource.select(:mime_type).uniq
-    mime_types.each do |r|
-      @mime_count[r.mime_type] = Resource.where(:mime_type => r.mime_type).count
+        @mime_count = Resource.topten_mime_types
+      }
+      format.json {
+        render json: Resource.topten_mime_types_revisions_box_plot
+      }
     end
-
-    @mime_count.sort_by {|_key, value| value}
   end
 
   def resources_without_checksum

@@ -1,0 +1,50 @@
+<% content_for :title, "General System Statistics" %>
+
+<h2>General System Statistics</h2>
+
+<h3>Resources and Revisions</h3>
+<table>
+  <thead><tr><th>Metric</th><th>Count</th><th>Percentage</th></tr></thead>
+  <tbody>
+    <tr><td>Number of Resources</td><td><%= @resource_count %></td><td></td></tr>
+    <tr>
+      <td>Number of Resources with single revision</td><td><%= @resource_single %></td>
+      <td><%= ((100/@resource_count.to_f)*@resource_single).round(2) %>%</td>
+    </tr>
+    <tr>
+      <td>Number of Images (JPG/ PNG) with single revision</td><td><%= @resource_single_images %></td>
+      <td><%= ((100/@resource_count.to_f)*@resource_single_images).round(2) %>%</td>
+    </tr>
+    <tr>
+      <td>Number of Resources with single revision, same datetime</td><td><%= @resource_single_same_latest %></td>
+      <td><%= ((100/@resource_count.to_f)*@resource_single_same_latest).round(2) %>%</td>
+    </tr>
+    <tr>
+      <td>Number of Resources with single revision, datetime different</td><td><%= @resource_single_different_latest %></td>
+      <td><%= ((100/@resource_count.to_f)*@resource_single_different_latest).round(2) %>%</td>
+    </tr>
+    <tr>
+      <td>Number of Resources with single revision, datetime eql. 1</td><td><%= @resource_single_latest_eql_one %></td>
+      <td><%= ((100/@resource_count.to_f)*@resource_single_latest_eql_one).round(2) %>%</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3>Top 15 Mime-Types <small>from <%= @resource_count %> resources (* folders have been excluded)</small></h3>
+<% unless @mime_count.blank? %>
+    <table>
+      <thead><tr><th>Mime-Type</th><th>Count</th><th>Percentage</th></tr></thead>
+      <tbody>
+      <% @mime_count.each do |row| %>
+          <tr>
+            <td><%= row['mime_type'] %></td>
+            <td> <%= row['count'] %></td>
+            <td> <%= ((row['count'].to_f/ @resource_count) * 100).round(2) %>%</td>
+          </tr>
+      <% end %>
+      </tbody>
+    </table>
+<% end %>
+
+<h3>Top 15 Mime-Types and their number of revisions plotted</h3>
+<div id="mimetype-boxplot" style="width: 1000px; height: 600px;"></div>

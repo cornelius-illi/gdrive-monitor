@@ -1,4 +1,6 @@
 //= require highcharts
+//= require highcharts/highcharts-more
+//= require highcharts/modules/exporting
 
 // reports.index
 function calculate_diffs() {
@@ -58,6 +60,21 @@ $(document).ready(function() {
             drawChartFor(metric_name, period_group_id);
         });
     }
+
+    // reports.statistics
+    var id = '#mimetype-boxplot';
+    if ($(id).length) {
+        $.ajax({
+            type: 'GET',
+            url: '/reports/statistics',
+            async: true,
+            dataType: "json",
+            success: function (result) {
+                var title = 'Top 15 Mime-Types and their number of revisions (Tukey boxplot)'
+                drawBoxPlot(id, title, result['categories'], result['data']);
+            }
+        });
+    }
 });
 
 function drawChartFor(metric_name, period_group_id) {
@@ -99,5 +116,30 @@ function drawMetaReportChart(title, period_group_id, periods, data) {
             borderWidth: 0
         },
         series: data
+    });
+}
+
+// reports.statistics
+function drawBoxPlot(id, title, categories, data) {
+    $(id).highcharts({
+        chart: { type: 'boxplot' },
+        title: { text: title },
+        legend: { enabled: false },
+
+        xAxis: {
+            categories: categories,
+            title: { text: 'Mime-Type ordered by rank (most used starts left)' }
+        },
+
+        yAxis: {
+            title: {
+                text: 'Number of Revisions'
+            }
+        },
+
+        series: [{
+            name: 'Number of revisions/ mime_type',
+            data: data
+        }]
     });
 }

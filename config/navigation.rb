@@ -57,6 +57,7 @@ SimpleNavigation::Configuration.run do |navigation|
       end
     end
     primary.item :metareport, '<span class="fi-graph-trend"></span> Meta-Reports', reports_metareport_path
+    primary.item :statistics, '<span class="fi-star"></span> Statistics', reports_statistics_path
 
     # you can also specify a css id or class to attach to this particular level
     # works for all levels of the menu

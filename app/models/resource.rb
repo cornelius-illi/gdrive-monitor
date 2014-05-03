@@ -1,8 +1,8 @@
 class Resource < ActiveRecord::Base
   belongs_to :monitored_resource, :foreign_key => 'monitored_resource_id'
   has_many  :jobs, :class_name => "::Delayed::Job", :as => :owner
-  has_many  :revisions, -> { order('modified_date DESC') }
-  has_many  :comments
+  has_many  :revisions, -> { order('modified_date DESC') }, :dependent => :delete_all
+  has_many  :comments, :dependent => :delete_all
 
   scope :google_resources, -> { where("mime_type IN('application/vnd.google-apps.drawing','application/vnd.google-apps.document','application/vnd.google-apps.spreadsheet','application/vnd.google-apps.presentation')") }
 
@@ -47,9 +47,9 @@ class Resource < ActiveRecord::Base
   end
 
   def self.mimetypes_for_monitored_resource(mr_id)
-    query = ActiveRecord::Base.send(:sanitize_sql_array, ["SELECT DISTINCT resources.mime_type FROM resources WHERE monitored_resource_id=%s ORDER BY mime_type",mr_id])
+    query = ActiveRecord::Base.send(:sanitize_sql_array, ["SELECT DISTINCT resources.mime_type as mime_type FROM resources WHERE monitored_resource_id=%s ORDER BY mime_type",mr_id])
     results = ActiveRecord::Base.connection.exec_query(query)
-    [ ['--- none ---',''], ['GOOGLE_FILE_TYPES','GOOGLE_FILE_TYPES'] ].concat results.map {|result| [result[0], result[0]]}
+    [ ['--- none ---',''], ['GOOGLE_FILE_TYPES','GOOGLE_FILE_TYPES'] ].concat results.map {|result| [result['mime_type'], result['mime_type']]}
   end
 
   def is_folder?
@@ -255,6 +255,153 @@ class Resource < ActiveRecord::Base
       .where(:monitored_resource_id => monitored_resource.id)
       .where('resources.modified_date > ? AND resources.modified_date <= ?', period.start_date, period.end_date)
       .where("mime_type IN('application/vnd.google-apps.drawing','application/vnd.google-apps.document','application/vnd.google-apps.spreadsheet','application/vnd.google-apps.presentation')")
+  end
+
+  def self.with_single_revision
+    query = 'SELECT COUNT(rr.id) AS count FROM (SELECT res.id
+        FROM resources res JOIN revisions rev ON rev.resource_id=res.id
+        GROUP BY res.id HAVING COUNT(rev.id) = 1) rr'
+
+    result = ActiveRecord::Base.connection.exec_query(query)
+    result.first['count']
+  end
+
+  def self.with_single_images
+    query = "SELECT COUNT(rr.id) AS count FROM (SELECT res.id
+        FROM resources res JOIN revisions rev ON rev.resource_id=res.id
+        WHERE res.mime_type IN('image/jpeg','image/png')
+        GROUP BY res.id HAVING COUNT(rev.id) = 1) rr"
+
+    result = ActiveRecord::Base.connection.exec_query(query)
+    result.first['count']
+  end
+
+  def self.with_single_revision_same_latest
+    query = 'SELECT COUNT(rr.id) as count FROM (SELECT res.id, res.mime_type, res.modified_date AS m1, rev.modified_date AS m2
+      FROM resources res JOIN revisions rev ON rev.resource_id=res.id GROUP BY res.id HAVING COUNT(rev.id) = 1) rr WHERE rr.m1 = rr.m2'
+
+    result = ActiveRecord::Base.connection.exec_query(query)
+    result.first['count']
+  end
+
+  def self.with_single_revision_different_latest
+    query = 'SELECT COUNT(rr.id) as count FROM (SELECT res.id, res.mime_type, res.modified_date AS m1, rev.modified_date AS m2
+      FROM resources res JOIN revisions rev ON rev.resource_id=res.id GROUP BY res.id HAVING COUNT(rev.id) = 1) rr WHERE rr.m1 != rr.m2'
+
+    result = ActiveRecord::Base.connection.exec_query(query)
+    result.first['count']
+  end
+
+  def self.with_single_revision_latest_eql_one
+    query = 'SELECT COUNT(aa.id) AS count FROM
+      (SELECT rr.id, rr.mime_type, rr.m1, rr.m2, ABS(TIMESTAMPDIFF(SECOND, rr.m1, rr.m2)) as diff
+      FROM (SELECT res.id, res.mime_type, res.modified_date AS m1, rev.modified_date AS m2
+      FROM resources res JOIN revisions rev ON rev.resource_id=res.id GROUP BY res.id HAVING COUNT(rev.id) = 1) rr) aa WHERE aa.diff = 1'
+    result = ActiveRecord::Base.connection.exec_query(query)
+    result.first['count']
+  end
+
+  def self.topten_mime_types
+    query = "SELECT res.mime_type AS mime_type, COUNT(res.id) AS count FROM resources res
+      WHERE res.monitored_resource_id AND res.mime_type != 'application/vnd.google-apps.folder'
+      GROUP BY mime_type ORDER BY COUNT(res.id) DESC LIMIT 15;"
+    return ActiveRecord::Base.connection.exec_query(query)
+  end
+
+  def self.topten_mime_types_revisions_box_plot
+    top_ten = Resource.topten_mime_types
+
+    result_set = Hash.new
+    result_set['categories'] = Array.new
+    result_set['data'] = Array.new
+
+    top_ten.each do |row|
+      result_set['categories'] << row['mime_type']
+      values = Array.new
+
+      query_mime = ['SELECT res.id, COUNT(rev.id) AS count FROM resources res JOIN revisions rev ON rev.resource_id=res.id
+        WHERE res.mime_type=? GROUP BY res.id ORDER BY COUNT(rev.id) ASC', row['mime_type']]
+      sql = ActiveRecord::Base.send(:sanitize_sql_array, query_mime)
+      mime_res = ActiveRecord::Base.connection.exec_query(sql)
+
+      mime_res.each do |mime_row|
+        values << mime_row['count']
+      end
+
+      set = Array.new
+
+      # lower adjacent
+      set << values.min
+
+      # lower hinge (25th percentile)
+      up_hinge_rank = 0.25 * (values.length)
+      ir_rank = up_hinge_rank.to_i
+
+      up_hinge_fraction = up_hinge_rank - up_hinge_rank.to_i
+
+      if up_hinge_fraction.eql? 0.0
+        set << values[ir_rank]
+      else
+        if (ir_rank+1) >= values.length
+          set << values[ir_rank]
+        else
+          interpolation = (up_hinge_fraction * (values[ir_rank+1] - values[ir_rank])) + values[ir_rank]
+          set << interpolation
+        end
+      end
+
+      # Median (50th percentile)
+      up_hinge_rank = 0.50 * (values.length)
+      ir_rank = up_hinge_rank.to_i
+      up_hinge_fraction = up_hinge_rank - up_hinge_rank.to_i
+      if up_hinge_fraction.eql? 0.0
+        set << values[ir_rank]
+      else
+        if (ir_rank+1) >= values.length
+          set << values[ir_rank]
+        else
+          interpolation = (up_hinge_fraction * (values[ir_rank+1] - values[ir_rank])) + values[ir_rank]
+          set << interpolation
+        end
+      end
+
+      # upper hinge (75th percentile)
+      up_hinge_rank = 0.75 * (values.length)
+      ir_rank = up_hinge_rank.to_i
+      up_hinge_fraction = up_hinge_rank - up_hinge_rank.to_i
+      if up_hinge_fraction.eql? 0.0
+        set << values[ir_rank]
+      else
+        if (ir_rank+1) >= values.length
+          set << values[ir_rank]
+        else
+          interpolation_75 = (up_hinge_fraction * (values[ir_rank+1] - values[ir_rank])) + values[ir_rank]
+          set << interpolation_75
+        end
+      end
+
+      # upper adjacent, whiskers
+      set << values.max
+
+      # tukey plot - START - lines in between can be commented out, if min/ max is better
+      iqr_1_5 = (set[3] - set[1]) * 1.5
+
+      p set
+      p iqr_1_5
+
+      limit_lower_hinge = (set[1] - iqr_1_5) < 0 ? 0 :  (set[1] - iqr_1_5)
+      set[0] = values.min { |a,b| (a-limit_lower_hinge).abs <=> (b-limit_lower_hinge).abs }
+
+      limit_upper_hinge = set[3] + iqr_1_5
+      set[4] = values.min { |a,b| (a-limit_upper_hinge).abs <=> (b-limit_upper_hinge).abs }
+
+      p set
+      # tukey plot - END
+
+      result_set['data'] << set
+    end
+
+    return result_set
   end
 
   # REPORT RELATED QUERIES - STOP

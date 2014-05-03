@@ -3,7 +3,7 @@ require 'date'
 class Revision < ActiveRecord::Base
   belongs_to :resource
   belongs_to :permission
-  has_many :collaborations , class_name: '::Collaboration', :foreign_key => 'collaboration_id'
+  has_many :collaborations , class_name: '::Collaboration', :foreign_key => 'collaboration_id', :dependent => :delete_all
 
   JOIN_QUERY = 'SELECT * FROM collaborations WHERE collaborations.threshold=' + Collaboration::STANDARD_COLLABORATION_THRESHOLD.to_s
 
