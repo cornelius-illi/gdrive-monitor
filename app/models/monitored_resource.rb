@@ -39,8 +39,9 @@ class MonitoredResource < ActiveRecord::Base
       LEFT OUTER JOIN comments ON comments.resource_id=resources.id JOIN permission_groups_permissions ON permission_groups_permissions.permission_id=permissions.id #{where_sql}
       GROUP BY resources.id ORDER BY #{sort_column} #{sort_direction} LIMIT #{offset},#{per_page};"
 
-      # connection = ActiveRecord::Base.connection
-      ActiveRecord::Base.connection.exec_query(query, :symbolize_keys => true)
+      # connection = ActiveRecord::Base.
+      p query
+      ActiveRecord::Base.connection.exec_query(query)
   end
 
   def resources_analysed_total_entries(filters, doSearch=true)
@@ -53,7 +54,7 @@ class MonitoredResource < ActiveRecord::Base
     query = "SELECT COUNT(resources.id) AS count FROM resources #{where_sql}"
 
     # connection = ActiveRecord::Base.connection
-    result_set = ActiveRecord::Base.connection.exec_query(query, :symbolize_keys => true)
+    result_set = ActiveRecord::Base.connection.exec_query(query)
     result_set.first['count']
   end
 

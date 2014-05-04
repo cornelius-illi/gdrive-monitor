@@ -14,6 +14,7 @@ class Resource < ActiveRecord::Base
     application/vnd.google-apps.document
     application/vnd.google-apps.spreadsheet
     application/vnd.google-apps.presentation
+    application/vnd.google-apps.form
   ).freeze
 
   IMAGE_FILE_TYPE = 'image/jpeg'.freeze
@@ -386,16 +387,11 @@ class Resource < ActiveRecord::Base
       # tukey plot - START - lines in between can be commented out, if min/ max is better
       iqr_1_5 = (set[3] - set[1]) * 1.5
 
-      p set
-      p iqr_1_5
-
       limit_lower_hinge = (set[1] - iqr_1_5) < 0 ? 0 :  (set[1] - iqr_1_5)
       set[0] = values.min { |a,b| (a-limit_lower_hinge).abs <=> (b-limit_lower_hinge).abs }
 
       limit_upper_hinge = set[3] + iqr_1_5
       set[4] = values.min { |a,b| (a-limit_upper_hinge).abs <=> (b-limit_upper_hinge).abs }
-
-      p set
       # tukey plot - END
 
       result_set['data'] << set

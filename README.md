@@ -12,4 +12,4 @@ Reasoning
 
 Copyright
 ---------
-Copyright © 2013-2014 Cornelius Illi. See LICENSE for details.
+Copyright © 2013-2014 Cornelius Illi. Published under GPLv3. See [LICENSE](LICENSE.txt) for details.
