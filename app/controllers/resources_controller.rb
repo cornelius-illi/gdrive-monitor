@@ -13,49 +13,31 @@ class ResourcesController < ApplicationController
       'rgba(83, 83, 83, .5)',
   ]
 
-  # GET /resources/1
+  # GET monitored_resource/1/resources/1
   def show
-    # do nothing
+    redirect_to monitored_resource_path(@monitored_resource), :alert => 'Resource does not exist!' if @resource.blank?
   end
 
   def show_threshold
     respond_to do |format|
       format.html {  }
       format.json {
-        reportid = params[:resultid].to_i
-
-        case reportid
-          when 0
-            distances = scatter_distances
-            result_set = {
-              :title => 'frequency vs. distance',
-              :x_title => 'distances in seconds',
-              :y_title => 'frequency', :data => distances
-            }
-          when 1
-            aritmetic_means = scatter_aritmetic_means
-            result_set = {
-              :title => 'arithmetic mean vs. maximum distance',
-              :x_title => 'maximum distance between revisions in seconds',
-              :y_title => 'frequency', :data => aritmetic_means}
-          when 2
-            percentages = scatter_percentage
-            result_set = {
-                :title => 'accumulated percentage of revisions',
-                :x_title => 'maximum distance between revisions in seconds',
-                :y_title => 'percentage', :data => percentages}
-
-          else
-            result_set = {}
+        cat = Array.new
+        (1..27).each do |x|
+          cat << (x*10).to_s
         end
+
+        result_set = {
+          :categories => cat,
+          :data => scatter_distances(270)
+        }
 
         render json: result_set
       }
     end
   end
 
-  # @todo: should be names calculate_time_distance_to_previous
-  def calculate_threshold
+  def calculate_time_distance_to_previous
     resources = Resource.find_with_several_revisions
     resources.each do |resource|
       id = resource.has_key?('id') ? resource['id'].to_i : nil
@@ -77,7 +59,7 @@ class ResourcesController < ApplicationController
       format.html {  }
       format.json {
         distances_to_previous_revisions = Hash.new
-        (3..40).each do |var|
+        (3..30).each do |var|
           seconds = (var*60)
           minutes = (seconds/60).to_s
           upper_limit = seconds+60
@@ -226,22 +208,43 @@ class ResourcesController < ApplicationController
   # Use callbacks to share common setup or constraints between actions.
   def set_resource
     @monitored_resource = MonitoredResource.find(params[:monitored_resource_id])
-    @resource = Resource.find(params[:id])
+
+    # Authorize object permission - @todo: better way to solve this via cancan?
+    unless @monitored_resource.nil?
+      shared = current_user.shared_resources.map {|r| r.id }
+      @monitored_resource = nil unless ((@monitored_resource.user_id == current_user.id) || shared.include?(@monitored_resource.id))
+    end
+
+    @resource = Resource.where(
+        :id =>params[:id],
+        :monitored_resource_id => params[:monitored_resource_id]
+    ).first
   end
 
-  def scatter_distances
-    query = 'SELECT distance_to_previous FROM revisions WHERE distance_to_previous IS NOT NULL AND distance_to_previous < 901'
-    dist = ActiveRecord::Base.connection.exec_query(query)
-
+  def scatter_distances(limit=900)
+    limit_query = limit
     distances = Array.new
-    distances << scatter_distances_for(dist, 'Distances All', COLORS[0] )
 
-    MonitoredResource.all.each_with_index do |mr, index|
-      query_team = 'SELECT distance_to_previous FROM revisions JOIN resources ON revisions.resource_id = resources.id
-            WHERE resources.monitored_resource_id=' + mr.id.to_s + ' AND distance_to_previous IS NOT NULL AND distance_to_previous < 901'
-      dist_team = ActiveRecord::Base.connection.exec_query(query_team)
-      distances << scatter_distances_for(dist_team, mr.title, COLORS[index+1] )
-    end
+    #query = "SELECT distance_to_previous FROM revisions WHERE distance_to_previous IS NOT NULL AND distance_to_previous < #{limit_query}"
+    #dist = ActiveRecord::Base.connection.exec_query(query)
+    #distances << scatter_distances_for(dist, 'Distances All', COLORS[0] )
+
+    query_google = "SELECT distance_to_previous FROM revisions JOIN resources ON revisions.resource_id = resources.id
+      WHERE resources.mime_type IN ('#{ Resource::GOOGLE_FILE_TYPES.join("','") }') AND distance_to_previous IS NOT NULL AND distance_to_previous < #{limit_query}"
+    dist_google = ActiveRecord::Base.connection.exec_query(query_google)
+    distances << scatter_distances_for(dist_google, 'Google file types', COLORS[0] )
+
+    query_non_google = "SELECT distance_to_previous FROM revisions JOIN resources ON revisions.resource_id = resources.id
+      WHERE resources.mime_type NOT IN ('#{ Resource::GOOGLE_FILE_TYPES.join("','") }') AND distance_to_previous IS NOT NULL AND distance_to_previous < #{limit_query}"
+    dist_non_google = ActiveRecord::Base.connection.exec_query(query_non_google)
+    distances << scatter_distances_for(dist_non_google, 'other file types', COLORS[1] )
+
+    #MonitoredResource.all.each_with_index do |mr, index|
+    #  query_team = 'SELECT distance_to_previous FROM revisions JOIN resources ON revisions.resource_id = resources.id
+    #        WHERE resources.monitored_resource_id=' + mr.id.to_s + ' AND distance_to_previous IS NOT NULL AND distance_to_previous < 901'
+    #  dist_team = ActiveRecord::Base.connection.exec_query(query_team)
+    #  distances << scatter_distances_for(dist_team, mr.title, COLORS[index+1] )
+    #end
 
     return distances
   end
@@ -263,7 +266,12 @@ class ResourcesController < ApplicationController
       end
     end
 
-    distances_all[:data] = distances_all_values.to_a
+    set_array = Array.new
+    distances_all_values.sort.each do |tupel|
+      set_array << tupel[1]
+    end
+
+    distances_all[:data] = set_array
     return distances_all
   end
 

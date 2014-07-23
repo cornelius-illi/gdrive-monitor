@@ -1,6 +1,6 @@
 class Report::Metrics::RatioResolvedTotalComments < Report::Metrics::AbstractMetric
   def self.title
-    "Ratio resolved vs. total comments"
+    "Resolved / Total"
   end
 
   def calculate_for(monitored_resource, period, data=nil)

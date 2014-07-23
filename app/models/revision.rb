@@ -15,6 +15,15 @@ class Revision < ActiveRecord::Base
 
   WEAK_THRESHOLD_BASE = 1.freeze # divided with chars_count -> 1/100 = 0.01 = 1%, 1/1000 = 0.001 = 0.1%
 
+  def self.count_revisions_google_files
+    query = "SELECT SUM(a.count) as count FROM
+      (SELECT res.id, COUNT(rev.id) as count FROM revisions rev
+        JOIN resources res ON rev.resource_id = res.id
+        WHERE res.mime_type IN ('#{Resource::GOOGLE_FILE_TYPES.join("','")}') GROUP BY res.id) a"
+    result = ActiveRecord::Base.connection.exec_query(query)
+    return result.first['count']
+  end
+
   def self.count_weak(collection_of_revisions)
     nbr_weak = 0
     collection_of_revisions.each do |revision|
@@ -120,7 +129,6 @@ class Revision < ActiveRecord::Base
   def update_metadata(metadata, permission)
     # FIELDS: deleted,file(lastModifyingUserName),fileId,id,modificationDate
     update_attributes(
-        :etag => metadata['etag'],
         :file_size => metadata['fileSize'],
         :md5_checksum => metadata['md5Checksum'],
         :permission_id => permission,
@@ -158,6 +166,7 @@ class Revision < ActiveRecord::Base
   end
 
   def previous
+    # WARNING: this method can cause troubles, when using MySQL and modified_date as datetime(0) which is the standard.
     return Revision
       .where('resource_id=? AND modified_date < ?', resource_id, modified_date )
       .order('modified_date DESC').first
@@ -189,7 +198,7 @@ class Revision < ActiveRecord::Base
       end
     end
 
-    previous.find_and_create_collaboration
+    previous.find_and_create_collaboration(skip_calculation_mode)
   end
 
   def collaboration_length
@@ -222,6 +231,27 @@ class Revision < ActiveRecord::Base
     result.first['revisions']
   end
 
+  def self.count_workdays_for(monitored_resource_id, monitored_period, permission_group=nil)
+    return nil if monitored_resource_id.blank?
+
+    where = ["WHERE resources.monitored_resource_id=? AND resources.mime_type !='application/vnd.google-apps.folder'", monitored_resource_id]
+    unless monitored_period.blank? || !monitored_period.is_a?(MonitoredPeriod)
+      where.first << " AND (revisions.modified_date >= ? AND revisions.modified_date <= ? )"
+      where.push monitored_period.start_date
+      where.push monitored_period.end_date
+    end
+
+    unless permission_group.blank?
+      permission_ids = permission_group.permissions.map {|p| p.id }
+      where.first << " AND revisions.permission_id IN (#{permission_ids.join(',')})"
+    end
+
+    where = ActiveRecord::Base.send(:sanitize_sql_array, where)
+    query = "SELECT COUNT(DISTINCT DATE(revisions.modified_date)) as workdays FROM resources JOIN revisions ON revisions.resource_id=resources.id #{where}"
+    result = ActiveRecord::Base.connection.exec_query(query)
+    return result.first['workdays']
+  end
+
   def self.count_revisions_by_weekday(monitored_resource_id, monitored_period, permission_group=nil)
     return nil if monitored_resource_id.blank?
 
@@ -243,14 +273,14 @@ class Revision < ActiveRecord::Base
 
     result_hash= Hash.new
     (0..6).each do |wday|
-      result_hash[ Date::DAYNAMES[wday] ] = 0
+      result_hash[ Date::ABBR_DAYNAMES[wday] ] = 0
     end
 
     result.each do |revision|
-      result_hash[ Date::DAYNAMES[ revision['modified_date'].wday] ] += 1
+      result_hash[ Date::ABBR_DAYNAMES[ revision['modified_date'].wday] ] += 1
     end
 
-    return result_hash
+    return result_hash.sort_by {|k,v| v}.reverse.first 3
   end
   # REPORT RELATED QUERIES - START
 

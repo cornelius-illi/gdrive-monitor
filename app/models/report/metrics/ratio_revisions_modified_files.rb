@@ -1,6 +1,6 @@
 class Report::Metrics::RatioRevisionsModifiedFiles < Report::Metrics::AbstractMetric
   def self.title
-    "Ratio Revisions vs. Modified Files"
+    "Revisions / Modified Files"
   end
 
   def calculate_for(monitored_resource, period, data=nil)

@@ -1,0 +1,60 @@
+html, body {
+    font-family: Verdana, Arial, Helvetica, sans-serif;
+    font-size: 0.8rem;
+    -webkit-print-color-adjust:exact;
+}
+
+nav.top-bar, div.sidebar, div.functions-bar, dl.sub-nav, dl#report-tabs, div.alert-box {
+    display: none;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+table, th, td {
+    border: 1px solid gray;
+}
+
+td, th {
+    padding: 1px 5px;
+    text-align: left;
+}
+
+h3 {
+    font-size: 1.4rem;
+}
+
+h4.report-table-header {
+    display: block;
+    font-size: 1.2rem;
+    page-break-before: always;
+    margin-bottom: 2px;
+}
+
+h4.first-header {
+    page-break-before: auto;
+}
+
+td ul {
+    margin: 0px;
+    padding: 0px;
+    list-style-type: none;
+}
+
+td.table-new-chapter {
+    background: #666;
+    color: #FFF;
+    text-align: center;
+    font-weight: bold;
+}
+
+td.table-new-section {
+    background: #C0C0C0;
+}
+
+th a {
+    text-decoration: none;
+    color: black;
+}

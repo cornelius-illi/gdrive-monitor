@@ -4,6 +4,7 @@ class Report::Sections::FilesStatisticsSection < Report::Sections::AbstractSecti
     @name = "File statistics"
 
     @metrics << Report::Metrics::NumberDaysPeriod.new
+    @metrics << Report::Metrics::NumberWorkingDays.new
     @metrics << Report::Metrics::NumberFilesTotal.new
     @metrics << Report::Metrics::NumberOfFilesCreated.new
     @metrics << Report::Metrics::NumberOfImages.new
@@ -16,5 +17,12 @@ class Report::Sections::FilesStatisticsSection < Report::Sections::AbstractSecti
     @metrics << Report::Metrics::NumberAverageRevisions.new
     @metrics << Report::Metrics::RatioRevisionsModifiedFiles.new
     @metrics << Report::Metrics::ChartMostUsedFileTypes.new
+
+    @metrics << Report::Metrics::NumberCollaboratedFiles.new
+    @metrics << Report::Metrics::RatioCollaboratedFilesWorkdays.new
+    @metrics << Report::Metrics::NumberGloballyCollaboratedFiles.new
+    @metrics << Report::Metrics::RatioGloballyCollaboratedFilesWorkdays.new
+    @metrics << Report::Metrics::NumberParallelActivities.new
+    @metrics << Report::Metrics::NumberParallelGlobalActivities.new
   end
 end

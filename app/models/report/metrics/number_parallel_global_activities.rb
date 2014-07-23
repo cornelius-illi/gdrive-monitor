@@ -1,6 +1,6 @@
 class Report::Metrics::NumberParallelGlobalActivities < Report::Metrics::AbstractMetric
   def self.title
-    return "# global collaborative sessions (GOOGLE)"
+    return "# global collab. sessions (GD)"
   end
 
   def calculate_for(monitored_resource, period, data=nil)

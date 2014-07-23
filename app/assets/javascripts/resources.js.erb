@@ -17,7 +17,7 @@ $(document).ready(function() {
                 async: true,
                 dataType: "json",
                 success: function (result) {
-                    drawScatterChart(id, result);
+                    drawColumnChart(id, 'Distance to previous revision', result['categories'], result['data'] )
                 }
             });
         });
@@ -40,7 +40,7 @@ function drawScatterChart(id, result) {
         plotOptions: {
             scatter: {
                 marker: {
-                    radius: 5,
+                    radius: 3,
                     states: {
                         hover: {
                             enabled: true,
@@ -80,8 +80,8 @@ $(document).ready(function() {
                 drawBoxPlot(id, title, result['categories'], result['data']);
 
                 var id_2 = '#optimal-threshold-columnchart';
-                var title_2 = 'Number of revisions +60 sec above threshold';
-                drawColumnChart(id_2,title_2, result['categories'], result['occurences'])
+                var title_2 = 'Number of revisions between two thresholds';
+                drawColumnChart(id_2,title_2, result['categories'],[{name: 'Revisions', data: result['occurences'] }])
             }
         });
     }
@@ -126,11 +126,7 @@ function drawColumnChart(id, title, categories, data) {
                     text: 'Occurences'
                 }
             },
-            series: [{
-                name: 'Revisions',
-                data: data
-
-            }]
+            series: data
         });
     });
 }

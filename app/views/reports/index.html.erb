@@ -3,12 +3,14 @@
 <h3>Report for: <%= @monitored_resource.title %></h3>
 
 <% if (can? :manage, @monitored_resource) %>
+<div class="functions-bar">
 <span class="has-tip" title="This will only generate reports that have not been generated1" data-tooltip>
     <%= link_to "Generate Reports", generate_monitored_resource_reports_path(@monitored_resource), :class => 'button tiny' %>
 </span>
 <span class="has-tip" title="This will delete all reports for a monitored resource" data-tooltip>
     <%= link_to "Delete reports", remove_monitored_resource_reports_path(@monitored_resource), :class => 'button tiny' %>
 </span>
+</div>
 <% end %>
 
 <% if @monitored_resource.jobs.length > 0 %>
@@ -35,6 +37,7 @@
       <% @period_groups.each_with_index do |period_group, index| %>
 
           <div class="report-tab content<%= ' active' if index == 0 %>" id="panel2-<%= index %>">
+            <h4 class="report-table-header <%= 'first-header' if index == 0%>"><%= period_group.name %></h4>
             <table>
               <thead class="analytics">
               <tr>

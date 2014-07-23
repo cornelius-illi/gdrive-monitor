@@ -75,7 +75,12 @@ class ReportsController < ApplicationController
   def statistics
     respond_to do |format|
       format.html {
-        @resource_count = Resource.count
+        @dates = Resource.timespan
+        @resource_count = Resource.where("mime_type != '#{Resource::GOOGLE_FOLDER_TYPE}'").count
+        @revisions_count = Revision.count
+        @revision_google_count = Revision.count_revisions_google_files
+        @google_count = Resource.count_google_resources
+        @images_count = Resource.count_images
         @resource_single = Resource.with_single_revision
         @resource_single_images = Resource.with_single_images
         @resource_single_same_latest = Resource.with_single_revision_same_latest

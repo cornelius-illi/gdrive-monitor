@@ -1,6 +1,6 @@
 class Report::Metrics::NumberFilesComments < Report::Metrics::AbstractMetric
   def self.title
-    return "# of files with comments"
+    return "# files w comments"
   end
 
   def calculate_for(monitored_resource, period, data=nil)

@@ -6,8 +6,13 @@ class Permission < ActiveRecord::Base
     return email_address.blank? ? "#{name}@#{domain}" : email_address
   end
 
+  def title_no_mail
+    return title.split('@').first
+  end
+
   def unique_title
-    return "(##{id}): #{title}"
+    return "-  #{title_no_mail}"
+    #return "(##{id}): #{title_no_mail}"
   end
 
   def title_usage

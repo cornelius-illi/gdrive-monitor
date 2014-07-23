@@ -1,6 +1,6 @@
 module DriveRevisions
   # see: https://developers.google.com/drive/v2/reference/revisions#resource
-  FIELDS_REVISIONS_LIST = 'items(etag,fileSize,id,lastModifyingUser(permissionId),md5Checksum,modifiedDate)'
+  FIELDS_REVISIONS_LIST = 'items(fileSize,id,lastModifyingUser(permissionId),md5Checksum,modifiedDate)'
 
   def self.retrieve_revisions_list(file_id, user_token)
     return self.gdrive_api_revisions_list(file_id, user_token)

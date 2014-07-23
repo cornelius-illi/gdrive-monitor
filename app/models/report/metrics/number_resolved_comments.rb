@@ -1,6 +1,6 @@
 class Report::Metrics::NumberResolvedComments < Report::Metrics::AbstractMetric
   def self.title
-    return "# of resolved Comments"
+    return "# resolved comments"
   end
 
   def calculate_for(monitored_resource, period, data=nil)

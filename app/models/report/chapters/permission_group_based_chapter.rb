@@ -2,6 +2,7 @@ class Report::Chapters::PermissionGroupBasedChapter < Report::Chapters::Abstract
   def initialize_chapter
     @name = 'PermissionGroup-based Statistics'
 
-    @sections << Report::Sections::WorkdaysRankedByPermissionGroupSection.new
+    @sections << Report::Sections::WorkdaysByPermissionGroupSection.new
+    @sections << Report::Sections::RevisionsByWorksdaysAndPermissionGroupSection.new
   end
 end

@@ -9,11 +9,11 @@
  * compiled file, but it's generally better to create a new file per style scope.
  *
  *= require_self
- *= require foundation_and_overrides
+ *= require ./screen/foundation_and_overrides
 
- *= require_tree .
- *= require loader
- *= require dataTables.foundation
+ *= require_tree ./screen
+ *= require ./screen/loader
+ *= require ./screen/dataTables.foundation.css
  */
 
 html, body {
@@ -325,4 +325,8 @@ td ul {
     100%{
         background-color:#FFFFFF}
 
+}
+
+h4.report-table-header {
+    display: none;
 }

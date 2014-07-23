@@ -17,6 +17,21 @@ class Resource < ActiveRecord::Base
     application/vnd.google-apps.form
   ).freeze
 
+  MICROSOFT_OFFICE_FILE_TYPES = %w(
+    application/msword
+    application/vnd.ms-excel
+    application/vnd.ms-powerpoint
+    application/vnd.openxmlformats-officedocument.presentationml.presentation
+    application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
+    application/vnd.openxmlformats-officedocument.wordprocessingml.document
+  ).freeze
+
+  OPEN_OFFICE_FILE_TYPES = %w(
+    application/vnd.oasis.opendocument.graphics
+    application/vnd.oasis.opendocument.text
+  )
+
+
   IMAGE_FILE_TYPE = 'image/jpeg'.freeze
   IMAGE_FILE_TYPES = %w(
     image/gif
@@ -161,7 +176,7 @@ class Resource < ActiveRecord::Base
     return result
   end
 
-  def update_metadata(metadata)
+  def update_metadata(metadata, user_token)
     google_permission_id = metadata['owners'].first['permissionId']
     permission_id = nil
 
@@ -255,13 +270,32 @@ class Resource < ActiveRecord::Base
     Resource
       .where(:monitored_resource_id => monitored_resource.id)
       .where('resources.modified_date > ? AND resources.modified_date <= ?', period.start_date, period.end_date)
-      .where("mime_type IN('application/vnd.google-apps.drawing','application/vnd.google-apps.document','application/vnd.google-apps.spreadsheet','application/vnd.google-apps.presentation')")
+      .where("mime_type IN('#{GOOGLE_FILE_TYPES.join("','")}')")
+  end
+
+  def self.timespan
+    query = 'SELECT MIN(created_date) as min, MAX(created_date) as max FROM resources;'
+    result = ActiveRecord::Base.connection.exec_query(query)
+    return result.first
+  end
+
+  def self.count_google_resources
+    Resource
+      .where("mime_type IN('#{GOOGLE_FILE_TYPES.join("','")}')")
+      .count()
+  end
+
+  def self.count_images
+    Resource
+      .where("mime_type IN('#{IMAGE_FILE_TYPES.join("','")}')")
+      .count()
   end
 
   def self.with_single_revision
-    query = 'SELECT COUNT(rr.id) AS count FROM (SELECT res.id
+    query = "SELECT COUNT(rr.id) AS count FROM (SELECT res.id
         FROM resources res JOIN revisions rev ON rev.resource_id=res.id
-        GROUP BY res.id HAVING COUNT(rev.id) = 1) rr'
+        WHERE res.mime_type != '#{GOOGLE_FOLDER_TYPE}'
+        GROUP BY res.id HAVING COUNT(rev.id) = 1) rr"
 
     result = ActiveRecord::Base.connection.exec_query(query)
     result.first['count']
@@ -270,7 +304,7 @@ class Resource < ActiveRecord::Base
   def self.with_single_images
     query = "SELECT COUNT(rr.id) AS count FROM (SELECT res.id
         FROM resources res JOIN revisions rev ON rev.resource_id=res.id
-        WHERE res.mime_type IN('image/jpeg','image/png')
+        WHERE res.mime_type IN('#{IMAGE_FILE_TYPES.join("','")}')
         GROUP BY res.id HAVING COUNT(rev.id) = 1) rr"
 
     result = ActiveRecord::Base.connection.exec_query(query)
@@ -470,11 +504,11 @@ class Resource < ActiveRecord::Base
   end
   handle_asynchronously :retrieve_revisions, :queue => 'revisions', :owner => Proc.new {|o| o}
 
-  def find_collaborations
+  def find_collaborations(skip_calculation_mode=false)
     # 401 error - some revisions could not be fetched
     return if revisions.empty?
 
-    revisions.first.find_and_create_collaboration
+    revisions.first.find_and_create_collaboration(skip_calculation_mode)
   end
   handle_asynchronously :find_collaborations, :queue => 'diffing', :owner => Proc.new {|o| o}
 

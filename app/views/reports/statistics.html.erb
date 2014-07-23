@@ -1,19 +1,33 @@
 <% content_for :title, "General System Statistics" %>
 
 <h2>General System Statistics</h2>
+<p>Recording since <%= @dates['min'].to_s(:db) %>, for <%= time_difference(@dates['min'], @dates['max']) %> hours </p>
 
 <h3>Resources and Revisions</h3>
 <table>
   <thead><tr><th>Metric</th><th>Count</th><th>Percentage</th></tr></thead>
   <tbody>
-    <tr><td>Number of Resources</td><td><%= @resource_count %></td><td></td></tr>
+    <tr><td>Number of Files</td><td><%= @resource_count %></td><td></td></tr>
+    <tr><td>Number of Revisions</td><td><%= @revisions_count %></td><td></td></tr>
     <tr>
-      <td>Number of Resources with single revision</td><td><%= @resource_single %></td>
-      <td><%= ((100/@resource_count.to_f)*@resource_single).round(2) %>%</td>
+      <td>Number of Google Docs</td><td><%= @google_count %></td>
+      <td><%= ((100/@resource_count.to_f)*@google_count).round(2) %>%</td>
     </tr>
     <tr>
-      <td>Number of Images (JPG/ PNG) with single revision</td><td><%= @resource_single_images %></td>
+      <td>Number of revisions from Google Docs</td><td><%= @revision_google_count %></td>
+      <td><%= ((100/@revisions_count.to_f)*@revision_google_count).round(2) %>%</td>
+    </tr>
+    <tr>
+      <td>Number of Images</td><td><%= @images_count %></td>
+      <td><%= ((100/@resource_count.to_f)*@images_count).round(2) %>%</td>
+    </tr>
+    <tr>
+      <td>Number of Images with single revision</td><td><%= @resource_single_images %></td>
       <td><%= ((100/@resource_count.to_f)*@resource_single_images).round(2) %>%</td>
+    </tr>
+    <tr>
+      <td>Number of files with single revision</td><td><%= @resource_single %></td>
+      <td><%= ((100/@resource_count.to_f)*@resource_single).round(2) %>%</td>
     </tr>
     <tr>
       <td>Number of Resources with single revision, same datetime</td><td><%= @resource_single_same_latest %></td>

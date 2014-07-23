@@ -156,7 +156,7 @@ class MonitoredResource < ActiveRecord::Base
         .where(:user_id => user_id)
       .first_or_create
 
-      new_resource.update_metadata(metadata)
+      new_resource.update_metadata(metadata, user_token)
 
       if new_resource.is_folder? # create new delayed_job, if type is folder
         index_structure(user_id, user_token, new_resource.gid)

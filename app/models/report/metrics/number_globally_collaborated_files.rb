@@ -1,6 +1,6 @@
 class Report::Metrics::NumberGloballyCollaboratedFiles < Report::Metrics::AbstractMetric
   def self.title
-    return "# of globally collaborated files"
+    return "# of globally collab. files"
   end
 
   def calculate_for(monitored_resource, period, data=nil)

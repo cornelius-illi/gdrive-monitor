@@ -46,7 +46,7 @@ class Report::Metrics::ChartMostUsedFileTypes < Report::Metrics::AbstractMetric
 
     remaining_count = (remaining_revisions[0]['count']-sum_four_most_used)
 
-    result_set << [ 'REST', remaining_count, '#C0C0C0' ]
+    #result_set << [ 'REST', remaining_count, '#C0C0C0' ]
 
     return result_set
   end

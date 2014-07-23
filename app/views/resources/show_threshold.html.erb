@@ -4,7 +4,7 @@
 
 <% if current_user.has_role? :admin %>
 <span class="has-tip" title="This will calculate the time distance in seconds for each revision." data-tooltip>
-    <%= link_to "Calculate Distances", calculate_threshold_path, :class => 'button tiny' %>
+    <%= link_to "Calculate Distances", calculate_time_distance_to_previous_path, :class => 'button tiny' %>
 </span>
 <% end %>
 

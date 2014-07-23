@@ -1,6 +1,6 @@
 class Report::Metrics::RatioGoogleModifiedFiles < Report::Metrics::AbstractMetric
   def self.title
-    "Ratio Google vs. Modified Files"
+    "Google / Modified Files"
   end
 
   def calculate_for(monitored_resource, period, data=nil)
