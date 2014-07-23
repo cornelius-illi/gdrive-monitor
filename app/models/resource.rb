@@ -201,6 +201,11 @@ class Resource < ActiveRecord::Base
       permission_id = permission.id
     end
 
+    # NOTICE: sometimes files that origin from downloaded resources have old modified_dates.
+    # the createdDate on google hence is greater then the modified date, which will mess up the listings.
+    # Therefore it is altered here to avoid problems.
+    metadata['modifiedDate'] = metadata['createdDate'] if metadata['modifiedDate'] < metadata['createdDate']
+
     update_attributes(
         :alternate_link => metadata['alternateLink'],
         :created_date => metadata['createdDate'],
