@@ -7,7 +7,7 @@ module ResourcesHelper
 
   def svg_timeline(resource)
     all_revisions = resource.revisions
-    collab_revisions = resource.revisions.with_collaboration
+    activities = resource.revisions.activities
 
     # fist date in timeline, last in order
     reference_date = all_revisions.last.modified_date
@@ -27,13 +27,13 @@ module ResourcesHelper
     svg_contents << svg_line(width_line)
     sessions = Array.new # group around each to define standards (font-family, size)
 
-    collab_revisions.reverse.each_with_index do |revision, index|
-      x_rev_rect = ((revision.modified_date - reference_date).to_i/60 * pix_per_minute).to_i + SVG_PADDING
+    activities.reverse.each_with_index do |activity, index|
+      x_rev_rect = ((activity.modified_date - reference_date).to_i/60 * pix_per_minute).to_i + SVG_PADDING
 
-      if revision.collaborations.blank?
-        sessions << svg_rect_single_revision(x_rev_rect, (index%2 == 0), revision )
+      if activity.revisions.blank?
+        sessions << svg_rect_single_revision(x_rev_rect, (index%2 == 0), activity )
       else
-        sessions << svg_rect_multiple_revisions(x_rev_rect, (index%2 == 0), revision,
+        sessions << svg_rect_multiple_revisions(x_rev_rect, (index%2 == 0), activity,
                                                 reference_date, pix_per_minute, resource.monitored_resource_id )
       end
 
@@ -116,16 +116,16 @@ module ResourcesHelper
     return elements
   end
 
-  def svg_rect_multiple_revisions(x_value_end, even=true, revision, reference_date, pix_per_minute, mr_id)
-    stroke_width = revision.collaborations.blank? ? 0 : 2
-    stroke = rect_stroke_color(revision, mr_id)
-    first_date = revision.first_revision_in_session.modified_date
+  def svg_rect_multiple_revisions(x_value_end, even=true, activity, reference_date, pix_per_minute, mr_id)
+    stroke_width = activity.revisions.blank? ? 0 : 2
+    stroke = rect_stroke_color(activity, mr_id)
+    first_date = activity.first_revision_in_session.modified_date
 
     x_value_start = ((first_date - reference_date).to_i/60 * pix_per_minute).to_i + SVG_PADDING
     width = x_value_end-x_value_start + 10 # overlap (same as when rotated)
 
     elements = Array.new
-    elements << svg_revision_caption(x_value_start, even, revision, true, first_date)
+    elements << svg_revision_caption(x_value_start, even, activity, true, first_date)
     elements.flatten! # caption elements as new array, but on same level
 
     elements << tag(:rect,
@@ -139,8 +139,8 @@ module ResourcesHelper
     return elements
   end
 
-  def rect_stroke_color(revision, mr_id)
-    stroke_color = revision.team_collaboration? ? 'rgb(0,80,0)' : 'rgb(0,0,0)'
-    revision.collaboration_is_global?(mr_id) ? 'rgb(255,0,0)' : stroke_color
+  def rect_stroke_color(activity, mr_id)
+    stroke_color = activity.team_collaboration? ? 'rgb(0,80,0)' : 'rgb(0,0,0)'
+    activity.collaboration_is_global?(mr_id) ? 'rgb(255,0,0)' : stroke_color
   end
 end

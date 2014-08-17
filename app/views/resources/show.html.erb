@@ -107,7 +107,7 @@
 <% end %>
 
 <h3>Revisions List -
-  <small>Showing: <%= @resource.revisions.with_collaboration.length %> of <%= @resource.revisions.length %></small>
+  <small>Showing: <%= @resource.revisions.activities.length %> of <%= @resource.revisions.length %></small>
 </h3>
 
 <%= svg_timeline(@resource) %>
@@ -124,20 +124,20 @@
       </tr>
       </thead>
       <tbody>
-      <% @resource.revisions.with_collaboration.each do |revision| %>
-          <tr<%= revision.collaborations.blank? ? '' : ' class="strong"'.html_safe %>>
-            <td><%= link_to_if (!revision.collaborations.blank?), revision.gid,
-                               merged_revisions_monitored_resource_resource_path(@monitored_resource, @resource, revision.id),
+      <% @resource.revisions.activities.each do |acitivity| %>
+          <tr<%= acitivity.revisions.blank? ? '' : ' class="strong"'.html_safe %>>
+            <td><%= link_to_if (!acitivity.revisions.blank?), acitivity.gid,
+                               merged_revisions_monitored_resource_resource_path(@monitored_resource, @resource, acitivity.id),
                                :data => { 'reveal-id' => "modal", 'reveal-ajax' => "true" }, :class => 'reveal-link' %>
-              <% if revision.team_collaboration? %><span class="fi-torsos-all"></span>
-                  <% if revision.collaboration_is_global?(@resource.monitored_resource_id) %><span class="fi-web"></span><% end %>
-                  (<%= revision.collaborations.length+1 %>)
-              <% elsif !revision.team_collaboration? && revision.collaborations.length > 0 %><span class="fi-page-multiple"></span> (<%= revision.collaborations.length+1  %>)<% end %>
+              <% if acitivity.team_collaboration? %><span class="fi-torsos-all"></span>
+                  <% if acitivity.collaboration_is_global?(@resource.monitored_resource_id) %><span class="fi-web"></span><% end %>
+                  (<%= acitivity.revisions.length+1 %>)
+              <% elsif !acitivity.team_collaboration? && acitivity.revisions.length > 0 %><span class="fi-page-multiple"></span> (<%= acitivity.revisions.length+1  %>)<% end %>
             </td>
-            <td><%= revision.modified_date.to_s(:db) %></td>
-            <td><%= revision.collaborations.blank? ? '' : revision.collaborations.last.modified_date.to_s(:db) %></td>
-            <td><%= revision.collaborations.blank? ? '' : time_difference(revision.modified_date,  revision.collaborations.last.modified_date) %></td>
-            <td><%= revision.permission.email_address.blank? ? revision.permission.name : revision.permission.email_address %></td>
+            <td><%= acitivity.modified_date.to_s(:db) %></td>
+            <td><%= acitivity.revisions.blank? ? '' : acitivity.revisions.last.modified_date.to_s(:db) %></td>
+            <td><%= acitivity.revisions.blank? ? '' : time_difference(acitivity.modified_date,  acitivity.revisions.last.modified_date) %></td>
+            <td><%= acitivity.permission.email_address.blank? ? acitivity.permission.name : acitivity.permission.email_address %></td>
           </tr>
       <% end %>
       </tbody>

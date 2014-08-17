@@ -1,7 +1,7 @@
 class Resource < ActiveRecord::Base
   belongs_to :monitored_resource, :foreign_key => 'monitored_resource_id'
   has_many  :jobs, :class_name => "::Delayed::Job", :as => :owner
-  has_many  :revisions, -> { order('modified_date DESC') }, :dependent => :delete_all
+  has_many  :revisions, -> { order('modified_date DESC, permission_id DESC') }, :dependent => :delete_all
   has_many  :comments, :dependent => :delete_all
 
   scope :google_resources, -> { where("mime_type IN('application/vnd.google-apps.drawing','application/vnd.google-apps.document','application/vnd.google-apps.spreadsheet','application/vnd.google-apps.presentation')") }
@@ -201,6 +201,14 @@ class Resource < ActiveRecord::Base
       permission_id = permission.id
     end
 
+    # NOTICE: sometimes files have createdDates in the future, therefore we always search for the first revision.
+    # If the date of the first revision is < creadedDate, then this one is used instead
+    first_revision = Revision.where(:resource_id => id).order('modified_date ASC').first
+    unless first_revision.nil?
+      created_date = DateTime.parse( metadata['createdDate'] )
+      metadata['createdDate'] = first_revision.modified_date if created_date > first_revision.modified_date
+    end
+
     # NOTICE: sometimes files that origin from downloaded resources have old modified_dates.
     # the createdDate on google hence is greater then the modified date, which will mess up the listings.
     # Therefore it is altered here to avoid problems.
@@ -229,7 +237,7 @@ class Resource < ActiveRecord::Base
   
   def retrieve_and_update_metadata(token)
     metadata = DriveFiles.retrieve_metadata_for(gid, token)
-    update_metadata(metadata)
+    update_metadata(metadata, token)
   end
 
   def download_path
@@ -257,7 +265,7 @@ class Resource < ActiveRecord::Base
 
     where = ["WHERE resources.monitored_resource_id=%s AND mime_type !='application/vnd.google-apps.folder'", monitored_resource_id]
     unless monitored_period.blank? || !monitored_period.is_a?(MonitoredPeriod)
-      where.first << " AND (resources.modified_date > '#{monitored_period.start_date}' AND resources.modified_date < '#{monitored_period.end_date}' )"
+      where.first << " AND (revisions.modified_date >= '#{monitored_period.start_date}' AND revisions.modified_date <= '#{monitored_period.end_date}' )"
     end
 
     if google_file_types_only
@@ -266,7 +274,7 @@ class Resource < ActiveRecord::Base
 
     where_sql = ActiveRecord::Base.send(:sanitize_sql_array, where)
 
-    query = "SELECT COUNT(resources.id) as resources FROM resources #{where_sql}"
+    query = "SELECT COUNT(DISTINCT resources.id) as resources FROM resources JOIN revisions ON revisions.resource_id=resources.id #{where_sql}"
     result = ActiveRecord::Base.connection.exec_query(query)
     result.first['resources']
   end
@@ -509,13 +517,28 @@ class Resource < ActiveRecord::Base
   end
   handle_asynchronously :retrieve_revisions, :queue => 'revisions', :owner => Proc.new {|o| o}
 
-  def find_collaborations(skip_calculation_mode=false)
+
+  def create_working_sessions()
     # 401 error - some revisions could not be fetched
     return if revisions.empty?
 
-    revisions.first.find_and_create_collaboration(skip_calculation_mode)
+    # reset before creation
+    Revision.where(:resource_id => id).update_all("working_session_id = NULL, collaboration = NULL")
+
+    revisions.latest.create_working_sessions
+    revisions.first_in_working_sessions.each do |rev|
+      rev.detect_collaboration
+    end
   end
-  handle_asynchronously :find_collaborations, :queue => 'diffing', :owner => Proc.new {|o| o}
+  handle_asynchronously :create_working_sessions, :queue => 'revisions', :owner => Proc.new {|o| o}
+
+  def calculate_all_working_sessions()
+    # 401 error - some revisions could not be fetched
+    return if revisions.empty?
+
+    revisions.first.calculate_all_working_sessions
+  end
+  handle_asynchronously :calculate_all_working_sessions, :queue => 'revisions', :owner => Proc.new {|o| o}
 
 
   ### DEPRECATED ###

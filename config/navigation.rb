@@ -36,28 +36,28 @@ SimpleNavigation::Configuration.run do |navigation|
 
     primary.item :recources_label, 'Management', :class => 'heading strong'
     if current_user.has_role? :google_user
-      primary.item :monitored_resources, '<span class="fi-plus"></span> Create New Resource', monitored_resources_path, :highlights_on => /monitored_resources/
-      primary.item :monitored_periods, '<span class="fi-calendar"></span> Define Periods', monitored_periods_path
-      primary.item :period_groups, '<span class="fi-results"></span> Relate Periods', period_groups_path
-      primary.item :manage_access, '<span class="fi-lock"></span> Manage Access', management_grant_access_path
+      primary.item :monitored_resources, '<span class="fi-plus"></span> Create New Resource'.html_safe , monitored_resources_path, :highlights_on => /monitored_resources/
+      primary.item :monitored_periods, '<span class="fi-calendar"></span> Define Periods'.html_safe, monitored_periods_path
+      primary.item :period_groups, '<span class="fi-results"></span> Relate Periods'.html_safe, period_groups_path
+      primary.item :manage_access, '<span class="fi-lock"></span> Manage Access'.html_safe, management_grant_access_path
     end
-    primary.item :calculate_threshold, '<span class="fi-graph-pie"></span> Revision Aggregation', show_threshold_path
+    primary.item :calculate_threshold, '<span class="fi-graph-pie"></span> Revision Aggregation'.html_safe, show_threshold_path
     primary.item :divider1, '', :class => 'divider'
-    primary.item :recources_label1, 'Monitored Resources', :class => 'heading strong'
+    primary.item :recources_label1, 'Monitored Resources'.html_safe, :class => 'heading strong'
     if user_signed_in? && !current_user.my_resources.blank?
       current_user.my_resources.each_with_index do |monitored_resource,j|
-        primary.item "mr-#{j}", '<span class="fi-folder"></span> ' + monitored_resource.try(:title), monitored_resource_path(monitored_resource)
+        primary.item "mr-#{j}", "<span class=\"fi-folder\"></span> #{monitored_resource.try(:title)}".html_safe, monitored_resource_path(monitored_resource)
       end
     end
     primary.item :divider2, '', :class => 'divider'
-    primary.item :recources_labe2l, 'Reports', :class => 'heading strong'
+    primary.item :recources_labe2l, 'Reports'.html_safe, :class => 'heading strong'
     if user_signed_in? && !current_user.my_resources.blank?
       current_user.my_resources.each_with_index do |monitored_resource,k|
-        primary.item "mr-r-#{k}", '<span class="fi-graph-bar"></span> ' + monitored_resource.try(:title), monitored_resource_reports_path(monitored_resource)
+        primary.item "mr-r-#{k}", "<span class=\"fi-graph-bar\"></span> #{monitored_resource.try(:title)}".html_safe, monitored_resource_reports_path(monitored_resource)
       end
     end
-    primary.item :metareport, '<span class="fi-graph-trend"></span> Meta-Reports', reports_metareport_path
-    primary.item :statistics, '<span class="fi-star"></span> Statistics', reports_statistics_path
+    primary.item :metareport, '<span class="fi-graph-trend"></span> Meta-Reports'.html_safe, reports_metareport_path
+    primary.item :statistics, '<span class="fi-star"></span> Statistics'.html_safe, reports_statistics_path
 
     # you can also specify a css id or class to attach to this particular level
     # works for all levels of the menu

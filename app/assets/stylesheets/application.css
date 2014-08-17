@@ -20,6 +20,10 @@ html, body {
     height: 100%;
 }
 
+select {
+    height: auto !important;
+}
+
 ul.folder-list {
 	list-style-type: none;
 	margin-left: 0px;

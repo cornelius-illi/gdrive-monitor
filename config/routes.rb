@@ -22,7 +22,8 @@ GdriveFeed::Application.routes.draw do
 
     member do
       get 'index_structure'
-      get 'combine_revisions'
+      get 'create_working_sessions'
+      get 'calculate_all_working_sessions'
 
     end
 
@@ -37,9 +38,6 @@ GdriveFeed::Application.routes.draw do
       member do
         get 'refresh_revisions'
         get 'download_revisions'
-        get 'calculate_diffs'
-        get 'merge_revisions'
-        get 'find_collaborations'
         get 'merged_revisions/:rev_id', :action => :merged_revisions, :as => 'merged_revisions'
       end
     end

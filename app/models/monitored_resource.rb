@@ -179,10 +179,17 @@ class MonitoredResource < ActiveRecord::Base
   handle_asynchronously :index_structure, :queue => 'index_structure', :owner => Proc.new {|o| o}
 
   # this has to be done in a second step, as all diffing jobs have to be finished first
-  def combine_revisions
+  def create_working_sessions
     resources.google_resources.each do |resource|
-      resource.find_collaborations
+      resource.create_working_sessions
     end
   end
-  handle_asynchronously :combine_revisions, :queue => 'combine_revisions', :owner => Proc.new {|o| o}
+  handle_asynchronously :create_working_sessions, :queue => 'combine_revisions', :owner => Proc.new {|o| o}
+
+  def calculate_all_working_sessions
+    resources.google_resources.each do |resource|
+      resource.calculate_all_working_sessions
+    end
+  end
+  handle_asynchronously :calculate_all_working_sessions, :queue => 'combine_revisions', :owner => Proc.new {|o| o}
 end

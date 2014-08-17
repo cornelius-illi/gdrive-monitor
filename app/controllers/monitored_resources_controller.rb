@@ -3,7 +3,7 @@ require 'time_diff'
 
 class MonitoredResourcesController < ApplicationController
   #before_filter :refresh_token!, only: [:new, :index_structure]
-  before_action :set_monitored_resource, only: [:show, :permission_groups, :index_structure, :combine_revisions]
+  before_action :set_monitored_resource, only: [:show, :index_structure, :create_working_sessions, :calculate_all_working_sessions]
 
   def index
     @monitored_resources = current_user.monitored_resources
@@ -52,11 +52,18 @@ class MonitoredResourcesController < ApplicationController
     redirect_to @monitored_resource, :notice => "Structure has last been indexed #{diff[:diff]} hours ago!"
   end
 
-  def combine_revisions
+  def create_working_sessions
     authorize! :manage, @monitored_resource
 
-    @monitored_resource.combine_revisions
-    redirect_to @monitored_resource, :notice => "Revisions are being combined! This might take a while!"
+    @monitored_resource.create_working_sessions
+    redirect_to @monitored_resource, :notice => "Revisions are aggregated! This might take a while!"
+  end
+
+  def calculate_all_working_sessions
+    authorize! :manage, @monitored_resource
+
+    @monitored_resource.calculate_all_working_sessions
+    redirect_to @monitored_resource, :notice => "All possible working sessions between 3-40 minutes are calculated. This might take a while!"
   end
 
   def grant_access

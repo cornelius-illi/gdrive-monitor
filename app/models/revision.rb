@@ -3,15 +3,16 @@ require 'date'
 class Revision < ActiveRecord::Base
   belongs_to :resource
   belongs_to :permission
-  has_many :collaborations , class_name: '::Collaboration', :foreign_key => 'collaboration_id', :dependent => :delete_all
+  has_many :revisions , class_name: '::Revision', :foreign_key => 'working_session_id'
 
-  JOIN_QUERY = 'SELECT * FROM collaborations WHERE collaborations.threshold=' + Collaboration::STANDARD_COLLABORATION_THRESHOLD.to_s
+  # latest revision of a file
+  scope :latest, -> { order('modified_date DESC, permission_id DESC').first }
 
-  scope :latest, -> { order('modified_date DESC').first }
-  scope :with_collaboration, -> {
-    joins('LEFT JOIN ('+JOIN_QUERY+') AS c ON c.revision_id=revisions.id')
-    .where('c.id IS NULL')
-  }
+  #
+  scope :activities, -> { where('revisions.working_session_id IS NULL')}
+
+  # select all revisions that have joinable revisions via working_session_id
+  scope :first_in_working_sessions, -> { joins('JOIN revisions r ON r.working_session_id=revisions.id ').group('revisions.id') }
 
   WEAK_THRESHOLD_BASE = 1.freeze # divided with chars_count -> 1/100 = 0.01 = 1%, 1/1000 = 0.001 = 0.1%
 
@@ -24,14 +25,6 @@ class Revision < ActiveRecord::Base
     return result.first['count']
   end
 
-  def self.count_weak(collection_of_revisions)
-    nbr_weak = 0
-    collection_of_revisions.each do |revision|
-      nbr_weak += revision.is_weak? ? 1 : 0
-    end
-    return nbr_weak
-  end
-
   def first_revision_in_session
     Revision
       .joins('JOIN collaborations ON collaborations.revision_id=revisions.id')
@@ -41,41 +34,60 @@ class Revision < ActiveRecord::Base
   end
 
   def team_collaboration?
-    permission_ids = [ permission_id ]
-    collaborations.each do |collaboration|
-      permission_ids << collaboration.permission_id
+    # for head-revisions of working sessions and single activities
+    if working_session_id.blank?
+      team_collaboration =  (!collaboration.blank? && collaboration > 0)
+    else
+      # if it is a revision that is part of an working session, find the head-revision first
+      head_revision = Revision.find(working_session_id)
+      team_collaboration = (head_revision.blank? && head_revision.collaboration > 0)
     end
 
-    permission_ids.uniq!
-    return (permission_ids.length > 1)
+    return team_collaboration
   end
 
   def collaboration_is_global?(monitored_resource_id=nil)
-    return false if monitored_resource_id.nil?
-
-    perm_ids = Array.new
-    perm_ids << self.permission_id
-    self.collaborations.each do |r|
-      perm_ids << r.permission_id
-    end
-    # remove duplicates
-    perm_ids.uniq!
-
-    # definition: at least one permission from a different permission group
-    perm_group_ids = Array.new
-    # @todo: works only for n=2 perm-groups. need to look at n-1 groups
-    group = PermissionGroup.where(:monitored_resource_id => monitored_resource_id).first
-
-    # pre-condition
-    return false if group.nil?
-
-    group.permissions.each do |perm|
-      perm_group_ids << perm.id
+    # for head-revisions of working sessions and single activities
+    if working_session_id.blank?
+      global_collaboration =  (!collaboration.blank? && collaboration > 1)
+    else
+      # if it is a revision that is part of an working session, find the head-revision first
+      head_revision = Revision.find(working_session_id)
+      global_collaboration = (head_revision.blank? && head_revision.collaboration > 1)
     end
 
-    intersection = perm_ids & perm_group_ids
-    # two cases are relevant: all match, none matches -> one group did all the work
-    return !((intersection).length.eql?(perm_ids.length) || intersection.length.eql?(0))
+    # collaboration holds the number of distinct permission-groups, or 0 if only one permission is part of the session
+    return global_collaboration
+  end
+
+  def detect_collaboration
+    # if it is not the head-revision of a session.
+    return false unless working_session_id.blank?
+
+    collaboration = 0
+
+    # get all permission-ids of revisions that are part of the working session
+    permission_ids = [ permission_id ]
+    revisions.each do |revision|
+      permission_ids << revision.permission_id
+    end
+
+    permission_ids.uniq!
+
+    if permission_ids.length > 1
+      collaboration = 1
+      uniq_perm_id_list = permission_ids.join(',')
+
+      # get the number of permission groups that are part of the working session
+      query = "SELECT COUNT(DISTINCT pgp.permission_group_id) as perm_groups FROM permissions p JOIN permission_groups_permissions pgp ON p.id=pgp.permission_id WHERE p.monitored_resource_id=1 AND p.id IN (#{uniq_perm_id_list})"
+      result = ActiveRecord::Base.connection.exec_query(query)
+
+      # in case no groups have been defined, 1 should be returned as pre-condition (permission_ids.length > 1) has already been fulfilled.
+      collaboration =  (result.first['perm_groups'] > 0) ? result.first['perm_groups'] : 1
+    end
+
+    Revision.find(id).update(collaboration: collaboration)
+    return collaboration
   end
 
   def total_percental_change
@@ -168,22 +180,42 @@ class Revision < ActiveRecord::Base
   def previous
     # WARNING: this method can cause troubles, when using MySQL and modified_date as datetime(0) which is the standard.
     return Revision
-      .where('resource_id=? AND modified_date < ?', resource_id, modified_date )
-      .order('modified_date DESC').first
+      .where('resource_id=? AND ((modified_date = ? AND permission_id < ?) OR modified_date < ?)', resource_id, modified_date, permission_id, modified_date )
+      .order('modified_date DESC, permission_id DESC').first
+  end
+
+  # tries to aggregate revisions to working sessions
+  # pre-condition: requires to start with the latest revision.
+  # then recursivly creates working sessions
+  def create_working_sessions()
+    previous = previous()
+    # return, if there is no previous revision
+    return if previous.blank?
+
+    threshold_in_seconds = Collaboration::STANDARD_COLLABORATION_THRESHOLD
+    if (modified_date - threshold_in_seconds) <= previous.modified_date
+      # am I already part of a working session? ... then continue session, else create new with my id
+      working_session = working_session_id.blank? ?  id : working_session_id
+
+      previous.update(
+          working_session_id: working_session
+      )
+    end
+
+    previous.create_working_sessions()
   end
 
   def collaboration_for(threshold)
     Collaboration.where(:revision_id => id).where(:threshold => threshold).first
   end
 
-  def find_and_create_collaboration(skip_calculation_mode=false)
+  def calculate_all_working_sessions()
     previous = previous()
     # return, if there is no previous revision
     return if previous.blank?
 
-    distance_in_seconds_list = skip_calculation_mode ? [ Collaboration::STANDARD_COLLABORATION_THRESHOLD ] : (3..40)
-    distance_in_seconds_list.each do |var|
-      threshold_in_seconds = (var*60).seconds
+    distance_in_seconds_list = (3..40)
+    distance_in_seconds_list.each do |threshold_in_seconds|
       if (modified_date - threshold_in_seconds) <= previous.modified_date
         collaboration = collaboration_for(threshold_in_seconds)
         master =  collaboration.blank? ? id : collaboration.collaboration_id
@@ -198,7 +230,7 @@ class Revision < ActiveRecord::Base
       end
     end
 
-    previous.find_and_create_collaboration(skip_calculation_mode)
+    previous.calculate_all_working_sessions()
   end
 
   def collaboration_length
@@ -216,7 +248,7 @@ class Revision < ActiveRecord::Base
 
     where = ["WHERE resources.monitored_resource_id=%s AND resources.mime_type !='application/vnd.google-apps.folder'", monitored_resource_id]
     unless monitored_period.blank? || !monitored_period.is_a?(MonitoredPeriod)
-      where.first << " AND (resources.created_date > '#{monitored_period.start_date}' AND resources.created_date < '#{monitored_period.end_date}' )"
+      where.first << " AND (revisions.modified_date >= '#{monitored_period.start_date}' AND revisions.modified_date <= '#{monitored_period.end_date}' )"
     end
 
     unless permission_id.blank?

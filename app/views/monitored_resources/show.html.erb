@@ -6,8 +6,11 @@
     <span class="has-tip" title="To update resource-list and revisions for each resource." data-tooltip>
         <%= link_to "Index Structure", index_structure_monitored_resource_path(@monitored_resource), :class => 'button tiny' %>
     </span>
-    <span class="has-tip" title="To combine revisions. Has to be done after update." data-tooltip>
-        <%= link_to "Combine Revisions", combine_revisions_monitored_resource_path(@monitored_resource), :class => 'button tiny' %>
+    <span class="has-tip" title="To aggregate revisions. Has to be done after update." data-tooltip>
+        <%= link_to "Create Working Sessions", create_working_sessions_monitored_resource_path(@monitored_resource), :class => 'button tiny' %>
+    </span>
+    <span class="has-tip" title="To calculate the best time-distance for aggreation of revisions to working-session" data-tooltip>
+        <%= link_to "Calculate Best WS-Value", calculate_all_working_sessions_monitored_resource_path(@monitored_resource), :class => 'button tiny' %>
     </span>
 <% end %>
 

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140505164350) do
+ActiveRecord::Schema.define(version: 20140817133137) do
 
   create_table "changes", force: true do |t|
     t.string   "change_id"
@@ -164,17 +164,11 @@ ActiveRecord::Schema.define(version: 20140505164350) do
     t.integer  "permission_id"
     t.integer  "resource_id"
     t.float    "resource_etag"
-    t.text     "diff"
-    t.float    "percental_change"
-    t.float    "percental_add"
-    t.integer  "chars_changes"
-    t.integer  "words_changes"
-    t.integer  "lines_changes"
-    t.integer  "chars_count"
-    t.integer  "words_count"
-    t.integer  "lines_count"
     t.boolean  "is_weak",                        default: false
     t.integer  "distance_to_previous"
+    t.integer  "batch_upload_id"
+    t.integer  "working_session_id"
+    t.integer  "collaboration"
   end
 
   create_table "users", force: true do |t|
