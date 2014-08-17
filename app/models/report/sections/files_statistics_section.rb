@@ -22,7 +22,5 @@ class Report::Sections::FilesStatisticsSection < Report::Sections::AbstractSecti
     @metrics << Report::Metrics::RatioCollaboratedFilesWorkdays.new
     @metrics << Report::Metrics::NumberGloballyCollaboratedFiles.new
     @metrics << Report::Metrics::RatioGloballyCollaboratedFilesWorkdays.new
-    @metrics << Report::Metrics::NumberParallelActivities.new
-    @metrics << Report::Metrics::NumberParallelGlobalActivities.new
   end
 end

@@ -27,6 +27,7 @@ class BatchUpload < Activity
     monitored_resource.permissions.each do |permission|
       monitored_periods.each do |period|
         # get all revisions of Resource for a MonitoredResource for a given period and order them by modified_date
+        # pre-condition: working-sessions have to be aggregated first, because all revisions that belong to one are excluded
         query = ["SELECT revisions.id, revisions.resource_id, revisions.modified_date FROM resources JOIN revisions ON revisions.resource_id=resources.id"]
         query.first << " WHERE resources.monitored_resource_id=? AND revisions.permission_id=? AND revisions.modified_date >= ? AND revisions.modified_date <= ? AND working_session_id IS NULL and collaboration IS NULL"
         query.first << " ORDER BY revisions.modified_date DESC"

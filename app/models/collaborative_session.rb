@@ -6,7 +6,7 @@ class CollaborativeSession < Activity
     where.push monitored_resource.id
 
     unless monitored_period.blank?
-      where.first << "revisions.modified_date >= ? AND revisions.modified_date <= ?"
+      where.first << "AND revisions.modified_date >= ? AND revisions.modified_date <= ?"
       where.push monitored_period.start_date
       where.push monitored_period.end_date
     end
@@ -27,7 +27,7 @@ class CollaborativeSession < Activity
     where.push monitored_resource.id
 
     unless monitored_period.blank?
-      where.first << "revisions.modified_date >= ? AND revisions.modified_date <= ?"
+      where.first << "AND revisions.modified_date >= ? AND revisions.modified_date <= ?"
       where.push monitored_period.start_date
       where.push monitored_period.end_date
     end
@@ -48,7 +48,7 @@ class CollaborativeSession < Activity
     where.push monitored_resource.id
 
     unless monitored_period.blank?
-      where.first << "revisions.modified_date >= ? AND revisions.modified_date <= ?"
+      where.first << "AND revisions.modified_date >= ? AND revisions.modified_date <= ?"
       where.push monitored_period.start_date
       where.push monitored_period.end_date
     end
