@@ -64,6 +64,7 @@ class Revision < ActiveRecord::Base
     # if it is not the head-revision of a session.
     return false unless working_session_id.blank?
 
+    # NULL = activity, 0 = Working Session, 1-N = (Global) Collaboration
     collaboration = 0
 
     # get all permission-ids of revisions that are part of the working session
@@ -74,8 +75,8 @@ class Revision < ActiveRecord::Base
 
     permission_ids.uniq!
 
+    # collaboration only when there are more than 1 permissions involved
     if permission_ids.length > 1
-      collaboration = 1
       uniq_perm_id_list = permission_ids.join(',')
 
       # get the number of permission groups that are part of the working session
