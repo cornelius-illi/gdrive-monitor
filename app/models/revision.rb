@@ -3,13 +3,12 @@ require 'date'
 class Revision < ActiveRecord::Base
   belongs_to :resource
   belongs_to :permission
-  has_many :revisions , class_name: '::Revision', :foreign_key => 'working_session_id'
+  has_many :revisions , class_name: '::Revision', :foreign_key => 'working_session_id', :order => 'modified_date DESC, permission_id DESC'
 
   # latest revision of a file
   scope :latest, -> { order('modified_date DESC, permission_id DESC').first }
 
-  #
-  scope :activities, -> { where('revisions.working_session_id IS NULL')}
+  scope :activities, -> { where('revisions.working_session_id IS NULL').order('modified_date DESC, permission_id DESC') }
 
   # select all revisions that have joinable revisions via working_session_id
   scope :first_in_working_sessions, -> { joins('JOIN revisions r ON r.working_session_id=revisions.id ').group('revisions.id') }
