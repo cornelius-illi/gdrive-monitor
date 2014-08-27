@@ -15,7 +15,7 @@ class Resource < ActiveRecord::Base
     application/vnd.google-apps.spreadsheet
     application/vnd.google-apps.presentation
     application/vnd.google-apps.form
-  ).freeze
+  )
 
   MICROSOFT_OFFICE_FILE_TYPES = %w(
     application/msword
@@ -24,12 +24,15 @@ class Resource < ActiveRecord::Base
     application/vnd.openxmlformats-officedocument.presentationml.presentation
     application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
     application/vnd.openxmlformats-officedocument.wordprocessingml.document
-  ).freeze
+  )
 
   OPEN_OFFICE_FILE_TYPES = %w(
     application/vnd.oasis.opendocument.graphics
     application/vnd.oasis.opendocument.text
   )
+
+  OFFICE_FILE_TYPES = MICROSOFT_OFFICE_FILE_TYPES.concat(OPEN_OFFICE_FILE_TYPES)
+  WORKING_DOCUMENT_TYPES = GOOGLE_FILE_TYPES.concat(OFFICE_FILE_TYPES)
 
 
   IMAGE_FILE_TYPE = 'image/jpeg'.freeze
@@ -260,7 +263,11 @@ class Resource < ActiveRecord::Base
     result.first['resources']
   end
 
-  def self.analyse_modified_resources_for(monitored_resource_id, monitored_period, google_file_types_only=false)
+  def self.count_working_documents()
+    Resource.where("mime_type IN ('#{ WORKING_DOCUMENT_TYPES.join("','") }')").count
+  end
+
+  def self.analyse_modified_resources_for(monitored_resource_id, monitored_period, mime_type_collection=nil)
     return nil if monitored_resource_id.blank?
 
     where = ["WHERE resources.monitored_resource_id=%s AND mime_type !='application/vnd.google-apps.folder'", monitored_resource_id]
@@ -268,8 +275,8 @@ class Resource < ActiveRecord::Base
       where.first << " AND (revisions.modified_date >= '#{monitored_period.start_date}' AND revisions.modified_date <= '#{monitored_period.end_date}' )"
     end
 
-    if google_file_types_only
-      where.first << " AND resources.mime_type IN ('#{ GOOGLE_FILE_TYPES.join("','") }')"
+    unless mime_type_collection.blank?
+      where.first << " AND resources.mime_type IN ('#{ mime_type_collection.join("','") }')"
     end
 
     where_sql = ActiveRecord::Base.send(:sanitize_sql_array, where)
@@ -296,6 +303,18 @@ class Resource < ActiveRecord::Base
     Resource
       .where("mime_type IN('#{GOOGLE_FILE_TYPES.join("','")}')")
       .count()
+  end
+
+  def self.count_office_resources
+    Resource
+      .where("mime_type IN('#{MICROSOFT_OFFICE_FILE_TYPES.join("','")}')")
+      .count()
+  end
+
+  def self.count_openoffice_resources
+    Resource
+    .where("mime_type IN('#{OPEN_OFFICE_FILE_TYPES.join("','")}')")
+    .count()
   end
 
   def self.count_images

@@ -18,6 +18,14 @@
       <td><%= ((100/@revisions_count.to_f)*@revision_google_count).round(2) %>%</td>
     </tr>
     <tr>
+      <td>Number of MS-Office Documents</td><td><%= @office_count %></td>
+      <td><%= ((100/@resource_count.to_f)*@office_count).round(2) %>%</td>
+    </tr>
+    <tr>
+      <td>Number of OpenOffice Documents</td><td><%= @openoffice_count %></td>
+      <td><%= ((100/@resource_count.to_f)*@openoffice_count).round(2) %>%</td>
+    </tr>
+    <tr>
       <td>Number of Images</td><td><%= @images_count %></td>
       <td><%= ((100/@resource_count.to_f)*@images_count).round(2) %>%</td>
     </tr>

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140817133137) do
+ActiveRecord::Schema.define(version: 20140824092733) do
 
   create_table "changes", force: true do |t|
     t.string   "change_id"
@@ -22,7 +22,7 @@ ActiveRecord::Schema.define(version: 20140817133137) do
     t.integer  "resource_id"
   end
 
-  create_table "collaborations", force: true do |t|
+  create_table "collaboration_aggregates", force: true do |t|
     t.integer  "threshold"
     t.integer  "revision_id"
     t.integer  "collaboration_id"
@@ -41,6 +41,7 @@ ActiveRecord::Schema.define(version: 20140817133137) do
     t.string   "status"
     t.integer  "comment_id"
     t.integer  "resource_id"
+    t.integer  "permission_id"
   end
 
   create_table "delayed_jobs", force: true do |t|
@@ -120,6 +121,15 @@ ActiveRecord::Schema.define(version: 20140817133137) do
     t.string  "email_address"
     t.integer "monitored_resource_id"
     t.integer "permission_group_id"
+  end
+
+  create_table "report_data", force: true do |t|
+    t.string  "metric"
+    t.integer "permission_id"
+    t.integer "permission_group_id"
+    t.integer "monitored_resource_id"
+    t.float   "value"
+    t.date    "date"
   end
 
   create_table "reports", force: true do |t|

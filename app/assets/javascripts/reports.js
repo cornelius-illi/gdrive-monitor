@@ -1,6 +1,7 @@
 //= require highcharts
 //= require highcharts/highcharts-more
 //= require highcharts/modules/exporting
+//= require regression.js
 
 // reports.index
 function calculate_diffs() {
@@ -43,21 +44,19 @@ $(document).ready(function() {
     // if on page /reports/metareport/
     if ($('.metareport-charts').length) {
         // find active metric + period-group and draw chart
-        var period_group_id = $('dd.active a').data('period-id');
-        var metric_name = $('div.tabs-content li.active a.metric-link').data('metric-name');
+        var metric_name = $('li.active a.metric-link').data('metric-name');
 
-        drawChartFor(metric_name, period_group_id);
+        drawChartFor(metric_name);
 
         // register onClick-Handler for all metrics-period-groups
         $('a.metric-link ').click(function(event) {
             event.preventDefault();
-            var period_group_id = $('dd.active a').data('period-id');
             var metric_name = $(this).data('metric-name');
 
             $("ul.side-nav li.active").removeClass('active');
             $(this).parent().addClass('active');
 
-            drawChartFor(metric_name, period_group_id);
+            drawChartFor(metric_name);
         });
     }
 
@@ -77,29 +76,41 @@ $(document).ready(function() {
     }
 });
 
-function drawChartFor(metric_name, period_group_id) {
+function drawChartFor(metric_name) {
     $.ajax({
         type: 'GET',
         url: '/reports/metareport/',
-        data: { metric: metric_name, period_group: period_group_id },
+        data: { metric: metric_name },
         async: true,
         dataType: "json",
         success: function (result) {
-            drawMetaReportChart(metric_name, period_group_id, result['periods'], result['data']);
+            drawMetaReportChart(metric_name, result['periods'], result['data']);
         }
     });
 }
 
-function drawMetaReportChart(title, period_group_id, periods, data) {
-    $('#metareport-chart-' + period_group_id).highcharts({
+function drawMetaReportChart(title, periods, data) {
+    var chart_type = "line"; // "scatter"
+    $('#metareport-chart').highcharts({
         title: {
             text: title,
             x: -20 //center
         },
+        colors: ['#C7C7C7','#BEEFBE','#7EDF7E', '#A6B8ED','#4D70DB','#F3C2C2','#E06666'],
+        // colors: ['#BEEFBE', '#A6B8ED','#F3C2C2'],
+        // colors: ['#0000FF', '#3399FF', '#006600', '#00CC00', '#CC0000', '#FF6666'],
         xAxis: {
-            categories: periods
+            categories: periods,
+            labels: {
+                rotation: -45,
+                style: {
+                    fontSize:'15px'
+                }
+            }
         },
         yAxis: {
+            type: 'logarithmic',
+            //min: 0.01,
             title: {
                 text: 'Occurence'
             },
@@ -115,7 +126,54 @@ function drawMetaReportChart(title, period_group_id, periods, data) {
             verticalAlign: 'middle',
             borderWidth: 0
         },
-        series: data
+        exporting: {
+            sourceWidth: 1600,
+            sourceHeight: 800
+        },
+        series: [{
+            type: chart_type,
+            name: data[0]['name'],
+            data: data[0]['data']
+        },{
+            type: chart_type,
+            name: data[1]['name'],
+            data: data[1]['data']
+        },{
+            type: 'line',
+            //showInLegend: false,
+            name: data[1]['name'] + '- trend',
+            marker: { enabled: false },
+            /* function returns data for trend-line */
+            data: (function () {
+                return fitData(data[1]['data']).data;
+            })()
+        },{
+            type: chart_type,
+            name: data[2]['name'],
+            data: data[2]['data']
+        },{
+            type: 'line',
+            //showInLegend: false,
+            name: data[2]['name'] + '- trend',
+            marker: { enabled: false },
+            /* function returns data for trend-line */
+            data: (function() {
+                return fitData(data[2]['data']).data;
+            })()
+        },{
+            type: chart_type,
+            name: data[3]['name'],
+            data: data[3]['data']
+        },{
+            type: 'line',
+            //showInLegend: false,
+            name: data[3]['name'] + '- trend',
+            marker: { enabled: false },
+            /* function returns data for trend-line */
+            data: (function() {
+                return fitData(data[3]['data']).data;
+            })()
+        }]
     });
 }
 

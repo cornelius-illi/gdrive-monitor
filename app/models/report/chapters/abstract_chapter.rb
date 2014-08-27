@@ -9,9 +9,9 @@ class Report::Chapters::AbstractChapter
     initialize_chapter
   end
 
-  def calculate_for(monitored_resource, period_group)
+  def calculate_for(monitored_resource, monitored_periods)
     @sections.each do |section|
-      section.calculate_for(monitored_resource, period_group)
+      section.calculate_for(monitored_resource, monitored_periods)
     end
   end
 

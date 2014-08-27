@@ -130,7 +130,7 @@
                                merged_revisions_monitored_resource_resource_path(@monitored_resource, @resource, acitivity.id),
                                :data => { 'reveal-id' => "modal", 'reveal-ajax' => "true" }, :class => 'reveal-link' %>
               <% if acitivity.team_collaboration? %><span class="fi-torsos-all"></span>
-                  <% if acitivity.collaboration_is_global?(@resource.monitored_resource_id) %><span class="fi-web"></span><% end %>
+                  <% if acitivity.collaboration_is_global? %><span class="fi-web"></span><% end %>
                   (<%= acitivity.revisions.length+1 %>)
               <% elsif !acitivity.team_collaboration? && acitivity.revisions.length > 0 %><span class="fi-page-multiple"></span> (<%= acitivity.revisions.length+1  %>)<% end %>
             </td>

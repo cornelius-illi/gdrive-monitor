@@ -253,8 +253,8 @@ Devise.setup do |config|
   require "omniauth-google-oauth2"
   #config.omniauth_path_prefix = '/users/auth/google_oauth2'
   config.omniauth :google_oauth2, 
-    "1022605865898-vi3ikq1dah235s71q6prdc2sgdrkkqqr.apps.googleusercontent.com", 
-    "kfftxqMMgULgbsQ7fWIyTzkj", { 
+    "83617039642-71f5ba3gvupkj3o4c962nka454l2ljsc.apps.googleusercontent.com",
+    "QL74njRfVLNNIL-aCrWLydVs", {
         access_type: "offline", 
         prompt: "consent",
         approval_prompt: "",

@@ -4,6 +4,6 @@ class Report::Metrics::NumberOfGoogleFilesModified < Report::Metrics::AbstractMe
   end
 
   def calculate_for(monitored_resource, period, data=nil)
-    return Resource.analyse_modified_resources_for(monitored_resource.id, period, true)
+    return Resource.analyse_modified_resources_for(monitored_resource.id, period, Resource::GOOGLE_FILE_TYPES)
   end
 end

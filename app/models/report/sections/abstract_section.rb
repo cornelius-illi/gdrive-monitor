@@ -14,10 +14,10 @@ class Report::Sections::AbstractSection
     raise NotImplementedError.new("Subclass responsibility")
   end
 
-  def calculate_for(monitored_resource, period_group)
+  def calculate_for(monitored_resource, monitored_periods)
     @metrics.each do |metric|
       @data[metric.title] = Hash.new
-      period_group.monitored_periods.each do |period|
+      monitored_periods.each do |period|
         @data[metric.title][period.id] = metric.calculate_for(monitored_resource, period, @data)
       end
     end

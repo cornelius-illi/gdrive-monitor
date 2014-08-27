@@ -3,10 +3,10 @@ module ResourcesHelper
   SVG_HEIGHT = 120
   SVG_PADDING = 10
   SVG_TEXT_LINE_PADDING = 5
-  SVG_SIZE_RECT = 10
+  SVG_SIZE_RECT = 12
 
   def svg_timeline(resource)
-    all_revisions = resource.revisions
+    all_revisions = resource.revisions # to calculate whole time-span
     activities = resource.revisions.activities
 
     # fist date in timeline, last in order
@@ -58,11 +58,11 @@ module ResourcesHelper
 
   def svg_revision_caption(x_value, even, revision, multiple=false, first_date=nil)
     if even
-      y_caption_start = multiple ? (SVG_HEIGHT/2) - 45 : (SVG_HEIGHT/2) - 40
-      y_anchor_line_end = (SVG_HEIGHT/2) - 35
+      y_caption_start = multiple ? (SVG_HEIGHT/2) - 60 : (SVG_HEIGHT/2) - 50
+      y_anchor_line_end = (SVG_HEIGHT/2) - 45
     else
-      y_caption_start = (SVG_HEIGHT/2 + 15)
-      y_anchor_line_end = (SVG_HEIGHT/2) + 35
+      y_caption_start = (SVG_HEIGHT/2 + 20)
+      y_anchor_line_end = (SVG_HEIGHT/2) + 50
     end
 
     elements = Array.new
@@ -88,10 +88,15 @@ module ResourcesHelper
 
     if multiple
       tspans << content_tag(:tspan, time_difference(first_date,revision.modified_date),
-        :x => x_value + SVG_TEXT_LINE_PADDING,
-        :dy => '1.2em',
-      )
+              :x => x_value + SVG_TEXT_LINE_PADDING,
+              :dy => '1.2em',
+          )
     end
+
+    tspans << content_tag(:tspan, "P: " + revision.revisions_permissions_id_list,
+        :x => x_value + SVG_TEXT_LINE_PADDING,
+        :dy => '1.2em'
+    )
 
     elements << content_tag(:text, tspans.join().html_safe, :x => x_value + SVG_TEXT_LINE_PADDING, :y => y_caption_start )
     return elements
@@ -125,7 +130,7 @@ module ResourcesHelper
     width = x_value_end-x_value_start + 10 # overlap (same as when rotated)
 
     elements = Array.new
-    elements << svg_revision_caption(x_value_start, even, activity, true, first_date)
+    elements << svg_revision_caption(x_value_end, even, activity, true, first_date)
     elements.flatten! # caption elements as new array, but on same level
 
     elements << tag(:rect,
@@ -141,6 +146,6 @@ module ResourcesHelper
 
   def rect_stroke_color(activity, mr_id)
     stroke_color = activity.team_collaboration? ? 'rgb(0,80,0)' : 'rgb(0,0,0)'
-    activity.collaboration_is_global?(mr_id) ? 'rgb(255,0,0)' : stroke_color
+    activity.collaboration_is_global? ? 'rgb(255,0,0)' : stroke_color
   end
 end

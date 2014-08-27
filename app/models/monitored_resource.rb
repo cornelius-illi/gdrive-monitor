@@ -20,6 +20,10 @@ class MonitoredResource < ActiveRecord::Base
     #Delayed::Job.find_all_by_owner_type(self.base_class.name)
   #end
 
+  def anonymous_title
+    "project ##{id}"
+  end
+
   def report_for_period_group(period_group)
     reports.each do |report|
       return report if report.period_group_id.eql?(period_group.id)
@@ -32,6 +36,7 @@ class MonitoredResource < ActiveRecord::Base
 
       where_sql = create_where_statement filters
 
+      # @todo: this query will show collaborations only when they happend within a period, not when they have been started before ...
       query = "SELECT resources.id, resources.title, resources.created_date, resources.modified_date, resources.mime_type, resources.icon_link, COUNT(DISTINCT revisions.id) as revisions,
       COUNT(DISTINCT revisions.permission_id) as permissions, COUNT(DISTINCT permission_groups_permissions.permission_group_id) as permission_groups,
       COUNT(DISTINCT comments.gid) as comments
@@ -40,7 +45,6 @@ class MonitoredResource < ActiveRecord::Base
       GROUP BY resources.id ORDER BY #{sort_column} #{sort_direction} LIMIT #{offset},#{per_page};"
 
       # connection = ActiveRecord::Base.
-      p query
       ActiveRecord::Base.connection.exec_query(query)
   end
 

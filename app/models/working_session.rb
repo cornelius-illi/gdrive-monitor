@@ -1,9 +1,13 @@
 class WorkingSession < Activity
-  def self.count(monitored_resource, monitored_period=nil)
+  def self.count(monitored_resource, monitored_period=nil, resource_ids=nil)
     return if monitored_resource.blank?
 
     where = ["WHERE resources.monitored_resource_id=? AND revisions.working_session_id IS NULL AND revisions.collaboration = 0 "]
     where.push monitored_resource.id
+
+    if !resource_ids.blank? && resource_ids.is_a?(Array)
+      where.first << " AND resources.id IN (#{resource_ids.join(",")}) "
+    end
 
     unless monitored_period.blank?
       where.first << "AND revisions.modified_date >= ? AND revisions.modified_date <= ?"

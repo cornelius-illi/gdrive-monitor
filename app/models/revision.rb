@@ -26,11 +26,8 @@ class Revision < ActiveRecord::Base
   end
 
   def first_revision_in_session
-    Revision
-      .joins('JOIN collaborations ON collaborations.revision_id=revisions.id')
-      .where('collaborations.collaboration_id=?', self.id)
-      .where('collaborations.threshold=?', Collaboration::STANDARD_COLLABORATION_THRESHOLD)
-      .order('modified_date ASC').first
+    rev_id = collaboration.blank? ? (working_session_id.blank? ? self : Revision.find(working_session_id)) : self
+    Revision.where(:working_session_id => rev_id).order(modified_date: :asc).first
   end
 
   def team_collaboration?
@@ -46,7 +43,7 @@ class Revision < ActiveRecord::Base
     return team_collaboration
   end
 
-  def collaboration_is_global?(monitored_resource_id=nil)
+  def collaboration_is_global?
     # for head-revisions of working sessions and single activities
     if working_session_id.blank?
       global_collaboration =  (!collaboration.blank? && collaboration > 1)
@@ -60,11 +57,19 @@ class Revision < ActiveRecord::Base
     return global_collaboration
   end
 
+  def revisions_permissions_id_list
+    permission_list = Array.new
+    permission_list << permission_id
+    permission_list.concat revisions.map {|n| n.permission_id}
+    permission_list.uniq!
+    return permission_list.join(",")
+  end
+
   def detect_collaboration
     # if it is not the head-revision of a session.
     return false unless working_session_id.blank?
 
-    # NULL = activity, 0 = Working Session, 1-N = (Global) Collaboration
+    # NULL = activity, 0 = Working Session, 1-N = (Global) CollaborationAggregate
     collaboration = 0
 
     # get all permission-ids of revisions that are part of the working session
@@ -80,7 +85,8 @@ class Revision < ActiveRecord::Base
       uniq_perm_id_list = permission_ids.join(',')
 
       # get the number of permission groups that are part of the working session
-      query = "SELECT COUNT(DISTINCT pgp.permission_group_id) as perm_groups FROM permissions p JOIN permission_groups_permissions pgp ON p.id=pgp.permission_id WHERE p.monitored_resource_id=1 AND p.id IN (#{uniq_perm_id_list})"
+      mr_id = resource.monitored_resource_id
+      query = "SELECT COUNT(DISTINCT pgp.permission_group_id) as perm_groups FROM permissions p JOIN permission_groups_permissions pgp ON p.id=pgp.permission_id WHERE p.monitored_resource_id=#{mr_id} AND p.id IN (#{uniq_perm_id_list})"
       result = ActiveRecord::Base.connection.exec_query(query)
 
       # in case no groups have been defined, 1 should be returned as pre-condition (permission_ids.length > 1) has already been fulfilled.
@@ -193,7 +199,7 @@ class Revision < ActiveRecord::Base
     # return, if there is no previous revision
     return if previous.blank?
 
-    threshold_in_seconds = Collaboration::STANDARD_COLLABORATION_THRESHOLD
+    threshold_in_seconds = CollaborativeSession::STANDARD_COLLABORATION_THRESHOLD
     if (modified_date - threshold_in_seconds) <= previous.modified_date
       # am I already part of a working session? ... then continue session, else create new with my id
       working_session = working_session_id.blank? ?  id : working_session_id
@@ -207,7 +213,7 @@ class Revision < ActiveRecord::Base
   end
 
   def collaboration_for(threshold)
-    Collaboration.where(:revision_id => id).where(:threshold => threshold).first
+    CollaborationAggregate.where(:revision_id => id).where(:threshold => threshold).first
   end
 
   def calculate_all_working_sessions()
@@ -221,7 +227,7 @@ class Revision < ActiveRecord::Base
         collaboration = collaboration_for(threshold_in_seconds)
         master =  collaboration.blank? ? id : collaboration.collaboration_id
 
-        Collaboration
+        CollaborationAggregate
           .where(:revision_id => previous.id)
           .where(:permission_id => previous.permission_id)
           .where(:threshold => threshold_in_seconds)
@@ -244,6 +250,26 @@ class Revision < ActiveRecord::Base
   end
 
   # REPORT RELATED QUERIES - START
+  def self.count_for(monitored_resource_id, dates=nil, permission_id=nil)
+    return nil if monitored_resource_id.blank?
+
+    where = ["WHERE resources.monitored_resource_id=%s AND resources.mime_type !='application/vnd.google-apps.folder'", monitored_resource_id]
+    unless dates.blank? || !dates.is_a?(Hash)
+      where.first << " AND (revisions.modified_date >= '#{dates['start_date']}' AND revisions.modified_date <= '#{dates['end_date']}' )"
+    end
+
+    unless permission_id.blank?
+      where.first << " AND revisions.permission_id=%s"
+      where.push permission_id
+    end
+
+    where = ActiveRecord::Base.send(:sanitize_sql_array, where)
+
+    query = "SELECT COUNT(revisions.id) as revisions FROM resources JOIN revisions ON revisions.resource_id=resources.id #{where}"
+    result = ActiveRecord::Base.connection.exec_query(query)
+    result.first['revisions']
+  end
+
   def self.analyse_revisions_for(monitored_resource_id, monitored_period, permission_id=nil)
     return nil if monitored_resource_id.blank?
 

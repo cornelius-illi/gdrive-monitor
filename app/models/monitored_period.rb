@@ -12,6 +12,11 @@ class MonitoredPeriod < ActiveRecord::Base
     ((end_date - start_date)/ 1.day).round(0)
   end
 
+  def as_days
+    start_day = start_date.to_date
+    (0..(days-1)).to_a.collect { |y| start_day + y.day }
+  end
+
   def working_days(monitored_resource)
     query = "SELECT COUNT(DISTINCT DATE(modified_date)) AS working_days FROM resources WHERE modified_date >= '#{start_date}' AND modified_date <= '#{end_date}' AND monitored_resource_id=#{monitored_resource.id}"
     result = ActiveRecord::Base.connection.exec_query(query)

@@ -158,12 +158,7 @@ class ResourcesController < ApplicationController
 
   def merged_revisions
     @master = Revision.find(params[:rev_id])
-    @revisions = Revision
-    .joins('JOIN collaborations ON revisions.id=collaborations.revision_id')
-    .where('revisions.resource_id=?', @master.resource_id)
-    .where('collaborations.collaboration_id=?', @master.id)
-    .where('collaborations.threshold=?', Collaboration::STANDARD_COLLABORATION_THRESHOLD)
-    .order('modified_date DESC')
+    @revisions = Revision.where(:working_session_id => params[:rev_id]).order('modified_date DESC')
 
     respond_to do |format|
       format.html { render :layout => !request.xhr? }

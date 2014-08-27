@@ -1,4 +1,6 @@
 class CollaborativeSession < Activity
+  STANDARD_COLLABORATION_THRESHOLD = 1080.seconds.freeze # 18 minutes
+
   def self.count_local(monitored_resource, monitored_period=nil)
     return if monitored_resource.blank?
 
@@ -41,11 +43,15 @@ class CollaborativeSession < Activity
 
   end
 
-  def self.count_all(monitored_resource, monitored_period=nil)
+  def self.count_all(monitored_resource, monitored_period=nil, resource_ids=nil)
     return if monitored_resource.blank?
 
     where = ["WHERE resources.monitored_resource_id=? AND revisions.working_session_id IS NULL AND revisions.collaboration > 0 "]
     where.push monitored_resource.id
+
+    if !resource_ids.blank? && resource_ids.is_a?(Array)
+      where.first << " AND resources.id IN (#{resource_ids.join(",")}) "
+    end
 
     unless monitored_period.blank?
       where.first << "AND revisions.modified_date >= ? AND revisions.modified_date <= ?"

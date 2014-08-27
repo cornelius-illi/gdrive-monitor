@@ -10,5 +10,6 @@ class Report::Sections::ActivityStatisticsSection < Report::Sections::AbstractSe
     @metrics << Report::Metrics::NumberGlobalCollaborativeSessions.new
     @metrics << Report::Metrics::SumActivities.new
     @metrics << Report::Metrics::RatioActivitiesWorkdays.new
+    @metrics << Report::Metrics::SumGlobalCollaborationActivities.new
   end
 end

@@ -1,23 +1,24 @@
 require 'json'
 
 class ReportsController < ApplicationController
-  before_action :set_monitored_resource, only: [:index, :generate, :remove]
+  before_action :set_monitored_resource, only: [:index, :generate, :show, :remove]
 
   META_METRICS = [
+    Report::Metrics::NumberWorkingDays.title,
+    Report::Metrics::PercentageWorkingDays.title,
     Report::Metrics::NumberOfFilesCreated.title,
     Report::Metrics::NumberOfImages.title,
     Report::Metrics::NumberOfFilesModified.title,
     Report::Metrics::NumberOfFilesPreviousPeriods.title,
-    Report::Metrics::NumberAverageFilesCreated.title,
-    Report::Metrics::NumberOfGoogleFilesModified.title,
-    Report::Metrics::RatioGoogleModifiedFiles.title,
+    Report::Metrics::PercentageGdInWd.title,
     Report::Metrics::NumberOfRevisions.title,
-    Report::Metrics::NumberAverageRevisions.title,
-    Report::Metrics::RatioRevisionsModifiedFiles.title,
     Report::Metrics::NumberCollaboratedFiles.title,
     Report::Metrics::NumberGloballyCollaboratedFiles.title,
+    Report::Metrics::SumGlobalCollaborationActivities.title,
     Report::Metrics::NumberCollaborativeSessions.title,
-    Report::Metrics::NumberGlobalCollaborativeSessions.title
+    Report::Metrics::NumberGlobalCollaborativeSessions.title,
+    Report::Metrics::SumActivities.title,
+    Report::Metrics::RatioActivitiesWorkdays.title
   ].freeze
 
   def index
@@ -40,29 +41,44 @@ class ReportsController < ApplicationController
       }
 
       format.json {
-        period_group_id = params[:period_group].to_i
         metric_name = params[:metric]
+        periods = MonitoredPeriod.all.order(start_date: :asc)
+        period_names = periods.map{ |period| period.name }
+        period_days = periods.map{ |period| period.days }
+        period_hash = { :name => 'Days/ Period', :data => period_days}
 
-        period_group = PeriodGroup.find(period_group_id)
-        period_names = period_group.monitored_periods.map{ |period| period.name }
+        data = fetch_metareport_data(metric_name)
+        data.insert(0,period_hash)
 
         render json: {
           'periods' => period_names,
-          'data' => fetch_metareport_data(period_group, metric_name)
+          'data' => data
         }
       }
     end
   end
 
   def generate
-    PeriodGroup.all.each do |period_group|
+    single = true
+
+    Report.delete("monitored_resource_id = #{@monitored_resource.id}")
+
+    if single
       report = Report
+      .where(:monitored_resource_id => @monitored_resource.id)
+      .first_or_create
+      report.generate_report_data
+    else
+      PeriodGroup.all.each do |period_group|
+        report = Report
         .where(:monitored_resource_id => @monitored_resource.id)
         .where(:period_group_id => period_group.id)
         .first_or_create
 
-      report.generate_report_data
+        report.generate_report_data
+      end
     end
+
 
     redirect_to monitored_resource_reports_path(@monitored_resource), :notice => "Reports are being generated! This might take a while!"
   end
@@ -80,6 +96,8 @@ class ReportsController < ApplicationController
         @revisions_count = Revision.count
         @revision_google_count = Revision.count_revisions_google_files
         @google_count = Resource.count_google_resources
+        @office_count = Resource.count_office_resources
+        @openoffice_count = Resource.count_openoffice_resources
         @images_count = Resource.count_images
         @resource_single = Resource.with_single_revision
         @resource_single_images = Resource.with_single_images
@@ -165,19 +183,18 @@ class ReportsController < ApplicationController
     return meta_report_data
   end
 
-  def fetch_metareport_data(period_group, metric_name)
+  def fetch_metareport_data(metric_name)
     # [ {'name' => 'Team-Name', 'data' => [values-by-period]}, {}]
     meta_report_data = Array.new
 
     reports = Report
-      .where(:period_group_id =>  period_group.id)
       .where('monitored_resource_id IN (1,2,4)')
       .order('monitored_resource_id ASC')
 
     reports.each do |report|
       monitored_resource = MonitoredResource.find(report.monitored_resource_id)
       results_for_resource = Hash.new
-      results_for_resource['name'] = monitored_resource.title
+      results_for_resource['name'] = monitored_resource.anonymous_title
       results_for_resource['data'] = Array.new
 
       report.data.each do |chapter_index, chapter|
