@@ -104,7 +104,7 @@ class MonitoredResource < ActiveRecord::Base
   end
 
   def update_metadata(user_token)
-    metadata = DriveFiles.retrieve_file_metadata(self.gid, user_token)
+    metadata = DriveFiles.retrieve_file_metadata(gid, user_token)
 
     update_attributes(
       :created_date => metadata['createdDate'],
@@ -113,6 +113,13 @@ class MonitoredResource < ActiveRecord::Base
       :owner_names => metadata['ownerNames'].join(", "),
       :title => metadata['title']
     )
+  end
+
+  def update_resources_metadata(user_token)
+    resources = Resource.where(:monitored_resource_id => id)
+    resources.each do |resource|
+      resource.retrieve_and_update_metadata(user_token)
+    end
   end
 
   def update_permissions(user_token)

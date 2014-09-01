@@ -24,12 +24,18 @@ GdriveFeed::Application.routes.draw do
       get 'index_structure'
       get 'create_working_sessions'
       get 'calculate_all_working_sessions'
-
+      get 'update_resources_metadata'
     end
 
     resources :permissions do
       collection do
         get 'refresh'
+      end
+    end
+
+    resources :document_groups do
+      collection do
+        get 'new_samedocument'
       end
     end
 

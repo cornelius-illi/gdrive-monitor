@@ -1,0 +1,2 @@
+class SameDocumentDifferentMimeTypes < DocumentGroup
+end

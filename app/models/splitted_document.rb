@@ -1,0 +1,4 @@
+
+class SplittedDocument < DocumentGroup
+
+end

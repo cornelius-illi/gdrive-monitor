@@ -44,6 +44,9 @@
           <dd class="<%= 'active' if current_page?( monitored_resource_url(@monitored_resource)) %>">
             <%= link_to 'List Files', monitored_resource_path(@monitored_resource) %>
           </dd>
+          <dd class="<%= 'active' if current_page?( monitored_resource_document_groups_url(@monitored_resource)) %>">
+            <%= link_to 'Document Groups', monitored_resource_document_groups_path(@monitored_resource) %>
+          </dd>
           <dd class="<%= 'active' if current_page?( monitored_resource_permissions_url(@monitored_resource) ) %>">
             <%= link_to 'Permissions', monitored_resource_permissions_path(@monitored_resource) %>
           </dd>

@@ -66,6 +66,14 @@ class MonitoredResourcesController < ApplicationController
     redirect_to @monitored_resource, :notice => "All possible working sessions between 3-40 minutes are calculated. This might take a while!"
   end
 
+  def update_resources_metadata
+    authorize! :manage, @monitored_resource
+    refresh_token!
+
+    @monitored_resource.update_resources_metadata(current_user.token)
+    redirect_to @monitored_resource, :notice => "Metadata of all resource is begin updated. This might take a while!"
+  end
+
   def grant_access
 
   end

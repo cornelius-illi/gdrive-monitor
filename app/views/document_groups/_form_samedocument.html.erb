@@ -1,0 +1,31 @@
+<%= form_for [@monitored_resource,@document_group] do |f| %>
+  <% if @document_group.errors.any? %>
+    <div data-alert class="alert-box warning round" id="error_explanation">
+      <h2><%= pluralize(@document_group.errors.count, "error") %> prohibited this document_group from being saved:</h2>
+
+      <ul>
+      <% @document_group.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+      <a href="#" class="close">&times;</a>
+    </div>
+  <% end %>
+
+  <%= f.hidden_field :monitored_resource_id %>
+    <div class="row">
+      <div class="large-12 columns">
+        <%= f.label :title %>
+        <%= f.text_field :title, disabled: true %>
+      </div>
+    </div>
+    <div class="row">
+      <div class="large-12 columns">
+        <%= f.label :type %>
+        <%= f.collection_select :types, @monitored_resource.permissions, :id, :title_usage %>
+      </div>
+    </div>
+    <div class="row">
+       <div class="large-12 columns"><%= f.submit :class => 'button tiny' %></div>
+    </div>
+<% end %>

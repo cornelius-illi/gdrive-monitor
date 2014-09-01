@@ -1,0 +1,25 @@
+<h1>Listing document_groups</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @document_groups.each do |document_group| %>
+      <tr>
+        <td><%= link_to 'Show', document_group %></td>
+        <td><%= link_to 'Edit', edit_monitored_resource_document_group(monitored_resource, document_group) %></td>
+        <td><%= link_to 'Destroy', document_group, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Document group', new_monitored_resource_document_group_path %>

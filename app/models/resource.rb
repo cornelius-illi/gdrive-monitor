@@ -4,6 +4,8 @@ class Resource < ActiveRecord::Base
   has_many  :revisions, -> { order('modified_date DESC, permission_id DESC') }, :dependent => :delete_all
   has_many  :comments, :dependent => :delete_all
 
+  has_and_belongs_to_many :parents , class_name: '::Resource', :join_table => 'resources_parents', :foreign_key => 'parent_id'
+
   scope :google_resources, -> { where("mime_type IN('application/vnd.google-apps.drawing','application/vnd.google-apps.document','application/vnd.google-apps.spreadsheet','application/vnd.google-apps.presentation')") }
 
   serialize :export_links, Hash
@@ -32,6 +34,7 @@ class Resource < ActiveRecord::Base
   )
 
   OFFICE_FILE_TYPES = MICROSOFT_OFFICE_FILE_TYPES.concat(OPEN_OFFICE_FILE_TYPES)
+  # @todo: add adobe documents (indd) or rename to office_working ...
   WORKING_DOCUMENT_TYPES = GOOGLE_FILE_TYPES.concat(OFFICE_FILE_TYPES)
 
 
@@ -197,7 +200,7 @@ class Resource < ActiveRecord::Base
             :email_address => perm_metadata['emailAddress'],
             :domain => perm_metadata['domain'],
             :role => perm_metadata['role'],
-            :perm_type => perm_metadata['type'],
+            :perm_type => perm_metadata['type']
         )
       end
 
@@ -233,14 +236,10 @@ class Resource < ActiveRecord::Base
         :shared => metadata['shared'],
         :trashed => metadata['labels']['trashed'],
         :viewed => metadata['labels']['viewed'],
+        :parent_ids => metadata['parents'].first['id'],
         :title => metadata['title'],
         :permission_id => permission_id
       )
-  end
-  
-  def retrieve_and_update_metadata(token)
-    metadata = DriveFiles.retrieve_metadata_for(gid, token)
-    update_metadata(metadata, token)
   end
 
   def download_path
@@ -470,6 +469,12 @@ class Resource < ActiveRecord::Base
 
 
   # *** DELAYED TASKS - START
+  def retrieve_and_update_metadata(token)
+    metadata = DriveFiles.retrieve_file_metadata(gid, token)
+    update_metadata(metadata, token)
+  end
+  handle_asynchronously :retrieve_and_update_metadata, :queue => 'metadata', :owner => Proc.new {|o| o}
+
 
   def retrieve_comments(user_token)
     return unless is_google_filetype? # only for google_file_types

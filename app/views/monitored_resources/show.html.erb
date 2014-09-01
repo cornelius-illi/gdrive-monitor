@@ -6,6 +6,9 @@
     <span class="has-tip" title="To update resource-list and revisions for each resource." data-tooltip>
         <%= link_to "Index Structure", index_structure_monitored_resource_path(@monitored_resource), :class => 'button tiny' %>
     </span>
+    <span class="has-tip" title="To update resource metadata." data-tooltip>
+        <%= link_to "Update Resources Metadata", update_resources_metadata_monitored_resource_path(@monitored_resource), :class => 'button tiny' %>
+    </span>
     <span class="has-tip" title="To aggregate revisions. Has to be done after update." data-tooltip>
         <%= link_to "Create Working Sessions", create_working_sessions_monitored_resource_path(@monitored_resource), :class => 'button tiny' %>
     </span>

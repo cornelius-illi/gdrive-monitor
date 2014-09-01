@@ -1,5 +1,5 @@
 module DriveFiles
-  FIELDS_FILES_GET = 'alternateLink,iconLink,exportLinks,createdDate,md5Checksum,fileExtension,fileSize,kind,ownerNames,owners/permissionId,lastModifyingUserName,mimeType,modifiedDate,shared,sharedWithMeDate,title,labels(trashed,viewed)'
+  FIELDS_FILES_GET = 'alternateLink,iconLink,exportLinks,createdDate,md5Checksum,fileExtension,fileSize,kind,ownerNames,owners/permissionId,parents/id,lastModifyingUserName,mimeType,modifiedDate,shared,sharedWithMeDate,title,labels(trashed,viewed)'
   FIELDS_FILES_LIST = 'items(id,' + FIELDS_FILES_GET + ')'
   FIELDS_PERMISSIONS_GET = 'domain,emailAddress,etag,id,kind,name,role,type,value'
   FIELDS_PERMISSIONS_LIST = 'items(' + FIELDS_PERMISSIONS_GET + ')'
@@ -12,7 +12,8 @@ module DriveFiles
   end
   
   def self.retrieve_all_files_for(gid, user_token)
-    query = "'#{gid}' in parents and trashed = false"
+    # "and trashed = false" ... also download trashed!
+    query = "'#{gid}' in parents"
     return self.gdrive_api_file_list(query, user_token)
   end
   

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140824092733) do
+ActiveRecord::Schema.define(version: 20140901061644) do
 
   create_table "changes", force: true do |t|
     t.string   "change_id"
@@ -61,6 +61,13 @@ ActiveRecord::Schema.define(version: 20140824092733) do
   end
 
   add_index "delayed_jobs", ["priority", "run_at"], name: "delayed_jobs_priority", using: :btree
+
+  create_table "document_groups", force: true do |t|
+    t.string  "type"
+    t.string  "title"
+    t.integer "head_id"
+    t.integer "monitored_resource_id"
+  end
 
   create_table "monitored_periods", force: true do |t|
     t.string   "name"
@@ -164,6 +171,13 @@ ActiveRecord::Schema.define(version: 20140824092733) do
     t.integer  "permission_id"
     t.string   "icon_link"
     t.text     "export_links"
+    t.integer  "document_group_id"
+    t.string   "parent_ids"
+  end
+
+  create_table "resources_parents", force: true do |t|
+    t.integer "resource_id"
+    t.integer "parent_id"
   end
 
   create_table "revisions", force: true do |t|
