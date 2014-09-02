@@ -15,6 +15,7 @@ class ReportsController < ApplicationController
     Report::Metrics::NumberCollaboratedFiles.title,
     Report::Metrics::NumberGloballyCollaboratedFiles.title,
     Report::Metrics::SumGlobalCollaborationActivities.title,
+    Report::Metrics::SumGlobalCollaborationActivitiesGroups.title,
     Report::Metrics::NumberCollaborativeSessions.title,
     Report::Metrics::NumberGlobalCollaborativeSessions.title,
     Report::Metrics::SumActivities.title,

@@ -3,7 +3,9 @@ require 'time_diff'
 
 class MonitoredResourcesController < ApplicationController
   #before_filter :refresh_token!, only: [:new, :index_structure]
-  before_action :set_monitored_resource, only: [:show, :index_structure, :create_working_sessions, :calculate_all_working_sessions]
+  before_action :set_monitored_resource, only: [:show, :index_structure, :create_working_sessions,
+                                                :calculate_all_working_sessions, :update_resources_metadata,
+                                                :garbage_collection_mark, :garbage_collection_sweep]
 
   def index
     @monitored_resources = current_user.monitored_resources
@@ -50,6 +52,28 @@ class MonitoredResourcesController < ApplicationController
     @monitored_resource.update_attribute(:structure_indexed_at, now)
 
     redirect_to @monitored_resource, :notice => "Structure has last been indexed #{diff[:diff]} hours ago!"
+  end
+
+  def garbage_collection_mark
+    authorize! :manage, @monitored_resource
+    refresh_token!
+
+    # un-mark every resource
+    Resource
+      .where(:monitored_resource_id => @monitored_resource.id)
+      .update_all(:gc_marked => nil)
+
+    @monitored_resource.garbage_collection(current_user.id, current_user.token, @monitored_resource.gid)
+
+    redirect_to @monitored_resource, :notice => "Gargabe collection: marking phase is in progress!"
+  end
+
+  def garbage_collection_sweep
+    authorize! :manage, @monitored_resource
+
+    @monitored_resource.gc_delete_marked
+
+    redirect_to @monitored_resource, :notice => "Gargabe collection: sweeping completed!"
   end
 
   def create_working_sessions

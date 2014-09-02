@@ -9,6 +9,12 @@
     <span class="has-tip" title="To update resource metadata." data-tooltip>
         <%= link_to "Update Resources Metadata", update_resources_metadata_monitored_resource_path(@monitored_resource), :class => 'button tiny' %>
     </span>
+    <span class="has-tip" title="GC Mark" data-tooltip>
+        <%= link_to "GC Mark", garbage_collection_mark_monitored_resource_path(@monitored_resource), :class => 'button tiny' %>
+    </span>
+    <span class="has-tip" title="GC Sweep" data-tooltip>
+        <%= link_to "GC Sweep", garbage_collection_sweep_monitored_resource_path(@monitored_resource), :class => 'button tiny' %>
+    </span>
     <span class="has-tip" title="To aggregate revisions. Has to be done after update." data-tooltip>
         <%= link_to "Create Working Sessions", create_working_sessions_monitored_resource_path(@monitored_resource), :class => 'button tiny' %>
     </span>

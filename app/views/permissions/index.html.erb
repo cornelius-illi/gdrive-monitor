@@ -4,7 +4,7 @@
 <% unless @monitored_resource.permissions.blank? %>
     <ul>
     <% @monitored_resource.permissions.each do |permission| %>
-        <li><%= permission.title  %> - <%= permission.role %></li>
+        <li><%= permission.title  %> - <%= permission.role %> (#<%= permission.id %>)</li>
     <% end %>
     </ul>
 <% end %>

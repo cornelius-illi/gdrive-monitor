@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140901061644) do
+ActiveRecord::Schema.define(version: 20140901101018) do
 
   create_table "changes", force: true do |t|
     t.string   "change_id"
@@ -173,6 +173,9 @@ ActiveRecord::Schema.define(version: 20140901061644) do
     t.text     "export_links"
     t.integer  "document_group_id"
     t.string   "parent_ids"
+    t.boolean  "unavailable",             default: false
+    t.boolean  "unreachable",             default: false
+    t.boolean  "gc_marked"
   end
 
   create_table "resources_parents", force: true do |t|

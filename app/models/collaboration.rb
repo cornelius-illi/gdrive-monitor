@@ -79,6 +79,15 @@ class Collaboration
     return results.map {|r| r['id']}
   end
 
+  def self.find_collaborated_resources_and_groups(monitored_resource=nil, period=nil,limit_to_global=false)
+    resources = Collaboration.find_collaborated_resources_until(monitored_resource,period,limit_to_global)
+    groups = DocumentGroup.find_collaborated_document_groups_until(monitored_resource,period,limit_to_global)
+
+    all = resources.concat(groups)
+    all.uniq!
+    return all
+  end
+
 
   # Anzahl der "Aktivitäten" die zur "globlen Collaboration" innerhalb einer Periode beigetragen haben   //* (1-0.5) working_day/(days/100)
   def self.illi_metric(monitored_resource=nil, period=nil)

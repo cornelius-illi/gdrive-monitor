@@ -50,10 +50,16 @@ class User < ActiveRecord::Base
      :client_id => GOOGLE['client_id'],
      :client_secret => GOOGLE['client_secret'],
      :refresh_token => "#{current_user.refresh_token}",
-     :grant_type => 'refresh_token'
+     :grant_type => 'refresh_token',
    }
    
-   refresh = RestClient.post('https://accounts.google.com/o/oauth2/token', options)
+   begin
+     refresh = RestClient.post('https://accounts.google.com/o/oauth2/token', options)
+   rescue Exception => e
+     p e.inspect
+     exit
+   end
+
    if refresh.code == 200
      parsed_response = JSON::parse(refresh.body)
      current_user.token = parsed_response['access_token']

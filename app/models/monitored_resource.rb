@@ -1,5 +1,5 @@
 class MonitoredResource < ActiveRecord::Base
-  has_many  :resources, -> { where.not(mime_type: GOOGLE_FOLDER_TYPE) }, :dependent => :delete_all
+  has_many  :resources, -> { where.not(mime_type: GOOGLE_FOLDER_TYPE).where(unreachable: false).order('title') }, :dependent => :delete_all
   has_many  :permissions, :dependent => :delete_all
   has_many  :permission_groups, :dependent => :delete_all
   has_many  :reports, :dependent => :delete_all
@@ -68,7 +68,7 @@ class MonitoredResource < ActiveRecord::Base
     filters.each do |key,value|
       case key
         when :sSearch
-          where.first << " AND resources.title LIKE '%%%s%%'"
+          where.first << " AND resources.title LIKE '%%%s%%' AND resources.unreachable != 1 AND unavailable != 1 AND trashed != 1"
           where.push value
         when :filter_periods
           # all resources that have been modified (not only created)
@@ -116,7 +116,12 @@ class MonitoredResource < ActiveRecord::Base
   end
 
   def update_resources_metadata(user_token)
-    resources = Resource.where(:monitored_resource_id => id)
+    resources = Resource
+      .where(:monitored_resource_id => id)
+      .where(:trashed => false)
+      .where(:unavailable => false)
+      .where(:unreachable => false)
+
     resources.each do |resource|
       resource.retrieve_and_update_metadata(user_token)
     end
@@ -188,6 +193,41 @@ class MonitoredResource < ActiveRecord::Base
     end
   end
   handle_asynchronously :index_structure, :queue => 'index_structure', :owner => Proc.new {|o| o}
+
+  # @todo: this has to be integrated into index_structure and chained with gc_delete_marked
+  def garbage_collection(user_id, user_token, file_id)
+    resources = DriveFiles.retrieve_all_files_for(file_id, user_token)
+
+    resources.each do |metadata|
+      # new resource will not be considered currently
+      new_resource = Resource
+      .where(:gid => metadata['id'])
+      .where(:monitored_resource_id => id)
+      .where(:user_id => user_id)
+      .first
+
+      # every resource that has been called through traversing the structure is marked
+      new_resource.update(:gc_marked => true) unless new_resource.blank?
+
+      if !new_resource.blank? && new_resource.is_folder? # create new delayed_job, if type is folder
+        garbage_collection(user_id, user_token, new_resource.gid)
+      end
+    end
+  end
+  handle_asynchronously :garbage_collection, :queue => 'gargabe_collection', :owner => Proc.new {|o| o}
+
+  def gc_delete_marked
+    # set unmarked to unreachable
+    Resource
+      .where(:monitored_resource_id => id)
+      .where(:gc_marked => nil)
+      .update_all(:unreachable => true)
+
+    # reset garbage collection
+    Resource
+      .where(:monitored_resource_id => id)
+      .update_all(:gc_marked => nil)
+  end
 
   # this has to be done in a second step, as all diffing jobs have to be finished first
   def create_working_sessions

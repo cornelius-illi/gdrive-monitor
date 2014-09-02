@@ -1,10 +1,7 @@
-<h1>New DocumentGroup</h1>
+<% content_for :title, 'New Document Group' %>
+<h2>New DocumentGroup</h2>
 <p>Pleases choose type of document group</p>
 
-<ul>
-<li><%= link_to IdenticalDocument.name, new_samedocument_monitored_resource_document_groups_path(@monitored_resource) %></li>
-<li><%= link_to VersionedDocument.name, "" %></li>
-<li><%= link_to SplittedDocument.name, "" %></li>
-</ul>
+<%= render 'form' %>
 
-<%= link_to 'Back', monitored_resource_document_groups_path %>
+<%= link_to 'Back', monitored_resource_document_groups_path, :class => 'button tiny' %>

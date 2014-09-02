@@ -1,9 +1,15 @@
-<h1>Listing document_groups</h1>
+<% content_for :title, 'List of Document Groups' %>
+<h2>Document Groups for <%= @monitored_resource.title %></h2>
 
+<%= link_to 'Create New', new_monitored_resource_document_group_path, :class => 'button tiny' %>
+
+<% if @document_groups.length.eql? 0 %>
+    <p><i>There are no document groups available, yet. Go create one!</i></p>
+<% else %>
 <table>
   <thead>
     <tr>
-      <th></th>
+      <th>Title</th>
       <th></th>
       <th></th>
     </tr>
@@ -12,14 +18,12 @@
   <tbody>
     <% @document_groups.each do |document_group| %>
       <tr>
-        <td><%= link_to 'Show', document_group %></td>
-        <td><%= link_to 'Edit', edit_monitored_resource_document_group(monitored_resource, document_group) %></td>
-        <td><%= link_to 'Destroy', document_group, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        <td><%= document_group.title %></td>
+        <td><%= link_to 'Edit', edit_monitored_resource_document_group_path(@monitored_resource, document_group) %></td>
+        <td><%= link_to 'Destroy', monitored_resource_document_group_path(@monitored_resource.id, document_group), method: :delete, data: { confirm: 'Are you sure?' } %></td>
       </tr>
     <% end %>
   </tbody>
 </table>
-
-<br>
-
-<%= link_to 'New Document group', new_monitored_resource_document_group_path %>
+<% end %>
+<%= link_to 'Create New', new_monitored_resource_document_group_path, :class => 'button tiny' %>

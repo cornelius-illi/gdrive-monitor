@@ -25,6 +25,8 @@ GdriveFeed::Application.routes.draw do
       get 'create_working_sessions'
       get 'calculate_all_working_sessions'
       get 'update_resources_metadata'
+      get 'garbage_collection_mark'
+      get 'garbage_collection_sweep'
     end
 
     resources :permissions do

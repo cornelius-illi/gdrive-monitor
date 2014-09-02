@@ -7,7 +7,7 @@ class DocumentGroupsController < ApplicationController
       .where(:id => params[:monitored_resource_id])
       .where(:user_id => current_user.id)
       .first()
-    @document_groups = DocumentGroup.where(:monitored_resource_id => [:monitored_resource_id])
+    @document_groups = DocumentGroup.where(:monitored_resource_id => params[:monitored_resource_id])
   end
 
   # GET /monitored_resources/1/document_groups/1
@@ -17,13 +17,6 @@ class DocumentGroupsController < ApplicationController
   # GET /document_groups/new
   def new
     @monitored_resource = MonitoredResource
-      .where(:id => params[:monitored_resource_id])
-      .where(:user_id => current_user.id)
-      .first()
-  end
-
-  def new_samedocument
-    @monitored_resource = MonitoredResource
     .where(:id => params[:monitored_resource_id])
     .where(:user_id => current_user.id)
     .first()
@@ -32,7 +25,7 @@ class DocumentGroupsController < ApplicationController
       redirect_to monitored_resources_path, :notice => "Monitored Resource with ID #{params[:id]} could not be found!"
     end
 
-    @document_group = IdenticalDocument.new
+    @document_group = DocumentGroup.new
     @document_group.monitored_resource_id = @monitored_resource.id
   end
 
@@ -47,11 +40,9 @@ class DocumentGroupsController < ApplicationController
 
     respond_to do |format|
       if @document_group.save
-        format.html { redirect_to @document_group, notice: 'Document group was successfully created.' }
-        format.json { render action: 'show', status: :created, location: @document_group }
+        format.html { redirect_to monitored_resource_document_groups_path(@document_group.monitored_resource_id), notice: 'Document group was successfully created.' }
       else
         format.html { render action: 'new' }
-        format.json { render json: @document_group.errors, status: :unprocessable_entity }
       end
     end
   end

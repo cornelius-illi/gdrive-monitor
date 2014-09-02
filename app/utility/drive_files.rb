@@ -12,8 +12,9 @@ module DriveFiles
   end
   
   def self.retrieve_all_files_for(gid, user_token)
-    # "and trashed = false" ... also download trashed!
-    query = "'#{gid}' in parents"
+    # "and trashed = false" ... to only retrieve files available to user
+    # use garbage collection to mark as unavailable=1 for files that do not occur anymore
+    query = "'#{gid}' in parents and trashed = false"
     return self.gdrive_api_file_list(query, user_token)
   end
   
@@ -45,13 +46,19 @@ module DriveFiles
   end
   
   def self.gdrive_api_file_get(file_id, user_token)
-    # an expection could be thrown regarding insufficient permissions ...
-    response = RestClient.get "https://www.googleapis.com/drive/v2/files/#{file_id}", {:params => {
-      :key => GOOGLE['client_secret'], 
-      :access_token => user_token,
-      :fields => FIELDS_FILES_GET }}
-    response = JSON::parse(response)
-    # should return null
+    RestClient.get("https://www.googleapis.com/drive/v2/files/#{file_id}", {:params => {
+        :key => GOOGLE['client_secret'],
+        :access_token => user_token,
+        :fields => FIELDS_FILES_GET }}){ |response, request, result, &block|
+      case response.code
+        when 200
+          return JSON::parse(response)
+        when 404
+          return nil
+        else
+          response.return!(request, result, &block)
+      end
+    }
   end
   
   def self.gdrive_api_permission_list(file_id, user_token)

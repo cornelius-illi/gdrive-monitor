@@ -1,12 +1,15 @@
 class Resource < ActiveRecord::Base
   belongs_to :monitored_resource, :foreign_key => 'monitored_resource_id'
+  belongs_to :document_group, :foreign_key => 'document_group_id'
+
   has_many  :jobs, :class_name => "::Delayed::Job", :as => :owner
   has_many  :revisions, -> { order('modified_date DESC, permission_id DESC') }, :dependent => :delete_all
   has_many  :comments, :dependent => :delete_all
 
-  has_and_belongs_to_many :parents , class_name: '::Resource', :join_table => 'resources_parents', :foreign_key => 'parent_id'
+  #has_and_belongs_to_many :parents , class_name: '::Resource', :join_table => 'resources_parents', :foreign_key => 'parent_id'
 
   scope :google_resources, -> { where("mime_type IN('application/vnd.google-apps.drawing','application/vnd.google-apps.document','application/vnd.google-apps.spreadsheet','application/vnd.google-apps.presentation')") }
+  scope :ungrouped, ->(doc_gr) { where("mime_type IN('#{ALL_WORKING_DOCUMENT_TYPES.join("','")}') AND (document_group_id IS NULL OR document_group_id=?)", doc_gr.id )}
 
   serialize :export_links, Hash
 
@@ -36,6 +39,8 @@ class Resource < ActiveRecord::Base
   OFFICE_FILE_TYPES = MICROSOFT_OFFICE_FILE_TYPES.concat(OPEN_OFFICE_FILE_TYPES)
   # @todo: add adobe documents (indd) or rename to office_working ...
   WORKING_DOCUMENT_TYPES = GOOGLE_FILE_TYPES.concat(OFFICE_FILE_TYPES)
+
+  ALL_WORKING_DOCUMENT_TYPES = WORKING_DOCUMENT_TYPES.concat(['application/pdf', 'application/octet-stream'])
 
 
   IMAGE_FILE_TYPE = 'image/jpeg'.freeze
@@ -72,6 +77,11 @@ class Resource < ActiveRecord::Base
     query = ActiveRecord::Base.send(:sanitize_sql_array, ["SELECT DISTINCT resources.mime_type as mime_type FROM resources WHERE monitored_resource_id=%s ORDER BY mime_type",mr_id])
     results = ActiveRecord::Base.connection.exec_query(query)
     [ ['--- none ---',''], ['GOOGLE_FILE_TYPES','GOOGLE_FILE_TYPES'] ].concat results.map {|result| [result['mime_type'], result['mime_type']]}
+  end
+
+  def doc_group_title
+    rev = revisions.latest.blank? ? "" : "(#{revisions.latest.modified_date.to_date})"
+    return "#{title} (#{parent_ids}) #{rev}"
   end
 
   def is_folder?
@@ -207,6 +217,25 @@ class Resource < ActiveRecord::Base
       permission_id = permission.id
     end
 
+    # find the parent object
+    parent_gid = metadata['parents'].blank? ? nil : metadata['parents'].first['id']
+    parent_id = nil
+    unless parent_gid.blank?
+      parent_resource = Resource
+        .where(:gid => parent_gid)
+        .where(:monitored_resource_id => monitored_resource_id )
+        .first_or_initialize
+
+      if parent_resource.id.blank?
+        parent_meta = DriveFiles.retrieve_file_metadata(parent_gid, user_token)
+        unless parent_meta.blank? # parent can also be unreachable (404)
+          parent_resource.update_metadata(parent_meta, user_token)
+        end
+      end
+
+      parent_id = parent_resource.id
+    end
+
     # NOTICE: sometimes files have createdDates in the future, therefore we always search for the first revision.
     # If the date of the first revision is < creadedDate, then this one is used instead
     first_revision = Revision.where(:resource_id => id).order('modified_date ASC').first
@@ -220,7 +249,7 @@ class Resource < ActiveRecord::Base
     # Therefore it is altered here to avoid problems.
     metadata['modifiedDate'] = metadata['createdDate'] if metadata['modifiedDate'] < metadata['createdDate']
 
-    update_attributes(
+    update(
         :alternate_link => metadata['alternateLink'],
         :created_date => metadata['createdDate'],
         :icon_link => metadata['iconLink'],
@@ -236,7 +265,7 @@ class Resource < ActiveRecord::Base
         :shared => metadata['shared'],
         :trashed => metadata['labels']['trashed'],
         :viewed => metadata['labels']['viewed'],
-        :parent_ids => metadata['parents'].first['id'],
+        :parent_ids => parent_id,
         :title => metadata['title'],
         :permission_id => permission_id
       )
@@ -471,7 +500,13 @@ class Resource < ActiveRecord::Base
   # *** DELAYED TASKS - START
   def retrieve_and_update_metadata(token)
     metadata = DriveFiles.retrieve_file_metadata(gid, token)
-    update_metadata(metadata, token)
+
+    # if nil then 404 - file is not reachable anymore
+    if metadata.blank?
+      update(:unavailable => true)
+    else
+      update_metadata(metadata, token)
+    end
   end
   handle_asynchronously :retrieve_and_update_metadata, :queue => 'metadata', :owner => Proc.new {|o| o}
 

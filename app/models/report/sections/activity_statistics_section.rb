@@ -11,5 +11,6 @@ class Report::Sections::ActivityStatisticsSection < Report::Sections::AbstractSe
     @metrics << Report::Metrics::SumActivities.new
     @metrics << Report::Metrics::RatioActivitiesWorkdays.new
     @metrics << Report::Metrics::SumGlobalCollaborationActivities.new
+    @metrics << Report::Metrics::SumGlobalCollaborationActivitiesGroups.new
   end
 end
