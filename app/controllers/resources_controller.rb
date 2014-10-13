@@ -4,6 +4,9 @@ class ResourcesController < ApplicationController
   before_filter :refresh_token!, only: [:refresh_revisions, :download_revisions]
   before_action :set_resource, only: [:show, :refresh_revisions, :download_revisions,
                                       :calculate_diffs, :merge_revisions, :find_collaborations, :merged_revisions]
+  def set_content_type
+
+  end
 
   COLORS = [
       'rgba(119, 152, 191, .5)',
@@ -15,6 +18,13 @@ class ResourcesController < ApplicationController
 
   # GET monitored_resource/1/resources/1
   def show
+    respond_to do |format|
+      format.html {}
+      format.svg {
+        headers["Content-Type"] = "image/svg+xml"
+      }
+    end
+
     redirect_to monitored_resource_path(@monitored_resource), :alert => 'Resource does not exist!' if @resource.blank?
   end
 
@@ -29,7 +39,7 @@ class ResourcesController < ApplicationController
 
         result_set = {
           :categories => cat,
-          :data => scatter_distances(270)
+          :data => scatter_distances(1200)
         }
 
         render json: result_set
@@ -64,10 +74,10 @@ class ResourcesController < ApplicationController
           minutes = (seconds/60).to_s
           upper_limit = seconds+60
           distances_to_previous_revisions[minutes] = Array.new
-          query = 'SELECT rr.id, rr.distance_to_previous AS dist FROM collaborations cc
+          query = 'SELECT rr.id, rr.distance_to_previous AS dist FROM collaboration_aggregates cc
             INNER JOIN  (
               SELECT c.collaboration_id AS sid, MIN(c.modified_date) AS modd
-              FROM collaborations c WHERE c.threshold=? GROUP BY c.collaboration_id
+              FROM collaboration_aggregates c WHERE c.threshold=? GROUP BY c.collaboration_id
             ) xx  ON cc.collaboration_id = xx.sid AND cc.modified_date = xx.modd
             JOIN revisions rr ON cc.revision_id=rr.id
             WHERE cc.threshold=? AND rr.distance_to_previous < ? AND rr.distance_to_previous != 0;'

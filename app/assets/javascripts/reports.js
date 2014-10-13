@@ -96,8 +96,8 @@ function drawMetaReportChart(title, periods, data) {
             text: title,
             x: -20 //center
         },
-        colors: ['#C7C7C7','#BEEFBE','#7EDF7E', '#A6B8ED','#4D70DB','#F3C2C2','#E06666'],
-        // colors: ['#BEEFBE', '#A6B8ED','#F3C2C2'],
+        //colors: ['#C7C7C7','#BEEFBE','#7EDF7E', '#A6B8ED','#4D70DB','#F3C2C2','#E06666'],
+        colors: ['#BEEFBE', '#A6B8ED','#F3C2C2'],
         // colors: ['#0000FF', '#3399FF', '#006600', '#00CC00', '#CC0000', '#FF6666'],
         xAxis: {
             categories: periods,
@@ -109,14 +109,15 @@ function drawMetaReportChart(title, periods, data) {
             }
         },
         yAxis: {
-            type: 'logarithmic',
-            //min: 0.01,
+            type: 'linear',
+            min: 0.0,
+            ceiling: 8,
             title: {
                 text: 'Occurence'
             },
             plotLines: [{
-                value: 0,
-                width: 1,
+                value: 1,
+                width: 3,
                 color: '#808080'
             }]
         },
@@ -132,47 +133,16 @@ function drawMetaReportChart(title, periods, data) {
         },
         series: [{
             type: chart_type,
-            name: data[0]['name'],
-            data: data[0]['data']
-        },{
-            type: chart_type,
             name: data[1]['name'],
             data: data[1]['data']
-        },{
-            type: 'line',
-            //showInLegend: false,
-            name: data[1]['name'] + '- trend',
-            marker: { enabled: false },
-            /* function returns data for trend-line */
-            data: (function () {
-                return fitData(data[1]['data']).data;
-            })()
         },{
             type: chart_type,
             name: data[2]['name'],
             data: data[2]['data']
         },{
-            type: 'line',
-            //showInLegend: false,
-            name: data[2]['name'] + '- trend',
-            marker: { enabled: false },
-            /* function returns data for trend-line */
-            data: (function() {
-                return fitData(data[2]['data']).data;
-            })()
-        },{
             type: chart_type,
             name: data[3]['name'],
             data: data[3]['data']
-        },{
-            type: 'line',
-            //showInLegend: false,
-            name: data[3]['name'] + '- trend',
-            marker: { enabled: false },
-            /* function returns data for trend-line */
-            data: (function() {
-                return fitData(data[3]['data']).data;
-            })()
         }]
     });
 }

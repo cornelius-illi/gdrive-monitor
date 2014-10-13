@@ -186,8 +186,8 @@ class Revision < ActiveRecord::Base
   def previous
     # WARNING: this method can cause troubles, when using MySQL and modified_date as datetime(0) which is the standard.
     return Revision
-      .where('resource_id=? AND ((modified_date = ? AND permission_id < ?) OR modified_date < ?)', resource_id, modified_date, permission_id, modified_date )
-      .order('modified_date DESC, permission_id DESC').first
+      .where('resource_id=? AND ((modified_date = ? AND id < ?) OR modified_date < ?)', resource_id, modified_date, id, modified_date )
+      .order('modified_date DESC, id DESC').first
   end
 
   # tries to aggregate revisions to working sessions

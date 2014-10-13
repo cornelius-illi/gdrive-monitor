@@ -47,6 +47,7 @@ GdriveFeed::Application.routes.draw do
         get 'refresh_revisions'
         get 'download_revisions'
         get 'merged_revisions/:rev_id', :action => :merged_revisions, :as => 'merged_revisions'
+        get 'show_svg'
       end
     end
     resources :reports do

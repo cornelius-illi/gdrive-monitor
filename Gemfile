@@ -33,7 +33,7 @@ gem 'json'
 gem 'foundation-rails'
 gem 'simple-navigation'
 gem 'highcharts-rails'
-gem 'raphaeljs-rails'
+#gem 'raphaeljs-rails'
 gem 'time_diff'
 gem 'yaml_db', github: 'jetthoughts/yaml_db', ref: 'fb4b6bd7e12de3cffa93e0a298a1e5253d7e92ba'
 

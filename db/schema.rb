@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140901101018) do
+ActiveRecord::Schema.define(version: 20141007180851) do
 
   create_table "changes", force: true do |t|
     t.string   "change_id"
@@ -76,6 +76,7 @@ ActiveRecord::Schema.define(version: 20140901101018) do
     t.integer  "user_id"
     t.integer  "period_group_id"
     t.integer  "monitored_period_id"
+    t.float    "collaborative_weighting"
   end
 
   create_table "monitored_periods_monitored_resources", force: true do |t|

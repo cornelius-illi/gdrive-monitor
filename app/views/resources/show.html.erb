@@ -110,7 +110,7 @@
   <small>Showing: <%= @resource.revisions.activities.length %> of <%= @resource.revisions.length %></small>
 </h3>
 
-<%= svg_timeline(@resource) %>
+<div class="row svg-timeline"><%= svg_timeline(@resource) %></div>
 
 <% unless @resource.is_folder? || @resource.revisions.length.eql?(0) %>
     <table>

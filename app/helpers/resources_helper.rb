@@ -31,7 +31,7 @@ module ResourcesHelper
       x_rev_rect = ((activity.modified_date - reference_date).to_i/60 * pix_per_minute).to_i + SVG_PADDING
 
       if activity.revisions.blank?
-        sessions << svg_rect_single_revision(x_rev_rect, (index%2 == 0), activity )
+        sessions << svg_rect_single_revision(x_rev_rect, activity, (index%2 == 0), true )
       else
         sessions << svg_rect_multiple_revisions(x_rev_rect, (index%2 == 0), activity,
                                                 reference_date, pix_per_minute, resource.monitored_resource_id )
@@ -40,8 +40,37 @@ module ResourcesHelper
     end
 
     svg_contents << content_tag(:g, sessions.join().html_safe, 'font-family' => 'Verdana', 'font-size' => 8 )
-    svg_tag = content_tag(:svg, svg_contents.join().html_safe, :width => width_image, :height => SVG_HEIGHT)
-    return content_tag(:div, svg_tag, :class => 'row svg-timeline')
+    return content_tag(:svg, svg_contents.join().html_safe, :width => width_image, :height => SVG_HEIGHT, :xmlns => "http://www.w3.org/2000/svg")
+  end
+
+  def svg_timeline_no_aggregation(resource)
+    all_revisions = resource.revisions # to calculate whole time-span
+
+    # fist date in timeline, last in order
+    reference_date = all_revisions.last.modified_date
+    span_in_minutes = (all_revisions.first.modified_date - reference_date).to_i/60
+
+    # when only one revision
+    span_in_minutes = 1 if span_in_minutes == 0
+    pix_per_minute = ((920.to_f/span_in_minutes) < 0.5) ? 0.5 : (920.to_f/span_in_minutes)
+
+    # svg properties
+    width_line = ((920.to_f/span_in_minutes) < 0.5) ? (0.5*span_in_minutes).to_i : 920
+    width_image = width_line + (2 * SVG_PADDING) + 60 # 2x10 for paddings, + 60 for caption of last revision
+
+    # rendering
+
+    svg_contents = Array.new
+    svg_contents << svg_line(width_line)
+    actions = Array.new # group around each to define standards (font-family, size)
+
+    all_revisions.reverse.each_with_index do |action, index|
+      x_rev_rect = ((action.modified_date - reference_date).to_i/60 * pix_per_minute).to_i + SVG_PADDING
+      actions << svg_rect_single_revision(x_rev_rect, action, (index%2 == 0), false )
+    end
+
+    svg_contents << content_tag(:g, actions.join().html_safe, 'font-family' => 'Verdana', 'font-size' => 8 )
+    return content_tag(:svg, svg_contents.join().html_safe, :width => width_image, :height => SVG_HEIGHT, :xmlns => "http://www.w3.org/2000/svg")
   end
 
   private
@@ -102,21 +131,35 @@ module ResourcesHelper
     return elements
   end
 
-  def svg_rect_single_revision(x_value, even=true, revision)
+  def svg_rect_single_revision(x_value, revision, even=true, captions=true)
     elements = Array.new
-    elements << svg_revision_caption(x_value, even, revision)
-    elements.flatten! # caption elements as new array, but on same level
+
+    if captions
+      elements << svg_revision_caption(x_value, even, revision)
+      elements.flatten! # caption elements as new array, but on same level
+
+      # the revision mark on the timeline
+      elements << tag(:rect,
+                      :width => SVG_SIZE_RECT,
+                      :height => SVG_SIZE_RECT,
+                      :x => x_value - SVG_SIZE_RECT/2,
+                      :y => (SVG_HEIGHT/2)- (SVG_SIZE_RECT/2),
+                      :style => 'fill:rgba(119, 152, 191, .9)',
+                      :transform => "rotate(45 #{x_value} 60)"
+      )
+    else
+      # the revision mark on the timeline
+      elements << tag(:rect,
+                      :width => SVG_SIZE_RECT,
+                      :height => SVG_SIZE_RECT,
+                      :x => x_value - SVG_SIZE_RECT/2,
+                      :y => (SVG_HEIGHT/2)- (SVG_SIZE_RECT/2),
+                      :style => 'fill:rgba(119, 152, 191, .3)',
+                      :transform => "rotate(45 #{x_value} 60)"
+      )
+    end
 
 
-    # the revision mark on the timeline
-    elements << tag(:rect,
-      :width => SVG_SIZE_RECT,
-      :height => SVG_SIZE_RECT,
-      :x => x_value - SVG_SIZE_RECT/2,
-      :y => (SVG_HEIGHT/2)- (SVG_SIZE_RECT/2),
-      :style => 'fill:rgba(119, 152, 191, .9)',
-      :transform => "rotate(45 #{x_value} 60)"
-    )
 
     return elements
   end

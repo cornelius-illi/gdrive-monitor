@@ -19,13 +19,17 @@
     </div>
 
     <div class="row">
-      <div class="large-6 columns">
+      <div class="large-4 columns">
         <%= f.label :start_date %>
         <%= f.datetime_local_field :start_date %>
       </div>
-      <div class="large-6 columns">
+      <div class="large-4 columns">
         <%= f.label :end_date %>
         <%= f.datetime_local_field :end_date %>
+      </div>
+      <div class="large-4 columns">
+        <%= f.label :collaborative_weighting %>
+        <%= f.text_field :collaborative_weighting %>
       </div>
     </div>
 

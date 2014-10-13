@@ -231,7 +231,7 @@ class MonitoredResource < ActiveRecord::Base
 
   # this has to be done in a second step, as all diffing jobs have to be finished first
   def create_working_sessions
-    resources.google_resources.each do |resource|
+    resources.each do |resource|
       resource.create_working_sessions
     end
   end

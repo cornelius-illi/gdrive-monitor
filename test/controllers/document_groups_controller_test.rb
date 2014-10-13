@@ -25,7 +25,7 @@ class DocumentGroupsControllerTest < ActionController::TestCase
   end
 
   test "should show document_group" do
-    get :show, id: @document_group
+    get :show_svg, id: @document_group
     assert_response :success
   end
 

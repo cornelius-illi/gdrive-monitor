@@ -11,6 +11,5 @@ class Report::Sections::CollaborationStatisticsSection < Report::Sections::Abstr
     @metrics << Report::Metrics::RatioGloballyCollaboratedFilesWorkdays.new
     @metrics << Report::Metrics::NumberCollaborativeSessions.new
     @metrics << Report::Metrics::NumberParallelGlobalActivities.new
-    @metrics << Report::Metrics::IlliMetric.new
   end
 end

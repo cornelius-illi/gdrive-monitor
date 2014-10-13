@@ -69,6 +69,6 @@ class MonitoredPeriodsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white index through.
     def monitored_period_params
-      params.require(:monitored_period).permit(:name, :end_date, :start_date)
+      params.require(:monitored_period).permit(:name, :end_date, :start_date, :collaborative_weighting)
     end
 end
