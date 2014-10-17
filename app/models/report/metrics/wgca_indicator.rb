@@ -10,6 +10,6 @@ class Report::Metrics::WGCAIndicator < Report::Metrics::AbstractMetric
     working_sessions = WorkingSession.count(monitored_resource, period, resource_ids)
     collaborative_sessions = CollaborativeSession.count_all(monitored_resource, period, resource_ids)
 
-    return (actions + working_sessions + collaborative_sessions) / (period.days.to_f * period.collaborative_weighting)
+    return ((actions + working_sessions + collaborative_sessions) / (period.days.to_f * period.collaborative_weighting).to_f).round(3)
   end
 end

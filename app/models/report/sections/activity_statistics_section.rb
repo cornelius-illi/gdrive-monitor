@@ -9,9 +9,9 @@ class Report::Sections::ActivityStatisticsSection < Report::Sections::AbstractSe
     @metrics << Report::Metrics::NumberCollaborativeSessions.new
     @metrics << Report::Metrics::NumberGlobalCollaborativeSessions.new
     @metrics << Report::Metrics::SumActivities.new
-    @metrics << Report::Metrics::RatioActivitiesWorkdays.new
-    @metrics << Report::Metrics::SumGlobalCollaborationActivities.new
-    @metrics << Report::Metrics::SumGlobalCollaborationActivitiesGroups.new
+    #@metrics << Report::Metrics::RatioActivitiesWorkdays.new
+    #@metrics << Report::Metrics::SumGlobalCollaborationActivities.new
+    #@metrics << Report::Metrics::SumGlobalCollaborationActivitiesGroups.new
     @metrics << Report::Metrics::GCAIndicator.new
     @metrics << Report::Metrics::WGCAIndicator.new
   end

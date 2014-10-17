@@ -351,6 +351,29 @@ class Revision < ActiveRecord::Base
 
     return result_hash.sort_by {|k,v| v}.reverse.first 3
   end
+
+  def self.count_revisions_by_permissiongroup(monitored_resource_id, monitored_period, permission_group=nil)
+    return nil if monitored_resource_id.blank?
+
+    where = ["WHERE resources.monitored_resource_id=? AND resources.mime_type !='application/vnd.google-apps.folder'", monitored_resource_id]
+    unless monitored_period.blank? || !monitored_period.is_a?(MonitoredPeriod)
+      where.first << " AND (resources.created_date > ? AND resources.created_date < ? )"
+      where.push monitored_period.start_date
+      where.push monitored_period.end_date
+    end
+
+    unless permission_group.blank?
+      permission_ids = permission_group.permissions.map {|p| p.id }
+      where.first << " AND revisions.permission_id IN (#{permission_ids.join(',')})"
+    end
+
+    where = ActiveRecord::Base.send(:sanitize_sql_array, where)
+    query = "SELECT COUNT(revisions.id) as nbr_revisions FROM resources JOIN revisions ON revisions.resource_id=resources.id #{where}"
+    result = ActiveRecord::Base.connection.exec_query(query)
+
+
+    return result.first['nbr_revisions']
+  end
   # REPORT RELATED QUERIES - START
 
   # DELAYED - START

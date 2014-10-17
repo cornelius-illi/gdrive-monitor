@@ -12,6 +12,6 @@ class Report::Metrics::GCAIndicator < Report::Metrics::AbstractMetric
 
     working_days = Revision.count_workdays_for(monitored_resource.id, period)
 
-    return (actions + working_sessions + collaborative_sessions) / working_days.to_f
+    return ((actions + working_sessions + collaborative_sessions) / working_days.to_f).round(3)
   end
 end

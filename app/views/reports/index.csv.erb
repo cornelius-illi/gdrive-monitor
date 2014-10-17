@@ -1,0 +1,12 @@
+<% unless @monitored_resource.reports.blank? %>
+    <% period_names = Array.new %>
+    <% MonitoredPeriod.all.order(start_date: :asc).each { |period| period_names << period.name } %>
+Name;<%= period_names.join(";") %>
+    <% @monitored_resource.reports.first.data.each do |k, chapter| %>
+        <% chapter[:values].each_with_index do |section, seci| %>
+            <% section[:values].each_with_index do |metric, mini| %>
+<%= metric[:name] %>;<%= metric[:values].join(";" ) %>
+            <% end %>
+        <% end %>
+    <% end %>
+<% end %>

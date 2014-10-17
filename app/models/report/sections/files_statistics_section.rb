@@ -14,8 +14,8 @@ class Report::Sections::FilesStatisticsSection < Report::Sections::AbstractSecti
     #@metrics << Report::Metrics::NumberAverageFilesCreated.new
     @metrics << Report::Metrics::NumberOfOfficeFilesModified.new
     @metrics << Report::Metrics::NumberOfGoogleFilesModified.new
-    @metrics << Report::Metrics::PercentageGdInWd.new
-    @m#etrics << Report::Metrics::RatioGoogleModifiedFiles.new
+    #@metrics << Report::Metrics::PercentageGdInWd.new
+    #@metrics << Report::Metrics::RatioGoogleModifiedFiles.new
     @metrics << Report::Metrics::NumberOfRevisions.new
     #@metrics << Report::Metrics::NumberAverageRevisions.new
     #@metrics << Report::Metrics::RatioRevisionsModifiedFiles.new

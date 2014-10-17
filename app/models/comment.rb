@@ -32,4 +32,13 @@ class Comment < ActiveRecord::Base
         :status => metadata['verb']
     )
   end
+
+  # batch fixes
+  def self.update_resource_ids
+    query = "SELECT c1.id, c2.id as missing_comment_id, c1.resource_id as resource_id FROM comments c1 JOIN comments c2 on c2.comment_id=c1.id WHERE c2.resource_id IS NULL;"
+    result_set = ActiveRecord::Base.connection.exec_query(query)
+    result_set.each do |comment|
+      Comment.find(comment['missing_comment_id']).update(:resource_id => comment['resource_id'])
+    end
+  end
 end

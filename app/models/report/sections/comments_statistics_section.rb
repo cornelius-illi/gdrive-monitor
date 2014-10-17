@@ -3,10 +3,10 @@ class Report::Sections::CommentsStatisticsSection < Report::Sections::AbstractSe
     @name = "Comments statistics"
 
     @metrics << Report::Metrics::NumberFilesComments.new
-    @metrics << Report::Metrics::NumberTotalComments.new
     @metrics << Report::Metrics::NumberComments.new
-    @metrics << Report::Metrics::NumberResolvedComments.new
-    @metrics << Report::Metrics::RatioResolvedTotalComments.new
+    @metrics << Report::Metrics::NumberOfReplies.new
+    @metrics << Report::Metrics::NumberUnresolvedComments.new
+    #@metrics << Report::Metrics::RatioUnresolvedTotalComments.new
 
   end
 end

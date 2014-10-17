@@ -25,7 +25,7 @@
     <table>
       <thead class="analytics">
       <tr>
-        <th>Name</th>
+        <th style="width:200px;">Name</th>
         <% MonitoredPeriod.all.order(start_date: :asc).each_with_index do |period,j| %>
             <th <%= 'class="reference"'.html_safe if j.eql? 0  %>><a class="active-report-col" href="#period-<%= j+1 %>"><%= period.name %></a></th>
         <% end %>
@@ -53,24 +53,7 @@
                             <% metric[:values].each_with_index do |value,l| %>
                                 <% classes = (l.eql? 0) ? 'reference ' : '' %>
                                 <% classes += value.is_a?(Array) ? '' : 'isnumber' %>
-                                <td class="<%= classes %>">
-                                  <% if value.is_a?(Array) %>
-                                      <ul style="font-size: 80%;">
-                                        <% value.each do |value_array| %>
-                                            <li><%= value_array[0].split('/').last.split('.').last %>: <%= value_array[1] %></li>
-                                        <% end %>
-                                      </ul>
-                                  <% elsif value.is_a?(Hash) %>
-                                      <ul style="font-size: 80%;">
-                                        <% the_hash = value.sort_by {|k,v| v}.reverse %>
-                                        <% the_hash.each do |day,count| %>
-                                            <li><%= day %>: <%= count %></li>
-                                        <% end %>
-                                      </ul>
-                                  <% else %>
-                                      <%= value %>
-                                  <% end %>
-                                </td>
+                                <td class="<%= classes %>"><%= value %></td>
                             <% end %>
                           </tr>
                       <% end %>
