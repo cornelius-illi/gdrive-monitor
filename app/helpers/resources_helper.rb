@@ -188,7 +188,7 @@ module ResourcesHelper
   end
 
   def rect_stroke_color(activity, mr_id)
-    stroke_color = activity.team_collaboration? ? 'rgb(0,80,0)' : 'rgb(0,0,0)'
-    activity.collaboration_is_global? ? 'rgb(255,0,0)' : stroke_color
+    stroke_color = activity.team_collaboration? ? 'rgb(51,204,51)' : 'rgb(0,0,0)'
+    activity.collaboration_is_global? ? 'rgb(239,0,0)' : stroke_color
   end
 end

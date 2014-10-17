@@ -102,7 +102,7 @@ function drawMetaReportChart(title, periods, data) {
         xAxis: {
             categories: periods,
             labels: {
-                rotation: -45,
+                rotation: -35,
                 style: {
                     fontSize:'15px'
                 }
@@ -111,7 +111,7 @@ function drawMetaReportChart(title, periods, data) {
         yAxis: {
             type: 'linear',
             min: 0.0,
-            ceiling: 8,
+            //ceiling: 8,
             title: {
                 text: 'Occurence'
             },

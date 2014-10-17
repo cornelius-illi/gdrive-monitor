@@ -1,0 +1,6 @@
+<% unless @monitored_periods.blank? %>
+Period Name;Group;Start;End;Days
+    <% @monitored_periods.each do |period| %>
+<%= period.name %>;<%= period.period_group.blank? ? "" : period.period_group.name %>;<%= period.start_date.to_date %>;<%= period.end_date.to_date %>;<%= period.days %>
+    <% end %>
+<% end %>

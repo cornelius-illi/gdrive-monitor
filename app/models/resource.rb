@@ -249,6 +249,7 @@ class Resource < ActiveRecord::Base
     # Therefore it is altered here to avoid problems.
     metadata['modifiedDate'] = metadata['createdDate'] if metadata['modifiedDate'] < metadata['createdDate']
 
+    # NOTICE: unreachable is set to false, as untrashed files need to be reanimated
     update(
         :alternate_link => metadata['alternateLink'],
         :created_date => metadata['createdDate'],
@@ -267,7 +268,8 @@ class Resource < ActiveRecord::Base
         :viewed => metadata['labels']['viewed'],
         :parent_ids => parent_id,
         :title => metadata['title'],
-        :permission_id => permission_id
+        :permission_id => permission_id,
+        :unreachable => false
       )
   end
 
@@ -319,12 +321,6 @@ class Resource < ActiveRecord::Base
       .where(:monitored_resource_id => monitored_resource.id)
       .where('resources.modified_date > ? AND resources.modified_date <= ?', period.start_date, period.end_date)
       .where("mime_type IN('#{GOOGLE_FILE_TYPES.join("','")}')")
-  end
-
-  def self.timespan
-    query = 'SELECT MIN(created_date) as min, MAX(created_date) as max FROM resources;'
-    result = ActiveRecord::Base.connection.exec_query(query)
-    return result.first
   end
 
   def self.count_google_resources

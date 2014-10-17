@@ -92,7 +92,7 @@ class ReportsController < ApplicationController
   def statistics
     respond_to do |format|
       format.html {
-        @dates = Resource.timespan
+        @dates = Revision.timespan
         @resource_count = Resource.where("mime_type != '#{Resource::GOOGLE_FOLDER_TYPE}'").count
         @revisions_count = Revision.count
         @revision_google_count = Revision.count_revisions_google_files

@@ -24,6 +24,17 @@ class Revision < ActiveRecord::Base
     return result.first['count']
   end
 
+  def self.timespan
+    return {
+        'min' => ::DateTime.strptime("2013-10-28 21:46:09", '%Y-%m-%d %H:%M:%S'),
+        'max' => ::DateTime.strptime("2014-07-25 11:38:17", '%Y-%m-%d %H:%M:%S')
+    }
+
+    #query = 'SELECT STR_TO_DATE("2013-10-28 21:46:09", "%Y-%m-%d") as min, MAX(modified_date) as max FROM revisions;'
+    #result = ActiveRecord::Base.connection.exec_query(query)
+    #return result.first
+  end
+
   def first_revision_in_session
     rev_id = collaboration.blank? ? (working_session_id.blank? ? self : Revision.find(working_session_id)) : self
     Revision.where(:working_session_id => rev_id).order(modified_date: :asc).first
